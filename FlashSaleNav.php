@@ -11,6 +11,16 @@ class FlashSaleNav implements EccubeNav
      */
     public static function getNav()
     {
-        return [];
+        return [
+            'setting' => [
+                'children' => [
+                    'FlashSale' => [
+                        'id' => 'flash_sales_admin',
+                        'url' => 'flash_sale_admin_list',
+                        'name' => 'Flash sale',
+                    ],
+                ],
+            ],
+        ];
     }
 }
