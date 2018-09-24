@@ -4,7 +4,7 @@ namespace Plugin\FlashSale;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class Event implements EventSubscriberInterface
+class FlashSaleEvent implements EventSubscriberInterface
 {
     /**
      * @return array

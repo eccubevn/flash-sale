@@ -4,7 +4,7 @@ namespace Plugin\FlashSale;
 
 use Eccube\Common\EccubeNav;
 
-class Nav implements EccubeNav
+class FlashSaleNav implements EccubeNav
 {
     /**
      * @return array
