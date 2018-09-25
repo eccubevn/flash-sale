@@ -3,6 +3,8 @@
 namespace Plugin\FlashSale\Controller\Admin;
 
 use Eccube\Controller\AbstractController;
+use Eccube\Event\EccubeEvents;
+use Eccube\Event\EventArgs;
 use Eccube\Repository\Master\PageMaxRepository;
 use Eccube\Util\CacheUtil;
 use Knp\Component\Pager\Paginator;

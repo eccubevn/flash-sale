@@ -15,12 +15,16 @@ namespace Plugin\FlashSale\Form\Type\Admin;
 
 use Eccube\Common\EccubeConfig;
 use Plugin\FlashSale\Entity\FlashSale;
+use Plugin\FlashSale\Repository\FlashSaleRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -31,9 +35,19 @@ class FlashSaleType extends AbstractType
      */
     protected $eccubeConfig;
 
-    public function __construct(EccubeConfig $eccubeConfig)
+    /** @var FlashSaleRepository */
+    protected $flashSaleRepository;
+
+    /**
+     * FlashSaleType constructor.
+     *
+     * @param EccubeConfig $eccubeConfig
+     * @param FlashSaleRepository $flashSaleRepository
+     */
+    public function __construct(EccubeConfig $eccubeConfig, FlashSaleRepository $flashSaleRepository)
     {
         $this->eccubeConfig = $eccubeConfig;
+        $this->flashSaleRepository = $flashSaleRepository;
     }
 
     /**
@@ -82,6 +96,30 @@ class FlashSaleType extends AbstractType
                 'required' => true,
                 'expanded' => false,
             ]);
+
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
+            /** @var FlashSale $FlashSale */
+            $FlashSale = $event->getData();
+            $qb = $this->flashSaleRepository->createQueryBuilder('fl');
+            $qb
+                ->select('count(fl.id)')
+                ->where(':from_time >= fl.from_time AND :from_time < fl.to_time')
+                ->setParameter('from_time', $FlashSale->getFromTime())
+                ->andWhere('fl.status <> :status')->setParameter('status', FlashSale::STATUS_DELETED);
+
+            if ($FlashSale->getId()) {
+                $qb
+                    ->andWhere('fl.id <> :id')
+                    ->setParameter('id', $FlashSale->getId());
+            }
+            $count = $qb->getQuery()
+                ->getSingleScalarResult();
+
+            if ($count > 0) {
+                $form = $event->getForm();
+                $form['from_time']->addError(new FormError(trans('taxrule.text.error.date_not_available')));
+            }
+        });
     }
 
     /**
