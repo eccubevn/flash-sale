@@ -14,10 +14,8 @@
 namespace Plugin\FlashSale\Form\Type\Admin;
 
 use Eccube\Common\EccubeConfig;
-use Eccube\Entity\News;
 use Plugin\FlashSale\Entity\FlashSale;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -48,7 +46,16 @@ class FlashSaleType extends AbstractType
                 'date_widget' => 'choice',
                 'input' => 'datetime',
                 'format' => 'yyyy-MM-dd hh:mm',
-                'years' => range($this->eccubeConfig['eccube_news_start_year'], date('Y') + 3),
+                'years' => range(date('Y'), date('Y') + 3),
+                'constraints' => [
+                    new Assert\NotBlank(),
+                ],
+            ])
+            ->add('to_time', DateTimeType::class, [
+                'date_widget' => 'choice',
+                'input' => 'datetime',
+                'format' => 'yyyy-MM-dd hh:mm',
+                'years' => range(date('Y'), date('Y') + 3),
                 'constraints' => [
                     new Assert\NotBlank(),
                 ],
@@ -69,9 +76,9 @@ class FlashSaleType extends AbstractType
                     new Assert\Length(['max' => $this->eccubeConfig['eccube_ltext_len']]),
                 ],
             ])
-            ->add('visible', ChoiceType::class, [
+            ->add('status', ChoiceType::class, [
                 'label' => false,
-                'choices' => ['admin.content.news.display_status__show' => true, 'admin.content.news.display_status__hide' => false],
+                'choices' => array_flip(FlashSale::$statusList),
                 'required' => true,
                 'expanded' => false,
             ]);

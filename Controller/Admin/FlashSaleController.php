@@ -3,7 +3,6 @@
 namespace Plugin\FlashSale\Controller\Admin;
 
 use Eccube\Controller\AbstractController;
-use Eccube\Form\Type\Admin\NewsType;
 use Eccube\Repository\Master\PageMaxRepository;
 use Eccube\Util\CacheUtil;
 use Knp\Component\Pager\Paginator;
@@ -82,6 +81,7 @@ class FlashSaleController extends AbstractController
             if (!$FlashSale) {
                 throw new NotFoundHttpException();
             }
+            $FlashSale->setUpdatedAt(new \DateTime());
         } else {
             $FlashSale = new FlashSale();
             $FlashSale->setCreatedAt(new \DateTime());
@@ -95,9 +95,6 @@ class FlashSaleController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if (!$FlashSale->getUrl()) {
-                $FlashSale->setLinkMethod(false);
-            }
             $this->flashSaleRepository->save($FlashSale);
 
             $this->addSuccess('admin.common.save_complete', 'admin');
@@ -105,7 +102,7 @@ class FlashSaleController extends AbstractController
             // キャッシュの削除
             $cacheUtil->clearDoctrineCache();
 
-            return $this->redirectToRoute('admin_content_news_edit', ['id' => $FlashSale->getId()]);
+            return $this->redirectToRoute('flash_sale_admin_edit', ['id' => $FlashSale->getId()]);
         }
 
         return [

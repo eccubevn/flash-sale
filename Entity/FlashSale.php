@@ -12,6 +12,16 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class FlashSale
 {
+    const
+        STATUS_DRAFT        = 0,
+        STATUS_ACTIVATED    = 1,
+        STATUS_DELETED      = 2;
+
+    public static $statusList = [
+        self::STATUS_DRAFT => 'Draft',
+        self::STATUS_ACTIVATED => 'Activated'
+    ];
+
     /**
      * @var int
      *
@@ -48,13 +58,6 @@ class FlashSale
      * @ORM\Column(name="to_time", type="datetimetz", nullable=true)
      */
     private $to_time;
-
-    /**
-     * @var boolean
-     *
-     * @ORM\Column(name="visible", type="boolean", options={"default":true})
-     */
-    private $visible;
 
     /**
      * @var smallint
@@ -168,19 +171,11 @@ class FlashSale
     }
 
     /**
-     * @return bool
+     * @return mixed
      */
-    public function isVisible()
+    public function getStatusText()
     {
-        return $this->visible;
-    }
-
-    /**
-     * @param bool $visible
-     */
-    public function setVisible($visible)
-    {
-        $this->visible = $visible;
+        return FlashSale::$statusList[$this->status];
     }
 
     /**

@@ -41,9 +41,28 @@ class FlashSaleRepository extends AbstractRepository
     public function getQueryBuilderAll()
     {
         $qb = $this->createQueryBuilder('fl');
+        $qb->where('fl.status != :status')->setParameter('status', FlashSale::STATUS_DELETED);
         $qb->orderBy('fl.from_time', 'DESC')
             ->addOrderBy('fl.id', 'DESC');
 
         return $qb;
+    }
+
+    public function save($FlashSale)
+    {
+        $em = $this->getEntityManager();
+        $em->persist($FlashSale);
+        $em->flush($FlashSale);
+    }
+
+    /**
+     * @param \Eccube\Entity\AbstractEntity $FlashSale
+     */
+    public function delete($FlashSale)
+    {
+        $FlashSale->setStatus(FlashSale::STATUS_DELETED);
+        $em = $this->getEntityManager();
+        $em->persist($FlashSale);
+        $em->flush($FlashSale);
     }
 }

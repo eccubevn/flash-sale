@@ -15,7 +15,7 @@
             <div class="c-primaryCol">
                 <div class="d-block mb-3">
                     <a id="addNew" class="btn btn-ec-regular"
-                       href="{{ url('admin_content_news_new') }}">{{ 'admin.common.create__new'|trans }}</a>
+                       href="{{ url('flash_sale_admin_new') }}">{{ 'admin.common.create__new'|trans }}</a>
                 </div>
 
                 {% if pagination and pagination.totalItemCount %}
@@ -31,6 +31,7 @@
                                         <th class="border-top-0 pt-2 pb-2">Start time</th>
                                         <th class="border-top-0 pt-2 pb-2">End time</th>
                                         <th class="border-top-0 pt-2 pb-2 text-nowrap">Created At</th>
+                                        <th class="border-top-0 pt-2 pb-2 text-nowrap">Updated At</th>
                                         <th class="border-top-0 pt-2 pb-2">Status</th>
                                         <th class="border-top-0 pt-2 pb-2 pr-3" colspan="3"></th>
                                     </tr>
@@ -40,7 +41,7 @@
                                         <tr id="ex-product-{{ item.id }}">
                                             <td class="align-middle text-center">{{ item.id }}</td>
                                             <td class="align-middle"><a
-                                                        href="{{ url('admin_product_product_edit', { id : item.id }) }}">{{ item.name }}</a>
+                                                        href="{{ url('flash_sale_admin_edit', { id : item.id }) }}">{{ item.name }}</a>
                                             </td>
                                             <td class="align-middle">
                                                 {{ item.description }}
@@ -56,6 +57,9 @@
                                             </td>
                                             <td class="align-middle">
                                                 {{ item.getUpdatedAt|date_min }}
+                                            </td>
+                                            <td class="align-middle">
+                                                {{ item.getStatusText }}
                                             </td>
                                             <td class="align-middle pr-3" colspan="3">
                                                 <div class="row">
