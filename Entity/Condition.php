@@ -5,7 +5,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Plugin\FlashSale\Repository\ConditionRepository;
 
 /**
- * @ORM\Table("flg_flash_sale_condition")
+ * @ORM\Table("plg_flash_sale_condition")
  * @ORM\Entity(repositoryClass=ConditionRepository::class)
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="discriminator_type", type="string", length=255)
@@ -25,21 +25,21 @@ class Condition
     /**
      * @var string
      *
-     * @ORM\Column(name="attribute", type="string", length="32", nullable=false)
+     * @ORM\Column(name="attribute", type="string", length=32, nullable=false)
      */
     protected $attribute;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="operator", type="string", length="32", nullable=false)
+     * @ORM\Column(name="operator", type="string", length=32, nullable=false)
      */
     protected $operator;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="type", type="string", nullable=false)
+     * @ORM\Column(name="value", type="string", nullable=false)
      */
     protected $value;
 

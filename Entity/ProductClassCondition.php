@@ -6,7 +6,11 @@ use Plugin\FlashSale\Service\Condition\Operator\InOperator;
 use Plugin\FlashSale\Service\Condition\Operator\AllOperator;
 use Plugin\FlashSale\Service\Condition\Operator\EqualOperator;
 use Plugin\FlashSale\Service\Condition\Operator\NotEqualOperator;
+use Doctrine\ORM\Mapping as ORM;
 
+/**
+ * @ORM\Entity
+ */
 class ProductClassCondition extends Condition implements ConditionInterface
 {
     /**

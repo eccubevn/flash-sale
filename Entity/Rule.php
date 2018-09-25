@@ -1,8 +1,10 @@
 <?php
 namespace Plugin\FlashSale\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+
 /**
- * @ORM\Table("flg_flash_sale_rule")
+ * @ORM\Table("plg_flash_sale_rule")
  * @ORM\Entity(repositoryClass=PromotionRepository::class)
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="discriminator_type", type="string", length=255)
@@ -22,17 +24,17 @@ class Rule
     /**
      * @var string
      *
-     * @ORM\Column(name="type", type="string", length="32", nullable=false)
+     * @ORM\Column(name="operator", type="string", length=32, nullable=false)
      */
     protected $operator;
 
     /**
-     * @var Event
+     * @var FlashSale
      *
-     * @ORM\ManyToOne(targetEntity=Event::class)
+     * @ORM\ManyToOne(targetEntity=FlashSale::class)
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="event_id", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="flash_sale_id", referencedColumnName="id")
      * })
      */
-    protected $Event;
+    protected $FlashSale;
 }
