@@ -3,16 +3,19 @@ namespace Plugin\FlashSale\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Plugin\FlashSale\Repository\PromotionRepository;
+use Plugin\FlashSale\Entity\AmountPromotion;
 
 /**
  * @ORM\Table("plg_flash_sale_promotion")
  * @ORM\Entity(repositoryClass=PromotionRepository::class)
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="discriminator_type", type="string", length=255)
- * @ORM\DiscriminatorMap({"abstract"="Promotion", "amount"="AmountPromotion"})
+ * @ORM\DiscriminatorMap({Promotion::TYPE="Promotion", AmountPromotion::TYPE="AmountPromotion"})
  */
 class Promotion
 {
+    const TYPE = 'promotion';
+
     /**
      * @var int
      *

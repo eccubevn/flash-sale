@@ -2,16 +2,19 @@
 namespace Plugin\FlashSale\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Plugin\FlashSale\Entity\ProductClassRule;
 
 /**
  * @ORM\Table("plg_flash_sale_rule")
  * @ORM\Entity(repositoryClass=PromotionRepository::class)
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="discriminator_type", type="string", length=255)
- * @ORM\DiscriminatorMap({"abstract"="rule", "product_class"="ProductClassRule"})
+ * @ORM\DiscriminatorMap({Rule::TYPE="Rule", ProductClassRule::TYPE="ProductClassRule"})
  */
 class Rule
 {
+    const TYPE = 'rule';
+
     /**
      * @var int
      *
@@ -37,4 +40,9 @@ class Rule
      * })
      */
     protected $FlashSale;
+
+    public function getFlashSale()
+    {
+        return $this->FlashSale;
+    }
 }

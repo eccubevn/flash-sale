@@ -9,6 +9,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class AmountPromotion extends Promotion implements PromotionInterface
 {
+    const TYPE = 'amount';
+
     /**
      * {@inheritdoc}
      *

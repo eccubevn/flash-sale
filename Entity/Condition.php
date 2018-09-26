@@ -3,16 +3,19 @@ namespace Plugin\FlashSale\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Plugin\FlashSale\Repository\ConditionRepository;
+use Plugin\FlashSale\Entity\ProductClassCondition;
 
 /**
  * @ORM\Table("plg_flash_sale_condition")
  * @ORM\Entity(repositoryClass=ConditionRepository::class)
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="discriminator_type", type="string", length=255)
- * @ORM\DiscriminatorMap({"abstract" = "Condition", "product_class" = "ProductClassCondition"})
+ * @ORM\DiscriminatorMap({Condition::TYPE="Condition", ProductClassCondition::TYPE="ProductClassCondition"})
  */
 class Condition
 {
+    const TYPE = 'condition';
+
     /**
      * @var int
      *

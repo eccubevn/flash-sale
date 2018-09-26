@@ -8,5 +8,5 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class ProductClassRule extends Rule
 {
-    
+    const TYPE = 'product_class';
 }

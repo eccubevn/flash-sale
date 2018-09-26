@@ -13,6 +13,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class ProductClassCondition extends Condition implements ConditionInterface
 {
+    const TYPE = 'product_class';
+
     /**
      * {@inheritdoc}
      *
