@@ -100,11 +100,20 @@ class FlashSaleType extends AbstractType
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
             /** @var FlashSale $FlashSale */
             $FlashSale = $event->getData();
+            if ($FlashSale->getFromTime() >= $FlashSale->getToTime()) {
+                $form = $event->getForm();
+                $form['from_time']->addError(new FormError('Start time should be earlier than end time'));
+            }
+        });
+
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
+            /** @var FlashSale $FlashSale */
+            $FlashSale = $event->getData();
             $qb = $this->flashSaleRepository->createQueryBuilder('fl');
             $qb
                 ->select('count(fl.id)')
-                ->where(':from_time >= fl.from_time AND :from_time < fl.to_time')
-                ->setParameter('from_time', $FlashSale->getFromTime())
+                ->where('(:from_time >= fl.from_time AND :from_time < fl.to_time) OR (:to_time > fl.to_time AND :to_time <= fl.to_time)')
+                ->setParameters(['from_time' => $FlashSale->getFromTime(), 'to_time' => $FlashSale->getToTime()])
                 ->andWhere('fl.status <> :status')->setParameter('status', FlashSale::STATUS_DELETED);
 
             if ($FlashSale->getId()) {
@@ -117,7 +126,7 @@ class FlashSaleType extends AbstractType
 
             if ($count > 0) {
                 $form = $event->getForm();
-                $form['from_time']->addError(new FormError(trans('taxrule.text.error.date_not_available')));
+                $form['from_time']->addError(new FormError('There was one event at this time'));
             }
         });
     }
