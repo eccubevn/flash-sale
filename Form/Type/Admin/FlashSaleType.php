@@ -95,6 +95,13 @@ class FlashSaleType extends AbstractType
                 'choices' => array_flip(FlashSale::$statusList),
                 'required' => true,
                 'expanded' => false,
+            ])
+            ->add('rule', TextareaType::class, [
+                'required' => true,
+                'mapped' => false,
+                'constraints' => [
+                    new Assert\NotBlank()
+                ]
             ]);
 
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
