@@ -2,6 +2,7 @@
 
 namespace Plugin\FlashSale\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -60,7 +61,7 @@ class FlashSale
     private $to_time;
 
     /**
-     * @var smallint
+     * @var int
      *
      * @ORM\Column(name="status", type="smallint", options={"default":true})
      */
@@ -89,6 +90,42 @@ class FlashSale
      * })
      */
     private $created_by;
+
+    /**
+     * @var ArrayCollection Rule
+     *
+     * @ORM\OneToMany(targetEntity=Rule::class, mappedBy="FlashSale", cascade={"persist","remove"})
+     */
+    private $Rules;
+
+    /**
+     * FlashSale constructor.
+     */
+    public function __construct()
+    {
+        $this->Rules = new ArrayCollection();
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getRules(): ArrayCollection
+    {
+        return $this->Rules;
+    }
+
+    /**
+     * @param Rule $rule
+     */
+    public function addRule(Rule $rule): void
+    {
+        $this->Rules->add($rule);
+    }
+
+    public function removeRule(Rule $rule)
+    {
+        $this->Rules->removeElement($rule);
+    }
 
     /**
      * @return int
@@ -179,7 +216,7 @@ class FlashSale
     }
 
     /**
-     * @return smallint
+     * @return int
      */
     public function getStatus()
     {
