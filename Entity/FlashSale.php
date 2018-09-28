@@ -3,6 +3,13 @@
 namespace Plugin\FlashSale\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection as DoctrineCollection;
+use Plugin\FlashSale\Entity\Rule;
+use Plugin\FlashSale\Service\Rule\RuleFactory;
+use Plugin\FlashSale\Service\Promotion\PromotionFactory;
+use Plugin\FlashSale\Service\Condition\ConditionFactory;
+
 
 /**
  * FlashSale
@@ -89,6 +96,13 @@ class FlashSale
      * })
      */
     private $created_by;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     *
+     * @ORM\OneToMany(targetEntity=Rule::class, mappedBy="FlashSale", indexBy="id", cascade={"persist"})
+     */
+    protected $Rules;
 
     /**
      * @return int
@@ -240,5 +254,102 @@ class FlashSale
     public function setCreatedBy($created_by)
     {
         $this->created_by = $created_by;
+    }
+
+    /**
+     * Get Rules
+     *
+     * @return DoctrineCollection
+     */
+    public function getRules()
+    {
+        return $this->Rules;
+    }
+
+    /**
+     * Set Rules
+     *
+     * @param DoctrineCollection $Rules
+     * @return $this
+     */
+    public function setRules(DoctrineCollection $Rules)
+    {
+        $this->Rules = $Rules;
+        return $this;
+    }
+
+    /**
+     * Get data as array
+     *
+     * @param $data
+     * @return array
+     */
+    public function toArray($data = null)
+    {
+        $result = [];
+        if ($data) {
+            $result = json_decode($data, true);
+            if (is_array($result) && !isset($result['id'])) {
+                $result['rules'] = $result;
+            }
+        } else {
+            $result['rules'] = [];
+            /** @var Rule $Rule */
+            foreach ($this->getRules() as $Rule) {
+                $result['rules'][] = $Rule->toArray();
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * Extract Rule from normalize data
+     *
+     * @param $data
+     * @return void
+     */
+    public function updateFromArray($data)
+    {
+        foreach ($data['rules'] as $rule) {
+            if (!empty($rule['id'])) {
+                $Rule = $this->getRules()->get($rule['id']);
+            } else {
+                $Rule = RuleFactory::createFromArray($rule);
+                $this->getRules()->add($Rule);
+            }
+            $Rule->modified = true;
+            $Rule->setFlashSale($this);
+            $Rule->setOperator($rule['operator']);
+
+            if (!empty($rule['promotion'])) {
+                $Promotion = $Rule->getPromotion();
+                if (!$Promotion) {
+                    $Promotion = PromotionFactory::createFromArray($rule['promotion']);
+                }
+                $Promotion->setAttribute($rule['promotion']['attribute']);
+                $Promotion->setValue($rule['promotion']['value']);
+                $Promotion->setRule($Rule);
+                $Rule->setPromotion($Promotion);
+            }
+            if (isset($rule['conditions'])) {
+                if (!$Rule->getConditions()) {
+                    $Rule->setConditions(new ArrayCollection());
+                }
+                foreach ($rule['conditions'] as $condition) {
+                    if (!empty($condition['id'])) {
+                        $Condition = $Rule->getConditions()->get($condition['id']);
+                    } else {
+                        $Condition = ConditionFactory::createFromArray($condition);
+                        $Rule->getConditions()->add($Condition);
+                    }
+                    $Condition->modified = true;
+                    $Condition->setAttribute($condition['attribute']);
+                    $Condition->setOperator($condition['operator']);
+                    $Condition->setValue($condition['value']);
+                    $Condition->setRule($Rule);
+
+                }
+            }
+        }
     }
 }

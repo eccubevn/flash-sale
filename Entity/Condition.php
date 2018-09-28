@@ -49,10 +49,142 @@ class Condition
     /**
      * @var Rule
      *
-     * @ORM\ManyToOne(targetEntity=Rule::class)
+     * @ORM\ManyToOne(targetEntity=Rule::class, inversedBy="Condition")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="rule_id", referencedColumnName="id")
      * })
      */
     protected $Rule;
+
+    /**
+     * Get $id
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set $id
+     *
+     * @param $id
+     * @return $this
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+        return $this;
+    }
+
+    /**
+     * Get $operator
+     *
+     * @return string
+     */
+    public function getOperator()
+    {
+        return $this->operator;
+    }
+
+    /**
+     * Set $operator
+     *
+     * @param $operator
+     * @return $this
+     */
+    public function setOperator($operator)
+    {
+        $this->operator = $operator;
+        return $this;
+    }
+
+    /**
+     * Get $attribute
+     *
+     * @return string
+     */
+    public function getAttribute()
+    {
+        return $this->attribute;
+    }
+
+    /**
+     * Set $attribute
+     *
+     * @param $attribute
+     * @return $this
+     */
+    public function setAttribute($attribute)
+    {
+        $this->attribute = $attribute;
+        return $this;
+    }
+
+    /**
+     * Get $value
+     *
+     * @return string
+     */
+    public function getValue()
+    {
+        return $this->value;
+    }
+
+    /**
+     * Set $value
+     *
+     * @param $value
+     * @return $this
+     */
+    public function setValue($value)
+    {
+        $this->value = $value;
+        return $this;
+    }
+
+    /**
+     * Get $Rule
+     *
+     * @return Rule
+     */
+    public function getRule()
+    {
+        return $this->Rule;
+    }
+
+    /**
+     * Set $Rule
+     *
+     * @param Rule $Rule
+     * @return $this
+     */
+    public function setRule(Rule $Rule)
+    {
+        $this->Rule = $Rule;
+        return $this;
+    }
+
+    /**
+     * Get data as array
+     *
+     * @param null $data
+     * @return array
+     */
+    public function toArray($data = null)
+    {
+        $result = [];
+        if ($data) {
+            $result = json_decode($data, true);
+        } else {
+            $result['id'] = intval($this->getId());
+            $result['type'] = static::TYPE;
+            $result['attribute'] = $this->getAttribute();
+            $result['operator'] = $this->getOperator();
+            $result['value'] = $this->getValue();
+        }
+
+        return $result;
+    }
 }

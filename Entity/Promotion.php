@@ -49,10 +49,119 @@ class Promotion
     /**
      * @var Rule
      *
-     * @ORM\OneToOne(targetEntity=Rule::class)
+     * @ORM\OneToOne(targetEntity=Rule::class, inversedBy="Promotion")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="rule_id", referencedColumnName="id")
      * })
      */
     protected $Rule;
+
+    /**
+     * Get $id
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set $id
+     *
+     * @param $id
+     * @return $this
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+        return $this;
+    }
+
+    /**
+     * Get $attribute
+     *
+     * @return string
+     */
+    public function getAttribute()
+    {
+        return $this->attribute;
+    }
+
+    /**
+     * Set $attribute
+     *
+     * @param $attribute
+     * @return $this
+     */
+    public function setAttribute($attribute)
+    {
+        $this->attribute = $attribute;
+        return $this;
+    }
+
+    /**
+     * Get $value
+     *
+     * @return string
+     */
+    public function getValue()
+    {
+        return $this->value;
+    }
+
+    /**
+     * Set $value
+     *
+     * @param $value
+     * @return $this
+     */
+    public function setValue($value)
+    {
+        $this->value = $value;
+        return $this;
+    }
+
+    /**
+     * Set $Rule
+     *
+     * @return Rule
+     */
+    public function getRule()
+    {
+        return $this->Rule;
+    }
+
+    /**
+     * Set $Rule
+     *
+     * @param Rule $Rule
+     * @return $this
+     */
+    public function setRule(Rule $Rule)
+    {
+        $this->Rule = $Rule;
+        return $this;
+    }
+
+    /**
+     * Get data as array
+     *
+     * @param null $data
+     * @return array
+     */
+    public function toArray($data = null)
+    {
+        $result = [];
+        if ($data) {
+            $result = json_decode($data, true);
+        } else {
+            $result['id'] = $this->getId();
+            $result['type'] = static::TYPE;
+            $result['attribute'] = $this->getAttribute();
+            $result['value'] = $this->getValue();
+        }
+
+        return $result;
+    }
 }

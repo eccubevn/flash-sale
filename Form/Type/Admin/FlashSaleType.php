@@ -21,6 +21,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
@@ -96,13 +97,46 @@ class FlashSaleType extends AbstractType
                 'required' => true,
                 'expanded' => false,
             ])
-            ->add('rule', TextareaType::class, [
+            ->add('rules', HiddenType::class, [
                 'required' => true,
                 'mapped' => false,
+                'error_bubbling' => false,
                 'constraints' => [
                     new Assert\NotBlank()
                 ]
             ]);
+
+        if (isset($options['data']) && $options['data'] instanceof FlashSale) {
+            $FlashSaleData = $options['data']->toArray();
+            if (isset($FlashSaleData['rules'])) {
+                $builder->get('rules')->setData(json_encode($FlashSaleData['rules']));
+            }
+        }
+
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
+            $form = $event->getForm();
+            $rules = json_decode($form->get('rules')->getData(), true);
+            if (empty($rules)) {
+                $form->get('rules')->addError(new FormError('Rule must be required'));
+                return;
+            }
+            foreach ($rules as $rule) {
+                if (!isset($rule['promotion']['value']) || $rule['promotion']['value'] == '') {
+                    $form->get('rules')->addError(new FormError('Promotion must be required'));
+                    return;
+                }
+                if (!isset($rule['conditions'])) {
+                    $form->get('rules')->addError(new FormError('Condition must be required'));
+                    return;
+                }
+                foreach ($rule['conditions'] as $condition) {
+                    if (!isset($condition['value']) || $condition['value'] == '') {
+                        $form->get('rules')->addError(new FormError('Condition must be required'));
+                        return;
+                    }
+                }
+            }
+        });
 
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
             /** @var FlashSale $FlashSale */

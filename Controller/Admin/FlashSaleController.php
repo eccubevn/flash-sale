@@ -12,6 +12,7 @@ use Plugin\FlashSale\Entity\FlashSale;
 use Plugin\FlashSale\Form\Type\Admin\FlashSaleType;
 use Plugin\FlashSale\Repository\ConfigRepository;
 use Plugin\FlashSale\Repository\FlashSaleRepository;
+use Plugin\FlashSale\Entity\Promotion;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -97,14 +98,47 @@ class FlashSaleController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->flashSaleRepository->save($FlashSale);
+            try {
+                $this->entityManager->beginTransaction();
+                $this->flashSaleRepository->save($FlashSale);
+                $data = $FlashSale->toArray($form->get('rules')->getData());
+                $FlashSale->updateFromArray($data);
+                foreach ($FlashSale->getRules() as $Rule) {
+                    $Promotion = $Rule->getPromotion();
+                    if ($Promotion instanceof Promotion) {
+                        if (isset($Rule->modified)) {
+                            $this->entityManager->persist($Promotion);
+                        } else {
+                            $this->entityManager->remove($Promotion);
+                        }
+                    }
+                    foreach ($Rule->getConditions() as $Condition) {
+                        if (isset($Rule->modified)) {
+                            $this->entityManager->persist($Condition);
+                        } else {
+                            $this->entityManager->remove($Condition);
+                        }
+                    }
 
-            $this->addSuccess('admin.common.save_complete', 'admin');
+                    if (isset($Rule->modified)) {
+                        $this->entityManager->persist($Rule);
+                    } else {
+                        $this->entityManager->remove($Rule);
+                    }
+                }
 
-            // キャッシュの削除
-            $cacheUtil->clearDoctrineCache();
+                $this->entityManager->flush();
+                $this->entityManager->commit();
+                $this->addSuccess('admin.common.save_complete', 'admin');
 
-            return $this->redirectToRoute('flash_sale_admin_edit', ['id' => $FlashSale->getId()]);
+                // キャッシュの削除
+                $cacheUtil->clearDoctrineCache();
+                return $this->redirectToRoute('flash_sale_admin_edit', ['id' => $FlashSale->getId()]);
+            } catch (\Exception $e) {
+                dump($e);
+                $this->entityManager->rollback();
+                $this->addError('admin.common.save_error', 'admin');
+            }
         }
 
         return [
