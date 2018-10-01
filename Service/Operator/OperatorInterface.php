@@ -1,5 +1,5 @@
 <?php
-namespace Plugin\FlashSale\Service\Condition\Operator;
+namespace Plugin\FlashSale\Service\Operator;
 
 use Doctrine\ORM\QueryBuilder;
 use Plugin\FlashSale\Entity\Condition;

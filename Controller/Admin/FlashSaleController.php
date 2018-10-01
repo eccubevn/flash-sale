@@ -17,6 +17,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Plugin\FlashSale\Service\FlashSaleService;
 
 class FlashSaleController extends AbstractController
 {
@@ -25,23 +26,39 @@ class FlashSaleController extends AbstractController
      */
     protected $configRepository;
 
-    /** @var FlashSaleRepository */
+    /**
+     * @var FlashSaleRepository
+     */
     protected $flashSaleRepository;
 
-    /** @var PageMaxRepository */
+    /**
+     * @var PageMaxRepository
+     */
     protected $pageMaxRepository;
+
+    /**
+     * @var FlashSaleService
+     */
+    protected $flashSaleService;
 
     /**
      * FlashSaleController constructor.
      *
      * @param ConfigRepository $configRepository
      * @param FlashSaleRepository $flashSaleRepository
+     * @param PageMaxRepository $pageMaxRepository
+     * @param FlashSaleService $flashSaleService
      */
-    public function __construct(ConfigRepository $configRepository, FlashSaleRepository $flashSaleRepository, PageMaxRepository $pageMaxRepository)
-    {
+    public function __construct(
+        ConfigRepository $configRepository,
+        FlashSaleRepository $flashSaleRepository,
+        PageMaxRepository $pageMaxRepository,
+        FlashSaleService $flashSaleService
+    ) {
         $this->configRepository = $configRepository;
         $this->flashSaleRepository = $flashSaleRepository;
         $this->pageMaxRepository = $pageMaxRepository;
+        $this->flashSaleService = $flashSaleService;
     }
 
     /**
@@ -101,7 +118,7 @@ class FlashSaleController extends AbstractController
             try {
                 $this->entityManager->beginTransaction();
                 $this->flashSaleRepository->save($FlashSale);
-                $data = $FlashSale->toArray($form->get('rules')->getData());
+                $data = $FlashSale->rawData($form->get('rules')->getData());
                 $FlashSale->updateFromArray($data);
                 foreach ($FlashSale->getRules() as $Rule) {
                     $Promotion = $Rule->getPromotion();
@@ -135,7 +152,6 @@ class FlashSaleController extends AbstractController
                 $cacheUtil->clearDoctrineCache();
                 return $this->redirectToRoute('flash_sale_admin_edit', ['id' => $FlashSale->getId()]);
             } catch (\Exception $e) {
-                dump($e);
                 $this->entityManager->rollback();
                 $this->addError('admin.common.save_error', 'admin');
             }
@@ -144,6 +160,7 @@ class FlashSaleController extends AbstractController
         return [
             'form' => $form->createView(),
             'FlashSale' => $FlashSale,
+            'metadata' => $this->flashSaleService->getMetadata(),
         ];
     }
 

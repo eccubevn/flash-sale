@@ -7,7 +7,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Plugin\FlashSale\Entity\Condition;
 use Plugin\FlashSale\Entity\ProductClassCondition;
 use Plugin\FlashSale\Entity\Rule;
-use Plugin\FlashSale\Service\Condition\Operator\OperatorFactory;
+use Plugin\FlashSale\Service\Operator\OperatorFactory;
 
 class ConditionRepository extends AbstractRepository
 {

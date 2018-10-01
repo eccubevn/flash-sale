@@ -21,47 +21,7 @@ file that was distributed with this source code.
     <script>
         $(function() {
             $('#ruleForm').initRulePanel({
-                setup: {
-                    // todo will get from class instead sample data
-                    rule: {
-                        types: {
-                            product_class: {
-                                label: 'ProductClass Rule',
-                                operators: {
-                                    in: 'is one of',
-                                    all: 'is all of'
-                                }
-                            }
-                        }
-                    },
-                    promotion: {
-                        types: {
-                            amount: {
-                                label: 'Amount Promotion',
-                                attributes: {
-                                    percent: '%',
-                                    amount: 'amount'
-                                }
-                            }
-                        }
-                    },
-                    condition: {
-                        types: {
-                            product_class: {
-                                label: 'ProductClass Condition',
-                                attributes: {
-                                    id: 'id'
-                                },
-                                operators: {
-                                    in: 'is one of ',
-                                    all: 'is all of ',
-                                    equal: 'is equal of',
-                                    not_equal: 'is not equal of'
-                                }
-                            }
-                        }
-                    }
-                }
+                setup: JSON.parse('{{ metadata|json_encode|raw }}')
             });
         });
     </script>

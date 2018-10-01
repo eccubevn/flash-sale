@@ -107,7 +107,7 @@ class FlashSaleType extends AbstractType
             ]);
 
         if (isset($options['data']) && $options['data'] instanceof FlashSale) {
-            $FlashSaleData = $options['data']->toArray();
+            $FlashSaleData = $options['data']->rawData();
             if (isset($FlashSaleData['rules'])) {
                 $builder->get('rules')->setData(json_encode($FlashSaleData['rules']));
             }

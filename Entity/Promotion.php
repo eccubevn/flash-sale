@@ -143,7 +143,7 @@ class Promotion extends AbstractEntity
      * @param null $data
      * @return array
      */
-    public function toArray($data = null)
+    public function rawData($data = null)
     {
         $result = [];
         if ($data) {

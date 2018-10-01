@@ -2,18 +2,33 @@
 namespace Plugin\FlashSale\Entity;
 
 use Plugin\FlashSale\Service\Condition\ConditionInterface;
-use Plugin\FlashSale\Service\Condition\Operator\InOperator;
-use Plugin\FlashSale\Service\Condition\Operator\AllOperator;
-use Plugin\FlashSale\Service\Condition\Operator\EqualOperator;
-use Plugin\FlashSale\Service\Condition\Operator\NotEqualOperator;
+use Plugin\FlashSale\Service\Operator\OperatorInterface;
+use Plugin\FlashSale\Service\Common\IdentifierInterface;
+use Plugin\FlashSale\Service\Operator\InOperator;
+use Plugin\FlashSale\Service\Operator\AllOperator;
+use Plugin\FlashSale\Service\Operator\EqualOperator;
+use Plugin\FlashSale\Service\Operator\NotEqualOperator;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
  */
-class ProductClassCondition extends Condition implements ConditionInterface
+class ProductClassCondition extends Condition implements ConditionInterface, IdentifierInterface
 {
     const TYPE = 'product_class';
+
+    /**
+     * @var OperatorInterface[]
+     */
+    protected $operators = [];
+
+    public function __construct()
+    {
+        $this->operators[] = new AllOperator();
+        $this->operators[] = new InOperator();
+        $this->operators[] = new EqualOperator();
+        $this->operators[] = new NotEqualOperator();
+    }
 
     /**
      * {@inheritdoc}
@@ -43,13 +58,28 @@ class ProductClassCondition extends Condition implements ConditionInterface
      *
      * @return array
      */
-    public function getOperators()
+    public function getOperators(): array
     {
-        return [
-            InOperator::TYPE,
-            AllOperator::TYPE,
-            EqualOperator::TYPE,
-            NotEqualOperator::TYPE
-        ];
+        return $this->operators;
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @return string
+     */
+    public function getName(): string
+    {
+        return 'ProductClass Condition';
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @return string
+     */
+    public function getType(): string
+    {
+        return static::TYPE;
     }
 }

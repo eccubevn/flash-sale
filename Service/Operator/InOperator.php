@@ -1,13 +1,14 @@
 <?php
-namespace Plugin\FlashSale\Service\Condition\Operator;
+namespace Plugin\FlashSale\Service\Operator;
 
 use Doctrine\ORM\QueryBuilder;
 use Plugin\FlashSale\Entity\Condition;
 use Plugin\FlashSale\Service\Condition\ConditionInterface;
+use Plugin\FlashSale\Service\Common\IdentifierInterface;
 
-class AllOperator implements OperatorInterface
+class InOperator implements OperatorInterface, IdentifierInterface
 {
-    const TYPE = 'all';
+    const TYPE = 'in';
 
     /**
      * {@inheritdoc}
@@ -25,12 +26,12 @@ class AllOperator implements OperatorInterface
                 $result = ($cond == $data);
             }
 
-            if (!$result) {
-                return false;
+            if ($result) {
+                return true;
             }
         }
 
-        return true;
+        return false;
     }
 
     /**
@@ -51,16 +52,37 @@ class AllOperator implements OperatorInterface
                 break;
 
             case InOperator::TYPE:
-                $qb->andWhere($qb->expr()->in('pc.'.$condition->getAttribute(), $condition->getValue()));
+                $qb->orWhere($qb->expr()->in('pc.'.$condition->getAttribute(), $condition->getValue()));
                 break;
 
+                // Todo: I'm not sure
             case NotEqualOperator::TYPE:
-                $qb->andWhere($qb->expr()->neq('pc.'.$condition->getAttribute(), $condition->getValue()));
+                $qb->andWhere($qb->expr()->notIn('pc.'.$condition->getAttribute(), $condition->getValue()));
                 break;
             default:
-                break;
+            break;
         }
 
         return $qb;
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @return string
+     */
+    public function getName(): string
+    {
+        return 'is one of';
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @return string
+     */
+    public function getType(): string
+    {
+        return static::TYPE;
     }
 }

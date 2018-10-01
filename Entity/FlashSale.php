@@ -4,7 +4,6 @@ namespace Plugin\FlashSale\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection as DoctrineCollection;
 use Plugin\FlashSale\Entity\Rule;
 use Plugin\FlashSale\Service\Rule\RuleFactory;
@@ -114,9 +113,9 @@ class FlashSale
     }
 
     /**
-     * @return ArrayCollection
+     * @return DoctrineCollection
      */
-    public function getRules(): ArrayCollection
+    public function getRules(): DoctrineCollection
     {
         return $this->Rules;
     }
@@ -292,7 +291,7 @@ class FlashSale
      * @param $data
      * @return array
      */
-    public function toArray($data = null)
+    public function rawData($data = null)
     {
         $result = [];
         if ($data) {
@@ -304,7 +303,7 @@ class FlashSale
             $result['rules'] = [];
             /** @var Rule $Rule */
             foreach ($this->getRules() as $Rule) {
-                $result['rules'][] = $Rule->toArray();
+                $result['rules'][] = $Rule->rawData();
             }
         }
         return $result;

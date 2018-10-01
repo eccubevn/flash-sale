@@ -161,7 +161,7 @@ class Rule extends AbstractEntity
      * @param $data
      * @return array
      */
-    public function toArray($data = null)
+    public function rawData($data = null)
     {
         if ($data) {
             $result = json_decode($data, true);
@@ -173,9 +173,9 @@ class Rule extends AbstractEntity
             ];
             /** @var Condition $Condition */
             foreach ($this->getConditions() as $Condition) {
-                $result['conditions'][] = $Condition->toArray();
+                $result['conditions'][] = $Condition->rawData();
             }
-            $result['promotion'] = $this->getPromotion()->toArray();
+            $result['promotion'] = $this->getPromotion()->rawData();
         }
 
         return $result;
