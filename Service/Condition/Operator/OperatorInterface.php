@@ -1,6 +1,9 @@
 <?php
 namespace Plugin\FlashSale\Service\Condition\Operator;
 
+use Doctrine\ORM\QueryBuilder;
+use Plugin\FlashSale\Entity\Condition;
+
 interface OperatorInterface
 {
     /**
@@ -11,4 +14,11 @@ interface OperatorInterface
      * @return bool
      */
     public function isValid($condition, $data);
+
+    /**
+     * @param QueryBuilder $qb
+     * @param Condition $condition
+     * @return QueryBuilder
+     */
+    public function parseCondition(QueryBuilder $qb, Condition $condition);
 }

@@ -2,6 +2,7 @@
 
 namespace Plugin\FlashSale\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection as DoctrineCollection;
@@ -67,7 +68,7 @@ class FlashSale
     private $to_time;
 
     /**
-     * @var smallint
+     * @var int
      *
      * @ORM\Column(name="status", type="smallint", options={"default":true})
      */
@@ -98,11 +99,40 @@ class FlashSale
     private $created_by;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var ArrayCollection Rule
      *
-     * @ORM\OneToMany(targetEntity=Rule::class, mappedBy="FlashSale", indexBy="id", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity=Rule::class, mappedBy="FlashSale", indexBy="id", cascade={"persist","remove"})
      */
-    protected $Rules;
+    private $Rules;
+
+    /**
+     * FlashSale constructor.
+     */
+    public function __construct()
+    {
+        $this->Rules = new ArrayCollection();
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getRules(): ArrayCollection
+    {
+        return $this->Rules;
+    }
+
+    /**
+     * @param Rule $rule
+     */
+    public function addRule(Rule $rule): void
+    {
+        $this->Rules->add($rule);
+    }
+
+    public function removeRule(Rule $rule)
+    {
+        $this->Rules->removeElement($rule);
+    }
 
     /**
      * @return int
@@ -193,7 +223,7 @@ class FlashSale
     }
 
     /**
-     * @return smallint
+     * @return int
      */
     public function getStatus()
     {
@@ -254,28 +284,6 @@ class FlashSale
     public function setCreatedBy($created_by)
     {
         $this->created_by = $created_by;
-    }
-
-    /**
-     * Get Rules
-     *
-     * @return DoctrineCollection
-     */
-    public function getRules()
-    {
-        return $this->Rules;
-    }
-
-    /**
-     * Set Rules
-     *
-     * @param DoctrineCollection $Rules
-     * @return $this
-     */
-    public function setRules(DoctrineCollection $Rules)
-    {
-        $this->Rules = $Rules;
-        return $this;
     }
 
     /**

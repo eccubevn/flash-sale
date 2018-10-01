@@ -147,6 +147,7 @@ class FlashSaleType extends AbstractType
             }
         });
 
+        // TODO: validate for a period of time
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
             /** @var FlashSale $FlashSale */
             $FlashSale = $event->getData();

@@ -2,6 +2,7 @@
 namespace Plugin\FlashSale\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Eccube\Entity\AbstractEntity;
 use Plugin\FlashSale\Repository\PromotionRepository;
 use Plugin\FlashSale\Entity\AmountPromotion;
 
@@ -12,7 +13,7 @@ use Plugin\FlashSale\Entity\AmountPromotion;
  * @ORM\DiscriminatorColumn(name="discriminator_type", type="string", length=255)
  * @ORM\DiscriminatorMap({Promotion::TYPE="Promotion", AmountPromotion::TYPE="AmountPromotion"})
  */
-class Promotion
+class Promotion extends AbstractEntity
 {
     const TYPE = 'promotion';
 
@@ -57,91 +58,83 @@ class Promotion
     protected $Rule;
 
     /**
-     * Get $id
-     *
      * @return int
      */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
     /**
-     * Set $id
-     *
-     * @param $id
-     * @return $this
+     * @param int $id
      */
-    public function setId($id)
+    public function setId(int $id): void
     {
         $this->id = $id;
-        return $this;
     }
 
     /**
-     * Get $attribute
-     *
      * @return string
      */
-    public function getAttribute()
+    public function getOperator(): string
+    {
+        return $this->operator;
+    }
+
+    /**
+     * @param string $operator
+     */
+    public function setOperator(string $operator): void
+    {
+        $this->operator = $operator;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAttribute(): string
     {
         return $this->attribute;
     }
 
     /**
-     * Set $attribute
-     *
-     * @param $attribute
-     * @return $this
+     * @param string $attribute
      */
-    public function setAttribute($attribute)
+    public function setAttribute(string $attribute): void
     {
         $this->attribute = $attribute;
-        return $this;
     }
 
     /**
-     * Get $value
-     *
      * @return string
      */
-    public function getValue()
+    public function getValue(): string
     {
         return $this->value;
     }
 
     /**
-     * Set $value
-     *
-     * @param $value
-     * @return $this
+     * @param string $value
      */
-    public function setValue($value)
+    public function setValue(string $value): void
     {
         $this->value = $value;
-        return $this;
     }
 
     /**
-     * Set $Rule
-     *
      * @return Rule
      */
-    public function getRule()
+    public function getRule(): Rule
     {
         return $this->Rule;
     }
 
     /**
-     * Set $Rule
-     *
      * @param Rule $Rule
-     * @return $this
      */
-    public function setRule(Rule $Rule)
+    public function setRule(Rule $Rule): void
     {
         $this->Rule = $Rule;
-        return $this;
     }
 
     /**

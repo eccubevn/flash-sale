@@ -1,0 +1,31 @@
+{% set items = repository('Plugin\\FlashSale\\Entity\\Condition').getProductList %}
+
+<!-- ▼item_list▼ -->
+<div class="ec-shelfRole">
+    <div class="ec-secHeading">
+        <span class="ec-secHeading__en">Flash Sale</span>
+        <span class="ec-secHeading__line"></span>
+        <span class="ec-secHeading__ja">フラッシュ販売</span>
+    </div>
+    <ul class="ec-shelfGrid">
+        {% for item in items %}
+            {% set Product = item.product %}
+            <li class="ec-shelfGrid__item">
+                <a href="{{ url('product_detail', {'id': Product.id}) }}">
+                    <img src="{{ asset(Product.mainFileName|no_image_product, "save_image") }}">
+                    <dl>
+                        <dt class="item_name">{{ Product.name }}</dt>
+                        <dd class="item_price">
+                            <p>
+                                Discount
+                            </p>
+                            {% for promotion in item.promotion %}
+                                {{ promotion }}{% if loop.last == false  %} - {% endif %}
+                            {% endfor %}
+                        </dd>
+                    </dl>
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+</div>

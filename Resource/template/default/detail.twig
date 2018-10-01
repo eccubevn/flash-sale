@@ -1,0 +1,38 @@
+
+{#
+/*
+ * This file is part of the ProductReview plugin
+ *
+ * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+#}
+
+{% import _self as stars %}
+
+{# 星テキスト生成用マクロ #}
+{% macro stars(positive, negative) %}
+    {% set positive_stars = ["", "★", "★★", "★★★", "★★★★", "★★★★★"] %}
+    {% set negative_stars = ["", "☆", "☆☆", "☆☆☆", "☆☆☆☆", "☆☆☆☆☆"] %}
+    {{ positive_stars[positive] }}{{ negative_stars[negative] }}
+{% endmacro %}
+
+<style type="text/css">
+
+</style>
+
+<script>
+    $(function () {
+//        $('#product_review_area').appendTo($('div.ec-layoutRole__main'));
+        var _productRole__actions = $('.ec-productRole__actions');
+
+    });
+</script>
+
+<div class="ec-role">
+    <div class="col-sm-12">
+    </div>
+</div>
+<!-- ▲レビューエリア -->

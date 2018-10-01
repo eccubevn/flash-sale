@@ -1,19 +1,21 @@
 <?php
 namespace Plugin\FlashSale\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Eccube\Entity\AbstractEntity;
 use Plugin\FlashSale\Entity\ProductClassRule;
 use Plugin\FlashSale\Repository\RuleRepository;
 use Doctrine\Common\Collections\Collection as DoctrineCollection;
 
 /**
  * @ORM\Table("plg_flash_sale_rule")
- * @ORM\Entity(repositoryClass=RuleRepository::class)
+ * @ORM\Entity(repositoryClass="Plugin\FlashSale\Repository\RuleRepository")
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="discriminator_type", type="string", length=255)
  * @ORM\DiscriminatorMap({Rule::TYPE="Rule", ProductClassRule::TYPE="ProductClassRule"})
  */
-class Rule
+class Rule extends AbstractEntity
 {
     const TYPE = 'rule';
 
@@ -44,45 +46,27 @@ class Rule
     protected $FlashSale;
 
     /**
-     * @var DoctrineCollection
-     *
-     * @ORM\OneToMany(targetEntity=Condition::class, mappedBy="Rule", indexBy="id")
+     * @var ArrayCollection
+     * @ORM\OneToMany(targetEntity=Condition::class, mappedBy="Rule", cascade={"persist"})
      */
     protected $Conditions;
 
     /**
      * @var Promotion
-     *
-     * @ORM\OneToOne(targetEntity=Promotion::class, mappedBy="Rule")
+     * @ORM\OneToOne(targetEntity=Promotion::class, mappedBy="Rule", cascade={"persist"})
      */
     protected $Promotion;
 
     /**
-     * Get $id
-     *
-     * @return int
+     * Rule constructor.
      */
-    public function getId()
+    public function __construct()
     {
-        return $this->id;
+        $this->Conditions = new ArrayCollection();
     }
 
     /**
-     * Set $id
-     *
-     * @param $id
-     * @return $this
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-        return $this;
-    }
-
-    /**
-     * Get Conditions
-     *
-     * @return DoctrineCollection
+     * @return ArrayCollection
      */
     public function getConditions()
     {
@@ -90,44 +74,22 @@ class Rule
     }
 
     /**
-     * Set Conditions
-     *
-     * @param DoctrineCollection $Conditions
-     * @return $this
+     * @param Condition $condition
      */
-    public function setConditions(DoctrineCollection $Conditions)
+    public function addConditions(Condition $condition): void
     {
-        $this->Conditions = $Conditions;
-        return $this;
+        $this->Conditions->add($condition);
     }
 
     /**
-     * Get Promotion
-     *
-     * @return Promotion
+     * @param Condition $condition
+     * @return bool
      */
-    public function getPromotion()
+    public function removeCondition(Condition $condition)
     {
-        return $this->Promotion;
+        return $this->Conditions->removeElement($condition);
     }
 
-    /**
-     * Set Promotion
-     *
-     * @param Promotion $Promotion
-     * @return $this
-     */
-    public function setPromotion(Promotion $Promotion)
-    {
-        $this->Promotion = $Promotion;
-        return $this;
-    }
-
-    /**
-     * Get FlashSale
-     *
-     * @return FlashSale
-     */
     public function getFlashSale()
     {
         return $this->FlashSale;
@@ -146,23 +108,51 @@ class Rule
     }
 
     /**
-     * Get operator
-     *
+     * @return int
+     */
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param int $id
+     */
+    public function setId(int $id): void
+    {
+        $this->id = $id;
+    }
+
+    /**
      * @return string
      */
-    public function getOperator()
+    public function getOperator(): string
     {
         return $this->operator;
     }
 
     /**
-     * Set operator
-     *
-     * @param $operator
+     * @param string $operator
      */
-    public function setOperator($operator)
+    public function setOperator(string $operator): void
     {
         $this->operator = $operator;
+    }
+
+    /**
+     * @return Promotion
+     */
+    public function getPromotion()
+    {
+        return $this->Promotion;
+    }
+
+    /**
+     * @param Promotion $Promotion
+     */
+    public function setPromotion(Promotion $Promotion): void
+    {
+        $this->Promotion = $Promotion;
     }
 
     /**

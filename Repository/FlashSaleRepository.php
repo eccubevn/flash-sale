@@ -3,7 +3,6 @@
 namespace Plugin\FlashSale\Repository;
 
 use Eccube\Repository\AbstractRepository;
-use Plugin\FlashSale\Entity\Config;
 use Plugin\FlashSale\Entity\FlashSale;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
@@ -27,12 +26,31 @@ class FlashSaleRepository extends AbstractRepository
 
     /**
      * @param int $id
-     *
-     * @return null|Config
+     * @return null|object
      */
     public function get($id = 1)
     {
         return $this->find($id);
+    }
+
+    /**
+     * @return bool|mixed
+     */
+    public function getCurrentEvent()
+    {
+        $qb = $this->createQueryBuilder('fl');
+        try {
+            $event = $qb
+                ->where(':time_now >= fl.from_time AND :time_now < fl.to_time')
+                ->setParameter('time_now', new \DateTime())
+                ->andWhere('fl.status = :status')->setParameter('status', FlashSale::STATUS_ACTIVATED)
+                ->getQuery();
+
+            return $event->getSingleResult();
+        } catch (\Exception $exception) {
+
+            return false;
+        }
     }
 
     /**
