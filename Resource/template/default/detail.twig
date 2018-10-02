@@ -1,4 +1,3 @@
-
 {#
 /*
  * This file is part of the ProductReview plugin
@@ -10,29 +9,45 @@
  */
 #}
 
-{% import _self as stars %}
-
-{# 星テキスト生成用マクロ #}
-{% macro stars(positive, negative) %}
-    {% set positive_stars = ["", "★", "★★", "★★★", "★★★★", "★★★★★"] %}
-    {% set negative_stars = ["", "☆", "☆☆", "☆☆☆", "☆☆☆☆", "☆☆☆☆☆"] %}
-    {{ positive_stars[positive] }}{{ negative_stars[negative] }}
-{% endmacro %}
-
 <style type="text/css">
+    .line-through {
+        text-decoration: line-through;
+    }
 
+    .discount p {
+        padding: 0.3em;
+        font-weight: bold;
+    }
 </style>
 
-<script>
+<script type="text/javascript">
     $(function () {
-//        $('#product_review_area').appendTo($('div.ec-layoutRole__main'));
-        var _productRole__actions = $('.ec-productRole__actions');
+        var _flashSaleProductJson = $.parseJSON({{ ProductFlashSale|json_encode|raw }});
+        var productPriceEl = $('.ec-productRole__price');
+        var _setDiscount = function (ProductClassId) {
+            _resetDiscount();
+            if (_flashSaleProductJson[ProductClassId]) {
+                console.log(ProductClassId, _flashSaleProductJson[ProductClassId]);
+                $('.ec-price__price', productPriceEl).addClass('line-through');
+                $('.ec-price', productPriceEl).after('<div class="discount">' + _flashSaleProductJson[ProductClassId].message + '</div>');
+            }
+        };
 
+        var _resetDiscount = function () {
+            $('.ec-price__price', productPriceEl).removeClass('line-through');
+            productPriceEl.find('.discount').remove();
+        };
+
+        var inputProductClass = $('#ProductClass');
+        if (inputProductClass.val()) {
+            _setDiscount(inputProductClass.val());
+        } else {
+            $('#classcategory_id2, #classcategory_id1').on('change', function () {
+                inputProductClass.trigger('change');
+            });
+            inputProductClass.on('change', function () {
+                _setDiscount($(this).val());
+            });
+        }
     });
 </script>
-
-<div class="ec-role">
-    <div class="col-sm-12">
-    </div>
-</div>
-<!-- ▲レビューエリア -->
