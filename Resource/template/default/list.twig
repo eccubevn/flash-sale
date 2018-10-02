@@ -1,0 +1,60 @@
+{#
+/*
+ * This file is part of the ProductReview plugin
+ *
+ * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+#}
+
+<style type="text/css">
+    .line-through {
+        text-decoration: line-through;
+    }
+
+    .discount p {
+        font-weight: bold;
+        color: red;
+    }
+</style>
+
+<script type="text/javascript">
+    $(function () {
+        var _flashSaleProductJson = $.parseJSON({{ ProductFlashSale|json_encode|raw }});
+
+        var _setDiscount = function (formProductClass) {
+            var ProductClassId = formProductClass.find('form input[name="ProductClass"]').val();
+            _resetDiscount(formProductClass);
+            if (_flashSaleProductJson[ProductClassId]) {
+                console.log(ProductClassId, _flashSaleProductJson[ProductClassId]);
+                $('.price02-default', formProductClass).addClass('line-through');
+                $('.price02-default', formProductClass).after('<div class="discount">' + _flashSaleProductJson[ProductClassId].message + '</div>');
+            }
+        };
+
+        var _resetDiscount = function (formProductClass) {
+            $('.price02-default', formProductClass).removeClass('line-through');
+            formProductClass.find('.discount').remove();
+        };
+
+        var _priceDiscount = function (formProductClass) {
+            var inputProductClass = formProductClass.find('form input[name="ProductClass"]');
+            if (inputProductClass.val()) {
+                _setDiscount(formProductClass);
+            } else {
+                $('select[name="classcategory_id2"], select[name="classcategory_id1"]', formProductClass).on('change', function () {
+                    $(this).closest('form').find('input[name="ProductClass"]', formProductClass).trigger('change');
+                });
+                $('input[name="ProductClass"]', formProductClass).on('change', function () {
+                    _setDiscount($(this).closest('li'));
+                });
+            }
+        };
+
+        $.each($('ul.ec-shelfGrid li'), function () {
+            _priceDiscount($(this));
+        });
+    });
+</script>
