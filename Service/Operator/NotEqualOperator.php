@@ -1,12 +1,13 @@
 <?php
-namespace Plugin\FlashSale\Service\Condition\Operator;
+namespace Plugin\FlashSale\Service\Operator;
 
 use Doctrine\ORM\QueryBuilder;
 use Plugin\FlashSale\Entity\Condition;
+use Plugin\FlashSale\Service\Common\IdentifierInterface;
 
-class EqualOperator implements OperatorInterface
+class NotEqualOperator implements OperatorInterface, IdentifierInterface
 {
-    const TYPE = 'equal';
+    const TYPE = 'not_equal';
 
     /**
      * {@inheritdoc}
@@ -17,7 +18,7 @@ class EqualOperator implements OperatorInterface
      */
     public function isValid($condition, $data)
     {
-        return $condition == $data;
+        return $condition != $data;
     }
 
     /**
@@ -30,18 +31,18 @@ class EqualOperator implements OperatorInterface
         $rule = $condition->getRule();
         switch ($rule->getOperator()) {
             case AllOperator::TYPE:
-                $qb->andWhere($qb->expr()->eq('pc.'.$condition->getAttribute(), $condition->getValue()));
+                $qb->andWhere($qb->expr()->neq('pc.'.$condition->getAttribute(), $condition->getValue()));
                 break;
 
             case EqualOperator::TYPE:
-                $qb->andWhere($qb->expr()->eq('pc.'.$condition->getAttribute(), $condition->getValue()));
+                $qb->andWhere($qb->expr()->neq('pc.'.$condition->getAttribute(), $condition->getValue()));
                 break;
 
             case InOperator::TYPE:
-                $qb->orWhere($qb->expr()->eq('pc.'.$condition->getAttribute(), $condition->getValue()));
+                $qb->orWhere($qb->expr()->neq('pc.'.$condition->getAttribute(), $condition->getValue()));
                 break;
 
-            // Todo: I'm not sure
+                // Todo: confuse
             case NotEqualOperator::TYPE:
                 $qb->andWhere($qb->expr()->neq('pc.'.$condition->getAttribute(), $condition->getValue()));
                 break;
@@ -50,5 +51,25 @@ class EqualOperator implements OperatorInterface
         }
 
         return $qb;
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @return string
+     */
+    public function getName(): string
+    {
+        return 'is not equal to';
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @return string
+     */
+    public function getType(): string
+    {
+        return static::TYPE;
     }
 }

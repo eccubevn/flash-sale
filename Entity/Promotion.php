@@ -4,6 +4,7 @@ namespace Plugin\FlashSale\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Eccube\Entity\AbstractEntity;
 use Plugin\FlashSale\Repository\PromotionRepository;
+use Plugin\FlashSale\Entity\AmountPromotion;
 
 /**
  * @ORM\Table("plg_flash_sale_promotion")
@@ -49,7 +50,7 @@ class Promotion extends AbstractEntity
     /**
      * @var Rule
      *
-     * @ORM\OneToOne(targetEntity=Rule::class)
+     * @ORM\OneToOne(targetEntity=Rule::class, inversedBy="Promotion")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="rule_id", referencedColumnName="id")
      * })
@@ -134,5 +135,26 @@ class Promotion extends AbstractEntity
     public function setRule(Rule $Rule): void
     {
         $this->Rule = $Rule;
+    }
+
+    /**
+     * Get data as array
+     *
+     * @param null $data
+     * @return array
+     */
+    public function rawData($data = null)
+    {
+        $result = [];
+        if ($data) {
+            $result = json_decode($data, true);
+        } else {
+            $result['id'] = $this->getId();
+            $result['type'] = static::TYPE;
+            $result['attribute'] = $this->getAttribute();
+            $result['value'] = $this->getValue();
+        }
+
+        return $result;
     }
 }

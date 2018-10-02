@@ -4,6 +4,7 @@ namespace Plugin\FlashSale\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Eccube\Entity\AbstractEntity;
 use Plugin\FlashSale\Repository\ConditionRepository;
+use Plugin\FlashSale\Entity\ProductClassCondition;
 
 /**
  * @ORM\Table("plg_flash_sale_condition")
@@ -49,7 +50,7 @@ class Condition extends AbstractEntity
     /**
      * @var Rule
      *
-     * @ORM\ManyToOne(targetEntity=Rule::class)
+     * @ORM\ManyToOne(targetEntity=Rule::class, inversedBy="Condition")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="rule_id", referencedColumnName="id")
      * })
@@ -134,5 +135,27 @@ class Condition extends AbstractEntity
     public function setRule(Rule $Rule): void
     {
         $this->Rule = $Rule;
+    }
+
+    /**
+     * Get data as array
+     *
+     * @param null $data
+     * @return array
+     */
+    public function rawData($data = null)
+    {
+        $result = [];
+        if ($data) {
+            $result = json_decode($data, true);
+        } else {
+            $result['id'] = intval($this->getId());
+            $result['type'] = static::TYPE;
+            $result['attribute'] = $this->getAttribute();
+            $result['operator'] = $this->getOperator();
+            $result['value'] = $this->getValue();
+        }
+
+        return $result;
     }
 }

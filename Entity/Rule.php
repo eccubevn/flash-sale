@@ -4,6 +4,9 @@ namespace Plugin\FlashSale\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Eccube\Entity\AbstractEntity;
+use Plugin\FlashSale\Entity\ProductClassRule;
+use Plugin\FlashSale\Repository\RuleRepository;
+use Doctrine\Common\Collections\Collection as DoctrineCollection;
 
 /**
  * @ORM\Table("plg_flash_sale_rule")
@@ -93,6 +96,18 @@ class Rule extends AbstractEntity
     }
 
     /**
+     * Set FlashSale
+     *
+     * @param $FlashSale
+     * @return $this
+     */
+    public function setFlashSale(FlashSale $FlashSale)
+    {
+        $this->FlashSale = $FlashSale;
+        return $this;
+    }
+
+    /**
      * @return int
      */
     public function getId(): int
@@ -138,5 +153,31 @@ class Rule extends AbstractEntity
     public function setPromotion(Promotion $Promotion): void
     {
         $this->Promotion = $Promotion;
+    }
+
+    /**
+     * Get data as array
+     *
+     * @param $data
+     * @return array
+     */
+    public function rawData($data = null)
+    {
+        if ($data) {
+            $result = json_decode($data, true);
+        } else {
+            $result = [
+                'id' => intval($this->getId()),
+                'type' => static::TYPE,
+                'operator' => $this->getOperator()
+            ];
+            /** @var Condition $Condition */
+            foreach ($this->getConditions() as $Condition) {
+                $result['conditions'][] = $Condition->rawData();
+            }
+            $result['promotion'] = $this->getPromotion()->rawData();
+        }
+
+        return $result;
     }
 }
