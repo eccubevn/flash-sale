@@ -13,7 +13,7 @@ interface OperatorInterface
      * @param $data
      * @return bool
      */
-    public function isValid($condition, $data);
+    public function match($condition, $data);
 
     /**
      * @param QueryBuilder $qb

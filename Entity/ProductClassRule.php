@@ -2,28 +2,34 @@
 namespace Plugin\FlashSale\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Eccube\Entity\ProductClass;
 use Plugin\FlashSale\Service\Rule\RuleInterface;
-use Plugin\FlashSale\Service\Common\IdentifierInterface;
+use Plugin\FlashSale\Service\Condition\ConditionInterface;
+use Plugin\FlashSale\Service\Promotion\PromotionInterface;
 use Plugin\FlashSale\Service\Operator as Operator;
 
 /**
  * @ORM\Entity
  */
-class ProductClassRule extends Rule implements RuleInterface, IdentifierInterface
+class ProductClassRule extends Rule implements RuleInterface
 {
-    const TYPE = 'product_class';
+    const TYPE = 'rule_product_class';
 
     /**
-     * @var Operator\OperatorInterface[]
+     * @var Operator\OperatorFactory
      */
-    protected $operators = [];
+    protected $operatorFactory;
 
-    public function __construct()
+    /**
+     *
+     * @param Operator\OperatorFactory $operatorFactory
+     * @return $this
+     * @required
+     */
+    public function setOperatorFactory(Operator\OperatorFactory $operatorFactory)
     {
-        parent::__construct();
-
-        $this->operators[] = new Operator\InOperator();
-        $this->operators[] = new Operator\AllOperator();
+        $this->operatorFactory = $operatorFactory;
+        return $this;
     }
 
     /**
@@ -31,28 +37,47 @@ class ProductClassRule extends Rule implements RuleInterface, IdentifierInterfac
      *
      * @return array
      */
-    public function getOperators() : array
+    public function getOperatorTypes() : array
     {
-        return $this->operators;
+        return [
+            Operator\InOperator::TYPE,
+            Operator\AllOperator::TYPE
+        ];
     }
 
     /**
      * {@inheritdoc}
      *
-     * @return string
+     * @return array
      */
-    public function getName(): string
+    public function getConditionTypes(): array
     {
-        return 'ProductClass Rule';
+        return [
+            ProductClassCondition::TYPE
+        ];
     }
 
     /**
      * {@inheritdoc}
      *
-     * @return string
+     * @return array
      */
-    public function getType(): string
+    public function getPromotionTypes(): array
     {
-        return static::TYPE;
+        return [
+            AmountPromotion::TYPE
+        ];
+    }
+
+    /**
+     * Check a product class is matching condition
+     *
+     * @param ProductClass $ProductClass
+     *
+     * @return bool
+     */
+    public function match(ProductClass $ProductClass)
+    {
+        return $this->operatorFactory->createByType($this->getOperator())->match($this->getConditions(), $ProductClass);
     }
 }

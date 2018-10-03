@@ -1,34 +1,18 @@
 <?php
 namespace Plugin\FlashSale\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+use Eccube\Entity\ProductClass;
 use Plugin\FlashSale\Service\Condition\ConditionInterface;
 use Plugin\FlashSale\Service\Operator\OperatorInterface;
-use Plugin\FlashSale\Service\Common\IdentifierInterface;
-use Plugin\FlashSale\Service\Operator\InOperator;
-use Plugin\FlashSale\Service\Operator\AllOperator;
-use Plugin\FlashSale\Service\Operator\EqualOperator;
-use Plugin\FlashSale\Service\Operator\NotEqualOperator;
-use Doctrine\ORM\Mapping as ORM;
+use Plugin\FlashSale\Service\Operator as Operator;
 
 /**
  * @ORM\Entity
  */
-class ProductClassCondition extends Condition implements ConditionInterface, IdentifierInterface
+class ProductClassCondition extends Condition implements ConditionInterface
 {
-    const TYPE = 'product_class';
-
-    /**
-     * @var OperatorInterface[]
-     */
-    protected $operators = [];
-
-    public function __construct()
-    {
-        $this->operators[] = new AllOperator();
-        $this->operators[] = new InOperator();
-        $this->operators[] = new EqualOperator();
-        $this->operators[] = new NotEqualOperator();
-    }
+    const TYPE = 'condition_product_class';
 
     /**
      * {@inheritdoc}
@@ -36,8 +20,12 @@ class ProductClassCondition extends Condition implements ConditionInterface, Ide
      * @param $data
      * @return bool
      */
-    public function isValid($data)
+    public function match($data)
     {
+        if ($data instanceof ProductClass) {
+            return false;
+        }
+
         return true;
     }
 
@@ -46,40 +34,11 @@ class ProductClassCondition extends Condition implements ConditionInterface, Ide
      *
      * @return array
      */
-    public function getAttributes()
+    public function getOperatorTypes(): array
     {
         return [
-            'id'
+            Operator\InOperator::TYPE,
+            Operator\NotEqualOperator::TYPE,
         ];
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @return array
-     */
-    public function getOperators(): array
-    {
-        return $this->operators;
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @return string
-     */
-    public function getName(): string
-    {
-        return 'ProductClass Condition';
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @return string
-     */
-    public function getType(): string
-    {
-        return static::TYPE;
     }
 }

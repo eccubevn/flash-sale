@@ -11,9 +11,9 @@ use Plugin\FlashSale\Entity\ProductClassCondition;
  * @ORM\Entity(repositoryClass=ConditionRepository::class)
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="discriminator_type", type="string", length=255)
- * @ORM\DiscriminatorMap({Condition::TYPE="Condition", ProductClassCondition::TYPE="ProductClassCondition"})
+ * @ORM\DiscriminatorMap({ProductClassCondition::TYPE=ProductClassCondition::class})
  */
-class Condition extends AbstractEntity
+abstract class Condition extends AbstractEntity
 {
     const TYPE = 'condition';
 
@@ -25,13 +25,6 @@ class Condition extends AbstractEntity
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     protected $id;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="attribute", type="string", length=32, nullable=false)
-     */
-    protected $attribute;
 
     /**
      * @var string
@@ -71,22 +64,6 @@ class Condition extends AbstractEntity
     public function setId(int $id): void
     {
         $this->id = $id;
-    }
-
-    /**
-     * @return string
-     */
-    public function getAttribute(): string
-    {
-        return $this->attribute;
-    }
-
-    /**
-     * @param string $attribute
-     */
-    public function setAttribute(string $attribute): void
-    {
-        $this->attribute = $attribute;
     }
 
     /**
@@ -151,7 +128,6 @@ class Condition extends AbstractEntity
         } else {
             $result['id'] = intval($this->getId());
             $result['type'] = static::TYPE;
-            $result['attribute'] = $this->getAttribute();
             $result['operator'] = $this->getOperator();
             $result['value'] = $this->getValue();
         }

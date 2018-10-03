@@ -1,21 +1,21 @@
 <?php
 namespace Plugin\FlashSale\Entity;
 
+use Doctrine\Common\Collections\Collection as DoctrineCollection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Eccube\Entity\AbstractEntity;
 use Plugin\FlashSale\Entity\ProductClassRule;
 use Plugin\FlashSale\Repository\RuleRepository;
-use Doctrine\Common\Collections\Collection as DoctrineCollection;
 
 /**
  * @ORM\Table("plg_flash_sale_rule")
  * @ORM\Entity(repositoryClass="Plugin\FlashSale\Repository\RuleRepository")
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="discriminator_type", type="string", length=255)
- * @ORM\DiscriminatorMap({Rule::TYPE="Rule", ProductClassRule::TYPE="ProductClassRule"})
+ * @ORM\DiscriminatorMap({ProductClassRule::TYPE=ProductClassRule::class})
  */
-class Rule extends AbstractEntity
+abstract class Rule extends AbstractEntity
 {
     const TYPE = 'rule';
 
@@ -56,6 +56,11 @@ class Rule extends AbstractEntity
      * @ORM\OneToOne(targetEntity=Promotion::class, mappedBy="Rule", cascade={"persist"})
      */
     protected $Promotion;
+
+    /**
+     * @var MetadataInterface
+     */
+    protected $metadata;
 
     /**
      * Rule constructor.
@@ -153,6 +158,16 @@ class Rule extends AbstractEntity
     public function setPromotion(Promotion $Promotion): void
     {
         $this->Promotion = $Promotion;
+    }
+
+    /**
+     * Get $metadata
+     *
+     * @return MetadataInterface
+     */
+    public function getMetadata(): MetadataInterface
+    {
+        return $this->metadata;
     }
 
     /**

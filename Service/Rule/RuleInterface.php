@@ -1,15 +1,26 @@
 <?php
 namespace Plugin\FlashSale\Service\Rule;
 
-use Plugin\FlashSale\Service\Operator\OperatorInterface;
-use Plugin\FlashSale\Service\Common\IdentifierInterface;
-
 interface RuleInterface
 {
     /**
-     * Get allowed operators
+     * Get operator types
      *
-     * @return OperatorInterface[]|IdentifierInterface[]
+     * @return array
      */
-    public function getOperators(): array;
+    public function getOperatorTypes(): array;
+
+    /**
+     * Get condition types
+     *
+     * @return array
+     */
+    public function getConditionTypes(): array;
+
+    /**
+     * Get promotion types
+     *
+     * @return array
+     */
+    public function getPromotionTypes(): array;
 }
