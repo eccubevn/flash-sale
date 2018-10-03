@@ -29,13 +29,6 @@ class Promotion extends AbstractEntity
     /**
      * @var string
      *
-     * @ORM\Column(name="operator", type="string", length=32, nullable=false)
-     */
-    protected $operator;
-
-    /**
-     * @var string
-     *
      * @ORM\Column(name="attribute", type="string", length=32, nullable=false)
      */
     protected $attribute;

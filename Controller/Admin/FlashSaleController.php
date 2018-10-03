@@ -85,7 +85,7 @@ class FlashSaleController extends AbstractController
     /**
      * 新着情報を登録・編集する。
      *
-     * @Route("/%eccube_admin_route%/flash_sale/new", name="flash_sale_admin_new")
+     * @Route("/%eccube_admin_route%/flash_sale/new", name="flash_sale_admin_new", methods={"POST", "GET"})
      * @Route("/%eccube_admin_route%/flash_sale/{id}/edit", requirements={"id" = "\d+"}, name="flash_sale_admin_edit")
      * @Template("@FlashSale/admin/edit.twig")
      *

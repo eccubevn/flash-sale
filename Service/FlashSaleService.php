@@ -72,10 +72,14 @@ class FlashSaleService
         foreach ($this->conditionTypes as $conditionType) {
             $map['condition']['types'][$conditionType->getType()] = [
                 'label' => $conditionType->getName(),
-                'operators' => []
+                'operators' => [],
+                'attributes' => []
             ];
             foreach ($conditionType->getOperators() as $operator) {
                 $map['condition']['types'][$conditionType->getType()]['operators'][$operator->getType()] = $operator->getName();
+            }
+            foreach ($conditionType->getAttributes() as $attribute) {
+                $map['condition']['types'][$conditionType->getType()]['attributes'][$attribute] = $attribute;
             }
         }
 

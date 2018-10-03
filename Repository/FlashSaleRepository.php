@@ -59,7 +59,7 @@ class FlashSaleRepository extends AbstractRepository
     public function getQueryBuilderAll()
     {
         $qb = $this->createQueryBuilder('fl');
-        $qb->where('fl.status != :status')->setParameter('status', FlashSale::STATUS_DELETED);
+        $qb->where('fl.status <> :status')->setParameter('status', FlashSale::STATUS_DELETED);
         $qb->orderBy('fl.from_time', 'DESC')
             ->addOrderBy('fl.id', 'DESC');
 

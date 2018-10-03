@@ -47,7 +47,7 @@ class Rule extends AbstractEntity
 
     /**
      * @var ArrayCollection
-     * @ORM\OneToMany(targetEntity=Condition::class, mappedBy="Rule", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity=Condition::class, mappedBy="Rule", indexBy="id", cascade={"persist"})
      */
     protected $Conditions;
 
