@@ -1,9 +1,9 @@
 <?php
 namespace Plugin\FlashSale\Service\Metadata;
 
-use Plugin\FlashSale\Entity\ProductClassRule;
-use Plugin\FlashSale\Entity\ProductClassCondition;
-use Plugin\FlashSale\Entity\AmountPromotion;
+use Plugin\FlashSale\Entity\Rule\ProductClassRule;
+use Plugin\FlashSale\Entity\Condition\ProductClassIdCondition;
+use Plugin\FlashSale\Entity\Promotion\ProductClassPricePercentPromotion;
 use Plugin\FlashSale\Service\Operator as Operator;
 
 class DiscriminatorManager
@@ -67,23 +67,23 @@ class DiscriminatorManager
                 );
                 return $this->container[ProductClassRule::TYPE];
 
-            case ProductClassCondition::TYPE:
-                $this->container[ProductClassCondition::TYPE] = new Discriminator(
-                    ProductClassCondition::TYPE,
-                    'Product Class Condition',
-                    ProductClassCondition::class,
+            case ProductClassIdCondition::TYPE:
+                $this->container[ProductClassIdCondition::TYPE] = new Discriminator(
+                    ProductClassIdCondition::TYPE,
+                    'Product Class Id Condition',
+                    ProductClassIdCondition::class,
                     ''
                 );
-                return $this->container[ProductClassCondition::TYPE];
+                return $this->container[ProductClassIdCondition::TYPE];
 
-            case AmountPromotion::TYPE:
-                $this->container[AmountPromotion::TYPE] = new Discriminator(
-                    AmountPromotion::TYPE,
+            case ProductClassPricePercentPromotion::TYPE:
+                $this->container[ProductClassPricePercentPromotion::TYPE] = new Discriminator(
+                    ProductClassPricePercentPromotion::TYPE,
                     'Amount Promotion',
-                    AmountPromotion::class,
+                    ProductClassPricePercentPromotion::class,
                     ''
                 );
-                return $this->container[AmountPromotion::TYPE];
+                return $this->container[ProductClassPricePercentPromotion::TYPE];
 
             default:
         }

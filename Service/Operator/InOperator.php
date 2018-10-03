@@ -1,6 +1,7 @@
 <?php
 namespace Plugin\FlashSale\Service\Operator;
 
+use Doctrine\Common\Collections\Collection as DoctrineCollection;
 use Doctrine\ORM\QueryBuilder;
 use Plugin\FlashSale\Entity\Condition;
 use Plugin\FlashSale\Service\Condition\ConditionInterface;
@@ -18,6 +19,9 @@ class InOperator implements OperatorInterface
      */
     public function match($condition, $data)
     {
+        if (!is_array($condition) && !$condition instanceof DoctrineCollection) {
+            $condition = explode(',', $condition);
+        }
         foreach ($condition as $cond) {
             if ($cond instanceof ConditionInterface) {
                 $result = $cond->match($data);

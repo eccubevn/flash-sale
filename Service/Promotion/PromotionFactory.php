@@ -2,7 +2,7 @@
 namespace Plugin\FlashSale\Service\Promotion;
 
 use Plugin\FlashSale\Entity\Rule;
-use Plugin\FlashSale\Entity\AmountPromotion;
+use Plugin\FlashSale\Entity\Promotion\ProductClassPricePercentPromotion;
 
 class PromotionFactory
 {
@@ -10,20 +10,18 @@ class PromotionFactory
      * Create Promotion from array
      *
      * @param array $data
-     * @return Rule
+     * @return PromotionInterface
      */
     public static function createFromArray(array $data)
     {
         switch ($data['type']) {
-            case AmountPromotion::TYPE:
-                $Promotion = new AmountPromotion();
+            case ProductClassPricePercentPromotion::TYPE:
+                $Promotion = new ProductClassPricePercentPromotion();
                 break;
             default:
-                $Promotion = new Rule();
+                throw new \InvalidArgumentException('$data[type] must be required');
         }
-        if (isset($data['attribute'])) {
-            $Promotion->setAttribute($data['attribute']);
-        }
+
         if (isset($data['value'])) {
             $Promotion->setValue($data['value']);
         }

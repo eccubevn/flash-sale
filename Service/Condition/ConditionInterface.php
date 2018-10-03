@@ -1,8 +1,6 @@
 <?php
 namespace Plugin\FlashSale\Service\Condition;
 
-use Plugin\FlashSale\Service\Operator\OperatorInterface;
-
 interface ConditionInterface
 {
     /**

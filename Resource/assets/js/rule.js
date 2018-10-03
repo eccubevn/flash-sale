@@ -1,6 +1,10 @@
 (function($){
     $.fn.initRulePanel = function (options) {
-        var settings = $.extend({}, options);
+        var settings = $.extend({
+            setup: {
+                rules_types: {}
+            }
+        }, options);
         var self = $(this), fn = this;
         this.addRule = function(e) {
             var data = $.extend({
@@ -18,27 +22,22 @@
                 .addClass('rule-entity')
                 .attr('data-template', '')
                 .attr('id', 'rule' + (data.id ? data.id : self.find('.rule').length));
-            $.each(settings.setup.rule.types, function(key) {
-                $(template).find('[name="rule[type]"]').append('<option value="'+key+'" ' + (data.type === key ? 'selected' : '') +'>'+ this.label +'</option>');
-                $.each(this.operators, function(key, label) {
-                    $(template).find('[name="rule[operator]"]').append('<option value="'+key+'" '+ (data.operator === key ? 'selected' : '') +'>'+ label +'</option>');
+            $.each(settings.setup.rule_types, function(key) {
+                $(template).find('[name="rule[type]"]').append('<option value="'+key+'" ' + (data.type === key ? 'selected' : '') +'>'+ this.name +'</option>');
+                $.each(this.operator_types, function(key, operator) {
+                    $(template).find('[name="rule[operator]"]').append('<option value="'+key+'" '+ (data.operator === key ? 'selected' : '') +'>'+ operator.name +'</option>');
                 });
+
+                $.each(this.promotion_types, function(key) {
+                    $(template).find('[name="promotion[type]"]').append('<option value="'+key+'" '+ (data.promotion.type === key ? 'selected' : '') +'>'+ this.name +'</option>');
+                    $(template).find('[name="promotion[value]"]').val(data.promotion.value);
+                    $(template).find('[name="promotion[id]"]').val(data.promotion.id);
+                });
+
                 template.find('[data-bind="addCondition"]').on('click', fn.addCondition);
                 template.find('[data-bind="removeRule"]').on('click', fn.removeRule);
             });
             $(template).find('[name="rule[id]"]').val(data.id);
-            $.each(settings.setup.promotion.types, function(key) {
-                $(template).find('[name="promotion[type]"]').append('<option value="'+key+'" '+ (data.promotion.type === key ? 'selected' : '') +'>'+ this.label +'</option>');
-                $.each(this.operators, function(key, label) {
-                    $(template).find('[name="promotion[operator]"]').append('<option value="'+key+'" '+ (data.promotion.operator === key ? 'selected' : '') +'>'+ label +'</option>');
-                });
-                $.each(this.attributes, function(key, label) {
-                    $(template).find('[name="promotion[attribute]"]').append('<option value="'+key+'" '+ (data.promotion.attribute === key ? 'selected' : '') +'>'+ label +'</option>');
-                });
-                $(template).find('[name="promotion[value]"]').val(data.promotion.value);
-                $(template).find('[name="promotion[id]"]').val(data.promotion.id);
-            });
-
             self.find('[data-container="rule"]').append(template);
         };
 
@@ -56,13 +55,12 @@
                 .addClass('condition-entity')
                 .attr('data-template', '')
                 .attr('id', 'condition' + (data.id ? data.id : self.find('.condition').length));
-            $.each(settings.setup.condition.types, function(key) {
-                $(template).find('[name="condition[type]"]').append('<option value="'+key+'" '+ (data.type === key ? 'selected' : '') +'>'+ this.label +'</option>');
-                $.each(this.operators, function(key, label) {
-                    $(template).find('[name="condition[operator]"]').append('<option value="'+key+'" '+ (data.operator === key ? 'selected' : '') +'>'+ label +'</option>');
-                });
-                $.each(this.attributes, function(key, label) {
-                    $(template).find('[name="condition[attribute]"]').append('<option value="'+key+'" '+ (data.attribute === key ? 'selected' : '') +'>'+ label +'</option>');
+
+            var ruleType = $(e.target).closest('.rule-entity').find('[name="rule[type]"]').val();
+            $.each(settings.setup.rule_types[ruleType]['condition_types'], function(key, condition) {
+                $(template).find('[name="condition[type]"]').append('<option value="'+key+'" '+ (data.type === key ? 'selected' : '') +'>'+ condition.name +'</option>');
+                $.each(this.operator_types, function(key, operator) {
+                    $(template).find('[name="condition[operator]"]').append('<option value="'+key+'" '+ (data.operator === key ? 'selected' : '') +'>'+ operator.name +'</option>');
                 });
                 $(template).find('[name="condition[value]"]').val(data.value);
                 $(template).find('[name="condition[id]"]').val(data.id);

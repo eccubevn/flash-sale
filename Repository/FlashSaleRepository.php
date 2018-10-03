@@ -36,7 +36,7 @@ class FlashSaleRepository extends AbstractRepository
     /**
      * @return bool|mixed
      */
-    public function getCurrentEvent()
+    public function getAvailableFlashSale()
     {
         $qb = $this->createQueryBuilder('fl');
         try {

@@ -5,8 +5,9 @@ use Doctrine\Common\Collections\Collection as DoctrineCollection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Eccube\Entity\AbstractEntity;
-use Plugin\FlashSale\Entity\ProductClassRule;
+use Plugin\FlashSale\Entity\Rule\ProductClassRule;
 use Plugin\FlashSale\Repository\RuleRepository;
+use Plugin\FlashSale\Service\Rule\EventListener\EventListenerInterface;
 
 /**
  * @ORM\Table("plg_flash_sale_rule")
@@ -47,7 +48,7 @@ abstract class Rule extends AbstractEntity
 
     /**
      * @var ArrayCollection
-     * @ORM\OneToMany(targetEntity=Condition::class, mappedBy="Rule", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity=Condition::class, mappedBy="Rule", indexBy="id", cascade={"persist"})
      */
     protected $Conditions;
 
@@ -58,9 +59,9 @@ abstract class Rule extends AbstractEntity
     protected $Promotion;
 
     /**
-     * @var MetadataInterface
+     * @var EventListenerInterface
      */
-    protected $metadata;
+    protected $eventListener;
 
     /**
      * Rule constructor.
@@ -161,13 +162,13 @@ abstract class Rule extends AbstractEntity
     }
 
     /**
-     * Get $metadata
+     * Get $eventListener
      *
-     * @return MetadataInterface
+     * @return EventListenerInterface
      */
-    public function getMetadata(): MetadataInterface
+    public function getEventListener(): EventListenerInterface
     {
-        return $this->metadata;
+        return $this->eventListener;
     }
 
     /**

@@ -2,12 +2,15 @@
 namespace Plugin\FlashSale\Service\Doctrine;
 
 use Doctrine\Common\EventSubscriber;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Events as DoctrineEvents;
 use Doctrine\ORM\Event\LifecycleEventArgs;
+use Plugin\FlashSale\Service\Promotion\PromotionInterface;
 use Plugin\FlashSale\Service\Rule\RuleInterface;
 use Plugin\FlashSale\Service\Condition\ConditionInterface;
 use Plugin\FlashSale\Service\Operator\OperatorInterface;
 use Plugin\FlashSale\Service\Operator\OperatorFactory;
+use Plugin\FlashSale\Service\Rule\EventListener\ProductClassEventListener;
 
 class DiEventSubscriber implements EventSubscriber
 {
@@ -18,12 +21,19 @@ class DiEventSubscriber implements EventSubscriber
 
     /**
      * DiEventSubscriber constructor.
+     *
      * @param OperatorFactory $operatorFactory
+     * @param EntityManagerInterface $entityManager
+     * @param ProductClassEventListener $productClassEventListener
      */
     public function __construct(
-        OperatorFactory $operatorFactory
+        OperatorFactory $operatorFactory,
+        EntityManagerInterface $entityManager,
+        ProductClassEventListener $productClassEventListener
     ) {
         $this->defineDI($operatorFactory);
+        $this->defineDI($productClassEventListener);
+        $this->container[EntityManagerInterface::class] = $entityManager;
     }
 
     /**
@@ -61,6 +71,7 @@ class DiEventSubscriber implements EventSubscriber
         if (!$entity instanceof RuleInterface
             && !$entity instanceof ConditionInterface
             && !$entity instanceof OperatorInterface
+            && !$entity instanceof PromotionInterface
         ) {
             return;
         }

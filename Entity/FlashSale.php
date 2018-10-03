@@ -333,7 +333,6 @@ class FlashSale
                 if (!$Promotion) {
                     $Promotion = PromotionFactory::createFromArray($rule['promotion']);
                 }
-                $Promotion->setAttribute($rule['promotion']['attribute']);
                 $Promotion->setValue($rule['promotion']['value']);
                 $Promotion->setRule($Rule);
                 $Rule->setPromotion($Promotion);
@@ -350,7 +349,6 @@ class FlashSale
                         $Rule->getConditions()->add($Condition);
                     }
                     $Condition->modified = true;
-                    $Condition->setAttribute($condition['attribute']);
                     $Condition->setOperator($condition['operator']);
                     $Condition->setValue($condition['value']);
                     $Condition->setRule($Rule);
