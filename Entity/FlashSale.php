@@ -352,7 +352,6 @@ class FlashSale
                     $Condition->setOperator($condition['operator']);
                     $Condition->setValue($condition['value']);
                     $Condition->setRule($Rule);
-
                 }
             }
         }
