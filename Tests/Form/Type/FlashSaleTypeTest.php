@@ -13,9 +13,13 @@
 
 namespace Plugin\FlashSale\Test\Form\Type;
 
+use Plugin\FlashSale\Entity\Condition\ProductClassIdCondition;
 use Plugin\FlashSale\Entity\FlashSale;
+use Plugin\FlashSale\Entity\Promotion\ProductClassPricePercentPromotion;
+use Plugin\FlashSale\Entity\Rule\ProductClassRule;
 use Plugin\FlashSale\Form\Type\Admin\FlashSaleType;
 use Eccube\Tests\Form\Type\AbstractTypeTestCase;
+use Plugin\FlashSale\Service\Operator\InOperator;
 
 class FlashSaleTypeTest extends AbstractTypeTestCase
 {
@@ -27,20 +31,18 @@ class FlashSaleTypeTest extends AbstractTypeTestCase
         $faker = $this->getFaker();
         $rules[] = [
             'id' => '',
-            'type' => 'product_class',
-            'operator' => 'in',
+            'type' => ProductClassRule::TYPE,
+            'operator' => InOperator::TYPE,
             'promotion' => [
                 'id' => '',
-                'type' => 'amount',
-                'attribute' => 'percent',
+                'type' => ProductClassPricePercentPromotion::TYPE,
                 'value' => 30,
             ],
             'conditions' => [
                 [
                     'id' => '',
-                    'type' => 'product_class',
-                    'attribute' => 'id',
-                    'operator' => 'all',
+                    'type' => ProductClassIdCondition::TYPE,
+                    'operator' => InOperator::TYPE,
                     'value' => 99,
                 ],
             ],

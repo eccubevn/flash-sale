@@ -14,9 +14,12 @@
 namespace Plugin\FlashSale\Test\Web;
 
 use Eccube\Tests\Web\Admin\AbstractAdminWebTestCase;
+use Plugin\FlashSale\Entity\Condition\ProductClassIdCondition;
 use Plugin\FlashSale\Entity\FlashSale;
 use Plugin\FlashSale\Entity\Promotion;
+use Plugin\FlashSale\Entity\Rule\ProductClassRule;
 use Plugin\FlashSale\Repository\FlashSaleRepository;
+use Plugin\FlashSale\Service\Operator\InOperator;
 
 /**
  * Class FlashSaleControllerTest.
@@ -49,26 +52,6 @@ class FlashSaleControllerTest extends AbstractAdminWebTestCase
     public function testCreate()
     {
         $faker = $this->getFaker('en_US');
-        $rules[] = [
-            'id' => '',
-            'type' => 'product_class',
-            'operator' => 'in',
-            'promotion' => [
-                'id' => '',
-                'type' => 'amount',
-                'attribute' => 'percent',
-                'value' => 30,
-            ],
-            'conditions' => [
-                [
-                    'id' => '',
-                    'type' => 'product_class',
-                    'attribute' => 'id',
-                    'operator' => 'all',
-                    'value' => 99,
-                ],
-            ],
-        ];
 
         $flash_sale_admin = [
             '_token' => 'dummy',
@@ -96,7 +79,7 @@ class FlashSaleControllerTest extends AbstractAdminWebTestCase
                     'minute' => 59,
                 ],
             ],
-            'rules' => json_encode($rules),
+            'rules' => json_encode($this->rulesData()),
             'status' => FlashSale::STATUS_ACTIVATED,
         ];
 
@@ -119,26 +102,7 @@ class FlashSaleControllerTest extends AbstractAdminWebTestCase
     {
         $faker = $this->getFaker('en_US');
         $newName = $faker->name().rand(111, 999);
-        $rules[] = [
-            'id' => '',
-            'type' => 'product_class',
-            'operator' => 'in',
-            'promotion' => [
-                'id' => '',
-                'type' => 'amount',
-                'attribute' => 'percent',
-                'value' => 30,
-            ],
-            'conditions' => [
-                [
-                    'id' => '',
-                    'type' => 'product_class',
-                    'attribute' => 'id',
-                    'operator' => 'all',
-                    'value' => 99,
-                ],
-            ],
-        ];
+        $rules[] = $this->rulesData();
 
         $flash_sale_admin = [
             '_token' => 'dummy',
@@ -214,26 +178,7 @@ class FlashSaleControllerTest extends AbstractAdminWebTestCase
 
     public function createFlashSaleAndRules($i)
     {
-        $rules['rules'][] = [
-            'id' => '',
-            'type' => 'product_class',
-            'operator' => 'in',
-            'promotion' => [
-                'id' => '',
-                'type' => 'amount',
-                'attribute' => 'percent',
-                'value' => 30,
-            ],
-            'conditions' => [
-                [
-                    'id' => '',
-                    'type' => 'product_class',
-                    'attribute' => 'id',
-                    'operator' => 'all',
-                    'value' => 99,
-                ],
-            ],
-        ];
+        $rules['rules'] = $this->rulesData();
 
         $FlashSale = new FlashSale();
         $FlashSale->setName('SQL-scrip-001');
@@ -271,5 +216,29 @@ class FlashSaleControllerTest extends AbstractAdminWebTestCase
         }
 
         return $FlashSale;
+    }
+
+    public function rulesData()
+    {
+        $rules[] = [
+            'id' => '',
+            'type' => ProductClassRule::TYPE,
+            'operator' => InOperator::TYPE,
+            'promotion' => [
+                'id' => '',
+                'type' => Promotion\ProductClassPricePercentPromotion::TYPE,
+                'value' => 30,
+            ],
+            'conditions' => [
+                [
+                    'id' => '',
+                    'type' => ProductClassIdCondition::TYPE,
+                    'operator' => InOperator::TYPE,
+                    'value' => 99,
+                ],
+            ],
+        ];
+
+        return $rules;
     }
 }

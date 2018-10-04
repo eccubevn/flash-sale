@@ -14,7 +14,7 @@
 namespace Plugin\FlashSale\Service\Rule;
 
 use Plugin\FlashSale\Entity\Rule;
-use Plugin\FlashSale\Entity\ProductClassRule;
+use Plugin\FlashSale\Entity\Rule\ProductClassRule;
 
 class RuleFactory
 {
@@ -28,11 +28,11 @@ class RuleFactory
     public static function createFromArray(array $data)
     {
         switch ($data['type']) {
-            case ProductClassRule::TYPE:
+            case Rule\ProductClassRule::TYPE:
                 $Rule = new ProductClassRule();
                 break;
             default:
-                $Rule = new Rule();
+                throw new \InvalidArgumentException('$data[type] must be required');
         }
         if (isset($data['operator'])) {
             $Rule->setOperator($data['operator']);
