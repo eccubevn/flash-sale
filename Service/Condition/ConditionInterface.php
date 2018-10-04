@@ -1,9 +1,6 @@
 <?php
 namespace Plugin\FlashSale\Service\Condition;
 
-use Plugin\FlashSale\Service\Operator\OperatorInterface;
-use Plugin\FlashSale\Service\Common\IdentifierInterface;
-
 interface ConditionInterface
 {
     /**
@@ -12,19 +9,12 @@ interface ConditionInterface
      * @param $data
      * @return bool
      */
-    public function isValid($data);
+    public function match($data);
 
     /**
      * Get allowed operator
      *
-     * @return OperatorInterface[]|IdentifierInterface[]
-     */
-    public function getOperators() : array;
-
-    /**
-     * Get allowed attribute
-     *
      * @return array
      */
-    public function getAttributes();
+    public function getOperatorTypes() : array;
 }

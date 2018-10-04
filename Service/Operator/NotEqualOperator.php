@@ -3,11 +3,10 @@ namespace Plugin\FlashSale\Service\Operator;
 
 use Doctrine\ORM\QueryBuilder;
 use Plugin\FlashSale\Entity\Condition;
-use Plugin\FlashSale\Service\Common\IdentifierInterface;
 
-class NotEqualOperator implements OperatorInterface, IdentifierInterface
+class NotEqualOperator implements OperatorInterface
 {
-    const TYPE = 'not_equal';
+    const TYPE = 'operator_not_equal';
 
     /**
      * {@inheritdoc}
@@ -16,7 +15,7 @@ class NotEqualOperator implements OperatorInterface, IdentifierInterface
      * @param $data
      * @return bool
      */
-    public function isValid($condition, $data)
+    public function match($condition, $data)
     {
         return $condition != $data;
     }

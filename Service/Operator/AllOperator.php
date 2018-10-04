@@ -4,11 +4,10 @@ namespace Plugin\FlashSale\Service\Operator;
 use Doctrine\ORM\QueryBuilder;
 use Plugin\FlashSale\Entity\Condition;
 use Plugin\FlashSale\Service\Condition\ConditionInterface;
-use Plugin\FlashSale\Service\Common\IdentifierInterface;
 
-class AllOperator implements OperatorInterface, IdentifierInterface
+class AllOperator implements OperatorInterface
 {
-    const TYPE = 'all';
+    const TYPE = 'operator_all';
 
     /**
      * {@inheritdoc}
@@ -17,11 +16,11 @@ class AllOperator implements OperatorInterface, IdentifierInterface
      * @param $data
      * @return bool
      */
-    public function isValid($condition, $data)
+    public function match($condition, $data)
     {
         foreach ($condition as $cond) {
             if ($cond instanceof ConditionInterface) {
-                $result = $cond->isValid($data);
+                $result = $cond->match($data);
             } else {
                 $result = ($cond == $data);
             }

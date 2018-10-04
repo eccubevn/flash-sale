@@ -4,14 +4,10 @@ namespace Plugin\FlashSale\Service\Promotion;
 interface PromotionInterface
 {
     /**
-     * @return mixed
-     */
-    public function getDiscountValue($value);
-
-    /**
-     * Get attributes
+     * Calculate discount items
      *
-     * @return array
+     * @param $object
+     * @return \Eccube\Entity\ItemInterface[]
      */
-    public function getAttributes(): array ;
+    public function getDiscountItems($object);
 }

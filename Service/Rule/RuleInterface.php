@@ -1,15 +1,51 @@
 <?php
 namespace Plugin\FlashSale\Service\Rule;
 
-use Plugin\FlashSale\Service\Operator\OperatorInterface;
-use Plugin\FlashSale\Service\Common\IdentifierInterface;
+use Plugin\FlashSale\Service\Metadata\DiscriminatorInterface;
 
 interface RuleInterface
 {
     /**
-     * Get allowed operators
+     * Get discriminator type
      *
-     * @return OperatorInterface[]|IdentifierInterface[]
+     * @return DiscriminatorInterface
      */
-    public function getOperators(): array;
+    public function getDiscriminator(): DiscriminatorInterface;
+
+    /**
+     * Get operator types
+     *
+     * @return array
+     */
+    public function getOperatorTypes(): array;
+
+    /**
+     * Get condition types
+     *
+     * @return array
+     */
+    public function getConditionTypes(): array;
+
+    /**
+     * Get promotion types
+     *
+     * @return array
+     */
+    public function getPromotionTypes(): array;
+
+    /**
+     * Check a object match conditions of rule
+     *
+     * @param $object
+     * @return bool
+     */
+    public function match($object): bool ;
+
+    /**
+     * Get discount item
+     *
+     * @param $object
+     * @return \Eccube\Entity\ItemInterface[]
+     */
+    public function getDiscountItems($object): array ;
 }

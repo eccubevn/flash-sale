@@ -1,14 +1,14 @@
 <?php
 namespace Plugin\FlashSale\Service\Operator;
 
+use Doctrine\Common\Collections\Collection as DoctrineCollection;
 use Doctrine\ORM\QueryBuilder;
 use Plugin\FlashSale\Entity\Condition;
 use Plugin\FlashSale\Service\Condition\ConditionInterface;
-use Plugin\FlashSale\Service\Common\IdentifierInterface;
 
-class InOperator implements OperatorInterface, IdentifierInterface
+class InOperator implements OperatorInterface
 {
-    const TYPE = 'in';
+    const TYPE = 'operator_in';
 
     /**
      * {@inheritdoc}
@@ -17,11 +17,14 @@ class InOperator implements OperatorInterface, IdentifierInterface
      * @param $data
      * @return bool
      */
-    public function isValid($condition, $data)
+    public function match($condition, $data)
     {
+        if (!is_array($condition) && !$condition instanceof DoctrineCollection) {
+            $condition = explode(',', $condition);
+        }
         foreach ($condition as $cond) {
             if ($cond instanceof ConditionInterface) {
-                $result = $cond->isValid($data);
+                $result = $cond->match($data);
             } else {
                 $result = ($cond == $data);
             }

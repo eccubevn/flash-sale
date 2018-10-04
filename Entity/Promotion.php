@@ -4,16 +4,16 @@ namespace Plugin\FlashSale\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Eccube\Entity\AbstractEntity;
 use Plugin\FlashSale\Repository\PromotionRepository;
-use Plugin\FlashSale\Entity\AmountPromotion;
+use Plugin\FlashSale\Entity\Promotion\ProductClassPricePercentPromotion;
 
 /**
  * @ORM\Table("plg_flash_sale_promotion")
  * @ORM\Entity(repositoryClass=PromotionRepository::class)
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="discriminator_type", type="string", length=255)
- * @ORM\DiscriminatorMap({Promotion::TYPE="Promotion", AmountPromotion::TYPE="AmountPromotion"})
+ * @ORM\DiscriminatorMap({ProductClassPricePercentPromotion::TYPE=ProductClassPricePercentPromotion::class})
  */
-class Promotion extends AbstractEntity
+abstract class Promotion extends AbstractEntity
 {
     const TYPE = 'promotion';
 
@@ -25,13 +25,6 @@ class Promotion extends AbstractEntity
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     protected $id;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="attribute", type="string", length=32, nullable=false)
-     */
-    protected $attribute;
 
     /**
      * @var string
@@ -64,38 +57,6 @@ class Promotion extends AbstractEntity
     public function setId(int $id): void
     {
         $this->id = $id;
-    }
-
-    /**
-     * @return string
-     */
-    public function getOperator(): string
-    {
-        return $this->operator;
-    }
-
-    /**
-     * @param string $operator
-     */
-    public function setOperator(string $operator): void
-    {
-        $this->operator = $operator;
-    }
-
-    /**
-     * @return string
-     */
-    public function getAttribute(): string
-    {
-        return $this->attribute;
-    }
-
-    /**
-     * @param string $attribute
-     */
-    public function setAttribute(string $attribute): void
-    {
-        $this->attribute = $attribute;
     }
 
     /**
@@ -144,7 +105,6 @@ class Promotion extends AbstractEntity
         } else {
             $result['id'] = $this->getId();
             $result['type'] = static::TYPE;
-            $result['attribute'] = $this->getAttribute();
             $result['value'] = $this->getValue();
         }
 

@@ -2,7 +2,7 @@
 namespace Plugin\FlashSale\Service\Condition;
 
 use Plugin\FlashSale\Entity\Condition;
-use Plugin\FlashSale\Entity\ProductClassCondition;
+use Plugin\FlashSale\Entity\Condition\ProductClassIdCondition;
 
 class ConditionFactory
 {
@@ -15,15 +15,13 @@ class ConditionFactory
     public static function createFromArray(array $data)
     {
         switch ($data['type']) {
-            case ProductClassCondition::TYPE:
-                $Condition = new ProductClassCondition();
+            case ProductClassIdCondition::TYPE:
+                $Condition = new ProductClassIdCondition();
                 break;
             default:
-                $Condition = new Condition();
+                throw new \InvalidArgumentException('$data[type] must be required');
         }
-        if (isset($data['attribute'])) {
-            $Condition->setAttribute($data['attribute']);
-        }
+
         if (isset($data['value'])) {
             $Condition->setValue($data['value']);
         }

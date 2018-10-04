@@ -3,11 +3,10 @@ namespace Plugin\FlashSale\Service\Operator;
 
 use Doctrine\ORM\QueryBuilder;
 use Plugin\FlashSale\Entity\Condition;
-use Plugin\FlashSale\Service\Common\IdentifierInterface;
 
-class EqualOperator implements OperatorInterface, IdentifierInterface
+class EqualOperator implements OperatorInterface
 {
-    const TYPE = 'equal';
+    const TYPE = 'operator_equal';
 
     /**
      * {@inheritdoc}
@@ -16,7 +15,7 @@ class EqualOperator implements OperatorInterface, IdentifierInterface
      * @param $data
      * @return bool
      */
-    public function isValid($condition, $data)
+    public function match($condition, $data)
     {
         return $condition == $data;
     }
