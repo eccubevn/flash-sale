@@ -26,6 +26,5 @@ class DefaultTest extends AbstractWebTestCase
     public function setUp()
     {
         parent::setUp();
-
     }
 }

@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\c\Test\Web;
+namespace Plugin\FlashSale\Test\Web;
 
 use Eccube\Tests\Web\Admin\AbstractAdminWebTestCase;
 use Plugin\FlashSale\Entity\FlashSale;
@@ -66,8 +66,8 @@ class FlashSaleControllerTest extends AbstractAdminWebTestCase
                     'attribute' => 'id',
                     'operator' => 'all',
                     'value' => 99,
-                ]
-            ]
+                ],
+            ],
         ];
 
         $flash_sale_admin = [
@@ -78,33 +78,33 @@ class FlashSaleControllerTest extends AbstractAdminWebTestCase
                 'date' => [
                     'year' => 2019,
                     'month' => 1,
-                    'day' => 1
+                    'day' => 1,
                 ],
                 'time' => [
                     'hour' => 0,
-                    'minute' => 0
-                ]
+                    'minute' => 0,
+                ],
             ],
             'to_time' => [
                 'date' => [
                     'year' => 2019,
                     'month' => 1,
-                    'day' => 1
+                    'day' => 1,
                 ],
                 'time' => [
                     'hour' => 23,
-                    'minute' => 59
-                ]
+                    'minute' => 59,
+                ],
             ],
             'rules' => json_encode($rules),
-            'status' => FlashSale::STATUS_ACTIVATED
+            'status' => FlashSale::STATUS_ACTIVATED,
         ];
 
         $this->client->request(
             'POST',
             $this->generateUrl('flash_sale_admin_new'),
             [
-                'flash_sale_admin' => $flash_sale_admin
+                'flash_sale_admin' => $flash_sale_admin,
             ]
         );
 
@@ -118,7 +118,7 @@ class FlashSaleControllerTest extends AbstractAdminWebTestCase
     public function testUpdate()
     {
         $faker = $this->getFaker('en_US');
-        $newName = $faker->name() . rand(111,999);
+        $newName = $faker->name().rand(111, 999);
         $rules[] = [
             'id' => '',
             'type' => 'product_class',
@@ -136,8 +136,8 @@ class FlashSaleControllerTest extends AbstractAdminWebTestCase
                     'attribute' => 'id',
                     'operator' => 'all',
                     'value' => 99,
-                ]
-            ]
+                ],
+            ],
         ];
 
         $flash_sale_admin = [
@@ -148,26 +148,26 @@ class FlashSaleControllerTest extends AbstractAdminWebTestCase
                 'date' => [
                     'year' => 2019,
                     'month' => 1,
-                    'day' => 1
+                    'day' => 1,
                 ],
                 'time' => [
                     'hour' => 0,
-                    'minute' => 0
-                ]
+                    'minute' => 0,
+                ],
             ],
             'to_time' => [
                 'date' => [
                     'year' => 2019,
                     'month' => 1,
-                    'day' => 1
+                    'day' => 1,
                 ],
                 'time' => [
                     'hour' => 23,
-                    'minute' => 59
-                ]
+                    'minute' => 59,
+                ],
             ],
             'rules' => json_encode($rules),
-            'status' => FlashSale::STATUS_ACTIVATED
+            'status' => FlashSale::STATUS_ACTIVATED,
         ];
 
         /** @var FlashSale $FlashSale */
@@ -177,7 +177,7 @@ class FlashSaleControllerTest extends AbstractAdminWebTestCase
             'POST',
             $this->generateUrl('flash_sale_admin_edit', ['id' => $FlashSale->getId()]),
             [
-                'flash_sale_admin' => $flash_sale_admin
+                'flash_sale_admin' => $flash_sale_admin,
             ]
         );
 
@@ -193,7 +193,7 @@ class FlashSaleControllerTest extends AbstractAdminWebTestCase
 
     public function testDelete()
     {
-        $FlashSales = $this->flashSaleRepository->findBy(["status" => FlashSale::STATUS_ACTIVATED]);
+        $FlashSales = $this->flashSaleRepository->findBy(['status' => FlashSale::STATUS_ACTIVATED]);
         $count = count($FlashSales);
 
         $this->client->request(
@@ -206,7 +206,7 @@ class FlashSaleControllerTest extends AbstractAdminWebTestCase
         $this->expected = '削除しました';
         $this->actual = $crawler->filter('.c-contentsArea .alert-success span')->text();
 
-        $countResult = $this->flashSaleRepository->findBy(["status" => FlashSale::STATUS_ACTIVATED]);
+        $countResult = $this->flashSaleRepository->findBy(['status' => FlashSale::STATUS_ACTIVATED]);
         $this->expected = $count - 1;
         $this->actual = count($countResult);
         $this->verify();
@@ -231,14 +231,14 @@ class FlashSaleControllerTest extends AbstractAdminWebTestCase
                     'attribute' => 'id',
                     'operator' => 'all',
                     'value' => 99,
-                ]
-            ]
+                ],
+            ],
         ];
 
         $FlashSale = new FlashSale();
         $FlashSale->setName('SQL-scrip-001');
-        $FlashSale->setFromTime(new \DateTime((date('Y') + $i) . '-09-10 00:30:00'));
-        $FlashSale->setToTime(new \DateTime((date('Y') + $i) . '-09-10 23:59:59'));
+        $FlashSale->setFromTime(new \DateTime((date('Y') + $i).'-09-10 00:30:00'));
+        $FlashSale->setToTime(new \DateTime((date('Y') + $i).'-09-10 23:59:59'));
         $FlashSale->setStatus(FlashSale::STATUS_ACTIVATED);
         $FlashSale->setCreatedAt(new \DateTime());
         $FlashSale->setUpdatedAt(new \DateTime());
