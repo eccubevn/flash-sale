@@ -5,6 +5,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Eccube\Entity\AbstractEntity;
 use Plugin\FlashSale\Repository\PromotionRepository;
 use Plugin\FlashSale\Entity\Promotion\ProductClassPricePercentPromotion;
+use Plugin\FlashSale\Service\Promotion\PromotionInterface;
 
 /**
  * @ORM\Table("plg_flash_sale_promotion")
@@ -13,7 +14,7 @@ use Plugin\FlashSale\Entity\Promotion\ProductClassPricePercentPromotion;
  * @ORM\DiscriminatorColumn(name="discriminator_type", type="string", length=255)
  * @ORM\DiscriminatorMap({ProductClassPricePercentPromotion::TYPE=ProductClassPricePercentPromotion::class})
  */
-abstract class Promotion extends AbstractEntity
+abstract class Promotion extends AbstractEntity implements PromotionInterface
 {
     const TYPE = 'promotion';
 

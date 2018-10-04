@@ -68,6 +68,6 @@ class ProductClassPricePercentPromotion extends Promotion implements PromotionIn
             ->setTaxDisplayType($TaxInclude)
             ->setTaxType($Taxation);
 
-        return $OrderItem;
+        return [$OrderItem];
     }
 }

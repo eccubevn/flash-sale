@@ -8,6 +8,7 @@ use Eccube\Entity\AbstractEntity;
 use Plugin\FlashSale\Entity\Rule\ProductClassRule;
 use Plugin\FlashSale\Repository\RuleRepository;
 use Plugin\FlashSale\Service\Metadata\DiscriminatorInterface;
+use Plugin\FlashSale\Service\Promotion\PromotionInterface;
 
 /**
  * @ORM\Table("plg_flash_sale_rule")
@@ -146,7 +147,7 @@ abstract class Rule extends AbstractEntity
     }
 
     /**
-     * @return Promotion
+     * @return PromotionInterface
      */
     public function getPromotion()
     {
