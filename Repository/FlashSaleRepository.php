@@ -15,6 +15,11 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
 class FlashSaleRepository extends AbstractRepository
 {
     /**
+     * @var array
+     */
+    protected $cached = [];
+
+    /**
      * FlashSaleRepository constructor.
      *
      * @param RegistryInterface $registry
@@ -38,19 +43,27 @@ class FlashSaleRepository extends AbstractRepository
      */
     public function getAvailableFlashSale()
     {
+        if (isset($this->cached[__METHOD__])) {
+            return $this->cached[__METHOD__];
+        }
+
         $qb = $this->createQueryBuilder('fl');
+        $result = false;
         try {
-            $event = $qb
+            $FlashSale = $qb
                 ->where(':time_now >= fl.from_time AND :time_now < fl.to_time')
                 ->setParameter('time_now', new \DateTime())
                 ->andWhere('fl.status = :status')->setParameter('status', FlashSale::STATUS_ACTIVATED)
                 ->getQuery();
 
-            return $event->getSingleResult();
+            $result =  $FlashSale->getSingleResult();
         } catch (\Exception $exception) {
-
-            return false;
+            // silence
         }
+
+        $this->cached[__METHOD__] = $result;
+
+        return $result;
     }
 
     /**
