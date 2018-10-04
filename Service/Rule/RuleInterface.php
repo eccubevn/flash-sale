@@ -1,4 +1,16 @@
 <?php
+
+/*
+ * This file is part of EC-CUBE
+ *
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * http://www.lockon.co.jp/
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Plugin\FlashSale\Service\Rule;
 
 use Plugin\FlashSale\Service\Metadata\DiscriminatorInterface;
@@ -37,15 +49,17 @@ interface RuleInterface
      * Check a object match conditions of rule
      *
      * @param $object
+     *
      * @return bool
      */
-    public function match($object): bool ;
+    public function match($object): bool;
 
     /**
      * Get discount item
      *
      * @param $object
+     *
      * @return \Eccube\Entity\ItemInterface[]
      */
-    public function getDiscountItems($object): array ;
+    public function getDiscountItems($object): array;
 }

@@ -1,4 +1,16 @@
 <?php
+
+/*
+ * This file is part of EC-CUBE
+ *
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * http://www.lockon.co.jp/
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Plugin\FlashSale\Entity\Rule;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -27,29 +39,32 @@ class ProductClassRule extends Rule implements RuleInterface
      */
     protected $discriminatorManager;
 
-
     /**
      * Set $operatorFactory
      *
      * @param Operator\OperatorFactory $operatorFactory
+     *
      * @return $this
      * @required
      */
     public function setOperatorFactory(Operator\OperatorFactory $operatorFactory)
     {
         $this->operatorFactory = $operatorFactory;
+
         return $this;
     }
 
     /**
      * @param DiscriminatorManager $discriminatorManager
+     *
      * @return $this
      * @required
      */
     public function setDiscriminatorManager(DiscriminatorManager $discriminatorManager)
     {
-        $this->discriminatorManager =  $discriminatorManager;
+        $this->discriminatorManager = $discriminatorManager;
         $this->discriminator = $discriminatorManager->get(static::TYPE);
+
         return $this;
     }
 
@@ -58,11 +73,11 @@ class ProductClassRule extends Rule implements RuleInterface
      *
      * @return array
      */
-    public function getOperatorTypes() : array
+    public function getOperatorTypes(): array
     {
         return [
             Operator\InOperator::TYPE,
-            Operator\AllOperator::TYPE
+            Operator\AllOperator::TYPE,
         ];
     }
 
@@ -74,7 +89,7 @@ class ProductClassRule extends Rule implements RuleInterface
     public function getConditionTypes(): array
     {
         return [
-            ProductClassIdCondition::TYPE
+            ProductClassIdCondition::TYPE,
         ];
     }
 
@@ -86,7 +101,7 @@ class ProductClassRule extends Rule implements RuleInterface
     public function getPromotionTypes(): array
     {
         return [
-            ProductClassPricePercentPromotion::TYPE
+            ProductClassPricePercentPromotion::TYPE,
         ];
     }
 
@@ -110,6 +125,7 @@ class ProductClassRule extends Rule implements RuleInterface
      * {@inheritdoc}
      *
      * @param $object
+     *
      * @return \Eccube\Entity\ItemInterface[]
      */
     public function getDiscountItems($ProductClass): array

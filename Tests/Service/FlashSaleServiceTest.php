@@ -20,7 +20,7 @@ use Plugin\FlashSale\Service\Metadata\DiscriminatorManager;
 
 class FlashSaleServiceTest extends AbstractServiceTestCase
 {
-    /** @var  FlashSaleService */
+    /** @var FlashSaleService */
     protected $flashSaleService;
 
     /**

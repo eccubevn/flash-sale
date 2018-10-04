@@ -1,4 +1,16 @@
 <?php
+
+/*
+ * This file is part of EC-CUBE
+ *
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * http://www.lockon.co.jp/
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Plugin\FlashSale\Service;
 
 use Doctrine\ORM\Mapping\DiscriminatorMap;
@@ -7,7 +19,6 @@ use Plugin\FlashSale\Service\Metadata\DiscriminatorManager;
 use Plugin\FlashSale\Entity\Rule;
 use Plugin\FlashSale\Service\Rule\RuleInterface;
 use Plugin\FlashSale\Service\Condition\ConditionInterface;
-
 
 class FlashSaleService
 {
@@ -23,6 +34,7 @@ class FlashSaleService
 
     /**
      * FlashSaleService constructor.
+     *
      * @param AnnotationReader $annotationReader
      * @param DiscriminatorManager $discriminatorManager
      */
@@ -38,6 +50,7 @@ class FlashSaleService
      * Get metadata
      *
      * @return array
+     *
      * @throws \ReflectionException
      */
     public function getMetadata()
@@ -52,7 +65,7 @@ class FlashSaleService
                 'description' => $discriminator->getDescription(),
                 'operator_types' => [],
                 'condition_types' => [],
-                'promotion_types' => []
+                'promotion_types' => [],
             ];
             /** @var RuleInterface $ruleEntity */
             $ruleClass = $discriminator->getClass();
@@ -61,7 +74,7 @@ class FlashSaleService
                 $discriminator = $this->discriminatorManager->get($operatorType);
                 $result['rule_types'][$ruleType]['operator_types'][$operatorType] = [
                     'name' => $discriminator->getName(),
-                    'description' => $discriminator->getDescription()
+                    'description' => $discriminator->getDescription(),
                 ];
             }
 
@@ -70,7 +83,7 @@ class FlashSaleService
                 $result['rule_types'][$ruleType]['condition_types'][$conditionType] = [
                     'name' => $discriminator->getName(),
                     'description' => $discriminator->getDescription(),
-                    'operator_types' => []
+                    'operator_types' => [],
                 ];
                 /** @var ConditionInterface $conditionEntity */
                 $conditionClass = $discriminator->getClass();
@@ -88,7 +101,7 @@ class FlashSaleService
                 $discriminator = $this->discriminatorManager->get($promotionType);
                 $result['rule_types'][$ruleType]['promotion_types'][$promotionType] = [
                     'name' => $discriminator->getName(),
-                    'description' => $discriminator->getDescription()
+                    'description' => $discriminator->getDescription(),
                 ];
             }
         }

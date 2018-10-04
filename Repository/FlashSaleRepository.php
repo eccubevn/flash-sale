@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of EC-CUBE
+ *
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * http://www.lockon.co.jp/
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Plugin\FlashSale\Repository;
 
 use Eccube\Repository\AbstractRepository;
@@ -31,6 +42,7 @@ class FlashSaleRepository extends AbstractRepository
 
     /**
      * @param int $id
+     *
      * @return null|object
      */
     public function get($id = 1)
@@ -56,7 +68,7 @@ class FlashSaleRepository extends AbstractRepository
                 ->andWhere('fl.status = :status')->setParameter('status', FlashSale::STATUS_ACTIVATED)
                 ->getQuery();
 
-            $result =  $FlashSale->getSingleResult();
+            $result = $FlashSale->getSingleResult();
         } catch (\Exception $exception) {
             // silence
         }

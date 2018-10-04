@@ -1,10 +1,19 @@
 <?php
 
+/*
+ * This file is part of EC-CUBE
+ *
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * http://www.lockon.co.jp/
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Plugin\FlashSale\Controller\Admin;
 
 use Eccube\Controller\AbstractController;
-use Eccube\Event\EccubeEvents;
-use Eccube\Event\EventArgs;
 use Eccube\Repository\Master\PageMaxRepository;
 use Eccube\Util\CacheUtil;
 use Knp\Component\Pager\Paginator;
@@ -78,7 +87,7 @@ class FlashSaleController extends AbstractController
         );
 
         return [
-            'pagination' => $pagination
+            'pagination' => $pagination,
         ];
     }
 
@@ -150,6 +159,7 @@ class FlashSaleController extends AbstractController
 
                 // キャッシュの削除
                 $cacheUtil->clearDoctrineCache();
+
                 return $this->redirectToRoute('flash_sale_admin_edit', ['id' => $FlashSale->getId()]);
             } catch (\Exception $e) {
                 $this->entityManager->rollback();
@@ -170,6 +180,7 @@ class FlashSaleController extends AbstractController
      * @param Request $request
      * @param FlashSale $FlashSale
      * @param CacheUtil $cacheUtil
+     *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function delete(Request $request, FlashSale $FlashSale, CacheUtil $cacheUtil)
@@ -187,7 +198,6 @@ class FlashSaleController extends AbstractController
 
             // キャッシュの削除
             $cacheUtil->clearDoctrineCache();
-
         } catch (\Exception $e) {
             $message = trans('admin.common.delete_error_foreign_key', ['%name%' => $FlashSale->getName()]);
             $this->addError($message, 'admin');

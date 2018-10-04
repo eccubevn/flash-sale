@@ -1,15 +1,24 @@
 <?php
 
+/*
+ * This file is part of EC-CUBE
+ *
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * http://www.lockon.co.jp/
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Plugin\FlashSale\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection as DoctrineCollection;
-use Plugin\FlashSale\Entity\Rule;
 use Plugin\FlashSale\Service\Rule\RuleFactory;
 use Plugin\FlashSale\Service\Promotion\PromotionFactory;
 use Plugin\FlashSale\Service\Condition\ConditionFactory;
-
 
 /**
  * FlashSale
@@ -20,13 +29,13 @@ use Plugin\FlashSale\Service\Condition\ConditionFactory;
 class FlashSale
 {
     const
-        STATUS_DRAFT        = 0,
-        STATUS_ACTIVATED    = 1,
-        STATUS_DELETED      = 2;
+        STATUS_DRAFT = 0;
+    const STATUS_ACTIVATED = 1;
+    const STATUS_DELETED = 2;
 
     public static $statusList = [
         self::STATUS_DRAFT => 'Draft',
-        self::STATUS_ACTIVATED => 'Activated'
+        self::STATUS_ACTIVATED => 'Activated',
     ];
 
     /**
@@ -289,6 +298,7 @@ class FlashSale
      * Get data as array
      *
      * @param $data
+     *
      * @return array
      */
     public function rawData($data = null)
@@ -306,6 +316,7 @@ class FlashSale
                 $result['rules'][] = $Rule->rawData();
             }
         }
+
         return $result;
     }
 
@@ -313,7 +324,6 @@ class FlashSale
      * Extract Rule from normalize data
      *
      * @param $data
-     * @return void
      */
     public function updateFromArray($data)
     {
