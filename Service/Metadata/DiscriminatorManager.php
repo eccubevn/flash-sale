@@ -23,66 +23,60 @@ class DiscriminatorManager
     {
         switch ($discriminatorType) {
             case Operator\AllOperator::TYPE:
-                $this->container[Operator\AllOperator::TYPE] = new Discriminator(
-                    Operator\AllOperator::TYPE,
-                    'is all of',
-                    Operator\AllOperator::class,
-                    ''
-                );
+                $this->container[Operator\AllOperator::TYPE] = (new Discriminator())
+                    ->setType(Operator\AllOperator::TYPE)
+                    ->setName('is all of')
+                    ->setClass(Operator\AllOperator::class)
+                    ->setDescription('');
                 return $this->container[Operator\AllOperator::TYPE];
 
             case Operator\InOperator::TYPE:
-                $this->container[Operator\InOperator::TYPE] = new Discriminator(
-                    Operator\InOperator::TYPE,
-                    'is one of',
-                    Operator\InOperator::class,
-                    ''
-                );
+                $this->container[Operator\InOperator::TYPE] = (new Discriminator())
+                    ->setType(Operator\InOperator::TYPE)
+                    ->setName('is one of')
+                    ->setClass(Operator\InOperator::class)
+                    ->setDescription('');
                 return $this->container[Operator\InOperator::TYPE];
 
             case Operator\EqualOperator::TYPE:
-                $this->container[Operator\EqualOperator::TYPE] = new Discriminator(
-                    Operator\EqualOperator::TYPE,
-                    'is equal to',
-                    Operator\EqualOperator::class,
-                    ''
-                );
+                $this->container[Operator\EqualOperator::TYPE] = (new Discriminator())
+                    ->setType(Operator\EqualOperator::TYPE)
+                    ->setName('is equal to')
+                    ->setClass(Operator\EqualOperator::class)
+                    ->setDescription('');
                 return $this->container[Operator\EqualOperator::TYPE];
 
             case Operator\NotEqualOperator::TYPE:
-                $this->container[Operator\NotEqualOperator::TYPE] = new Discriminator(
-                    Operator\NotEqualOperator::TYPE,
-                    'is not equal to',
-                    Operator\NotEqualOperator::class,
-                    ''
-                );
+                $this->container[Operator\NotEqualOperator::TYPE] = (new Discriminator())
+                    ->setType(Operator\NotEqualOperator::TYPE)
+                    ->setName('is not equal to')
+                    ->setClass(Operator\NotEqualOperator::class)
+                    ->setDescription('');
                 return $this->container[Operator\NotEqualOperator::TYPE];
 
             case ProductClassRule::TYPE:
-                $this->container[ProductClassRule::TYPE] = new Discriminator(
-                    ProductClassRule::TYPE,
-                    'Product Class Rule',
-                    ProductClassRule::class,
-                    ''
-                );
+                $this->container[ProductClassRule::TYPE] = (new Discriminator())
+                    ->setType(ProductClassRule::TYPE)
+                    ->setName('Product Class Rule')
+                    ->setClass(ProductClassRule::class)
+                    ->setDescription('');
+
                 return $this->container[ProductClassRule::TYPE];
 
             case ProductClassIdCondition::TYPE:
-                $this->container[ProductClassIdCondition::TYPE] = new Discriminator(
-                    ProductClassIdCondition::TYPE,
-                    'Product Class Id Condition',
-                    ProductClassIdCondition::class,
-                    ''
-                );
+                $this->container[ProductClassIdCondition::TYPE] = (new Discriminator())
+                    ->setType(ProductClassIdCondition::TYPE)
+                    ->setName('Product Class Id Condition')
+                    ->setClass(ProductClassIdCondition::class)
+                    ->setDescription('');
                 return $this->container[ProductClassIdCondition::TYPE];
 
             case ProductClassPricePercentPromotion::TYPE:
-                $this->container[ProductClassPricePercentPromotion::TYPE] = new Discriminator(
-                    ProductClassPricePercentPromotion::TYPE,
-                    'Amount Promotion',
-                    ProductClassPricePercentPromotion::class,
-                    ''
-                );
+                $this->container[ProductClassPricePercentPromotion::TYPE] = (new Discriminator())
+                    ->setType(ProductClassPricePercentPromotion::TYPE)
+                    ->setName('Product Class Price Percent Promotion')
+                    ->setClass(ProductClassPricePercentPromotion::class)
+                    ->setDescription('');
                 return $this->container[ProductClassPricePercentPromotion::TYPE];
 
             default:

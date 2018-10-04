@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Eccube\Entity\AbstractEntity;
 use Plugin\FlashSale\Entity\Rule\ProductClassRule;
 use Plugin\FlashSale\Repository\RuleRepository;
-use Plugin\FlashSale\Service\Rule\EventListener\EventListenerInterface;
+use Plugin\FlashSale\Service\Metadata\DiscriminatorInterface;
 
 /**
  * @ORM\Table("plg_flash_sale_rule")
@@ -59,9 +59,9 @@ abstract class Rule extends AbstractEntity
     protected $Promotion;
 
     /**
-     * @var EventListenerInterface
+     * @var DiscriminatorInterface
      */
-    protected $eventListener;
+    protected $discriminator;
 
     /**
      * Rule constructor.
@@ -162,13 +162,13 @@ abstract class Rule extends AbstractEntity
     }
 
     /**
-     * Get $eventListener
+     * Get $discriminator
      *
-     * @return EventListenerInterface
+     * @return DiscriminatorInterface
      */
-    public function getEventListener(): EventListenerInterface
+    public function getDiscriminator(): DiscriminatorInterface
     {
-        return $this->eventListener;
+        return $this->discriminator;
     }
 
     /**

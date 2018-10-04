@@ -10,7 +10,7 @@ use Plugin\FlashSale\Service\Rule\RuleInterface;
 use Plugin\FlashSale\Service\Condition\ConditionInterface;
 use Plugin\FlashSale\Service\Operator\OperatorInterface;
 use Plugin\FlashSale\Service\Operator\OperatorFactory;
-use Plugin\FlashSale\Service\Rule\EventListener\ProductClassEventListener;
+use Plugin\FlashSale\Service\Metadata\DiscriminatorManager;
 
 class DiEventSubscriber implements EventSubscriber
 {
@@ -21,18 +21,17 @@ class DiEventSubscriber implements EventSubscriber
 
     /**
      * DiEventSubscriber constructor.
-     *
      * @param OperatorFactory $operatorFactory
      * @param EntityManagerInterface $entityManager
-     * @param ProductClassEventListener $productClassEventListener
+     * @param DiscriminatorManager $discriminatorManager
      */
     public function __construct(
         OperatorFactory $operatorFactory,
         EntityManagerInterface $entityManager,
-        ProductClassEventListener $productClassEventListener
+        DiscriminatorManager $discriminatorManager
     ) {
         $this->defineDI($operatorFactory);
-        $this->defineDI($productClassEventListener);
+        $this->defineDI($discriminatorManager);
         $this->container[EntityManagerInterface::class] = $entityManager;
     }
 

@@ -1,10 +1,17 @@
 <?php
 namespace Plugin\FlashSale\Service\Rule;
 
-use Plugin\FlashSale\Service\Rule\EventListener\EventListenerInterface;
+use Plugin\FlashSale\Service\Metadata\DiscriminatorInterface;
 
 interface RuleInterface
 {
+    /**
+     * Get discriminator type
+     *
+     * @return DiscriminatorInterface
+     */
+    public function getDiscriminator(): DiscriminatorInterface;
+
     /**
      * Get operator types
      *
@@ -25,11 +32,6 @@ interface RuleInterface
      * @return array
      */
     public function getPromotionTypes(): array;
-
-    /**
-     * @return EventListenerInterface
-     */
-    public function getEventListener(): EventListenerInterface;
 
     /**
      * Check a object match conditions of rule

@@ -1,41 +1,34 @@
 <?php
+
 namespace Plugin\FlashSale;
 
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\KernelEvents;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Eccube\Common\EccubeConfig;
+use Eccube\Entity\Product;
+use Eccube\Entity\ProductClass;
 use Eccube\Event\TemplateEvent;
+use Eccube\Twig\Extension\EccubeExtension;
 use Plugin\FlashSale\Repository\FlashSaleRepository;
-use Plugin\FlashSale\Service\Rule\RuleInterface;
-use Plugin\FlashSale\Service\Rule\EventListener\EventListenerInterface;
-use Plugin\FlashSale\Entity\FlashSale;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class FlashSaleEvent implements EventSubscriberInterface
 {
-    /**
-     * @var FlashSaleRepository
-     */
+    /** @var FlashSaleRepository */
     protected $flashSaleRepository;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
+    /** @var EccubeConfig */
+    protected $eccubeConfig;
 
     /**
      * FlashSaleEvent constructor.
      *
      * @param FlashSaleRepository $flashSaleRepository
-     * @param EventDispatcherInterface $eventDispatcher
+     * @param EccubeConfig $eccubeConfig
      */
-    public function __construct(
-        FlashSaleRepository $flashSaleRepository,
-        EventDispatcherInterface $eventDispatcher
-    ) {
+    public function __construct(FlashSaleRepository $flashSaleRepository, EccubeConfig $eccubeConfig)
+    {
         $this->flashSaleRepository = $flashSaleRepository;
-        $this->eventDispatcher = $eventDispatcher;
+        $this->eccubeConfig = $eccubeConfig;
     }
-
 
     /**
      * @return array
@@ -43,25 +36,71 @@ class FlashSaleEvent implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::REQUEST => 'subscribeEvents',
-//            'Product/detail.twig' => 'detail',
+            'Product/detail.twig' => 'detail',
+            'Product/list.twig' => 'list',
         ];
     }
 
-    public function subscribeEvents()
+    /**
+     * @param TemplateEvent $event
+     */
+    public function detail(TemplateEvent $event)
     {
-        $FlashSale = $this->flashSaleRepository->getAvailableFlashSale();
-        if (!$FlashSale instanceof FlashSale) {
-            return;
+        $CurrentEvent = $this->flashSaleRepository->getCurrentEvent();
+        if ($CurrentEvent) {
+            $event->addSnippet('@FlashSale/default/detail.twig');
         }
-        /** @var RuleInterface $Rule */
-        foreach ($FlashSale->getRules() as $Rule) {
-            if (!$Rule->getEventListener() instanceof  EventListenerInterface) {
-                continue;
-            }
-            foreach ($Rule->getEventListener()->getSubscribedEvents() as $event => $callback) {
-                $this->eventDispatcher->addListener($event, [$Rule->getEventListener(), $callback]);
+
+        $parameters = $event->getParameters();
+        /** @var Product $Product */
+        $Product = $parameters['Product'];
+        $ProductClasses = $Product->getProductClasses();
+
+        $json = [];
+        $locale = $this->eccubeConfig['locale'];
+        $currency = $this->eccubeConfig['currency'];
+        $formatter = new \NumberFormatter($locale, \NumberFormatter::CURRENCY);
+        /** @var ProductClass $ProductClass */
+        foreach ($ProductClasses as $ProductClass) {
+            $per = 20;
+            $json[$ProductClass->getId()] = [
+                'message' => '<p><span>'.$formatter->formatCurrency($ProductClass->getPrice02IncTax() * ((100 - $per)/100), $currency).'</span> (-'.$per.'%)</p>'
+            ];
+        }
+
+        $parameters['ProductFlashSale'] = json_encode($json);
+        $event->setParameters($parameters);
+    }
+
+    /**
+     * @param TemplateEvent $event
+     */
+    public function list(TemplateEvent $event)
+    {
+        $CurrentEvent = $this->flashSaleRepository->getCurrentEvent();
+        if ($CurrentEvent) {
+            $event->addSnippet('@FlashSale/default/list.twig');
+        }
+
+        $parameters = $event->getParameters();
+        $pagination = $parameters['pagination'];
+        $json = [];
+        /** @var Product $Product */
+        foreach ($pagination->getItems() as $Product){
+            $ProductClasses = $Product->getProductClasses();
+            $locale = $this->eccubeConfig['locale'];
+            $currency = $this->eccubeConfig['currency'];
+            $formatter = new \NumberFormatter($locale, \NumberFormatter::CURRENCY);
+            /** @var ProductClass $ProductClass */
+            foreach ($ProductClasses as $ProductClass) {
+                $per = 20;
+                $json[$ProductClass->getId()] = [
+                    'message' => '<p><span>'.$formatter->formatCurrency($ProductClass->getPrice02IncTax() * ((100 - $per)/100), $currency).'</span> (-'.$per.'%)</p>'
+                ];
             }
         }
+
+        $parameters['ProductFlashSale'] = json_encode($json);
+        $event->setParameters($parameters);
     }
 }

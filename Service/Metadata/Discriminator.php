@@ -24,19 +24,25 @@ class Discriminator implements DiscriminatorInterface
     protected $description;
 
     /**
-     * Metadata constructor.
+     * {@inheritdoc}
+     *
+     * @return string
+     */
+    public function getType(): string
+    {
+        return $this->type;
+    }
+
+    /**
+     * Set $type
      *
      * @param $type
-     * @param $name
-     * @param $class
-     * @param $description
+     * @return Discriminator
      */
-    public function __construct($type, $name, $class, $description)
+    public function setType($type): Discriminator
     {
         $this->type = $type;
-        $this->name = $name;
-        $this->class = $class;
-        $this->description = $description;
+        return $this;
     }
 
     /**
@@ -50,13 +56,15 @@ class Discriminator implements DiscriminatorInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Set $name
      *
-     * @return string
+     * @param $name
+     * @return Discriminator
      */
-    public function getType(): string
+    public function setName($name): Discriminator
     {
-        return $this->type;
+        $this->name = $name;
+        return $this;
     }
 
     /**
@@ -70,6 +78,18 @@ class Discriminator implements DiscriminatorInterface
     }
 
     /**
+     * Set $description
+     *
+     * @param $description
+     * @return Discriminator
+     */
+    public function setDescription($description): Discriminator
+    {
+        $this->description = $description;
+        return $this;
+    }
+
+    /**
      * {@inheritdoc}
      *
      * @return string
@@ -77,5 +97,17 @@ class Discriminator implements DiscriminatorInterface
     public function getClass(): string
     {
         return $this->class;
+    }
+
+    /**
+     * Set $class
+     *
+     * @param $class
+     * @return Discriminator
+     */
+    public function setClass($class): Discriminator
+    {
+        $this->class = $class;
+        return $this;
     }
 }
