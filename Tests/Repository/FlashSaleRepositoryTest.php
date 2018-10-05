@@ -37,9 +37,9 @@ class FlashSaleRepositoryTest extends AbstractRepositoryTestCase
 
     public function testAvailableFlashSale()
     {
-        $data = $this->flashSaleRepository->getAvailableFlashSale();
-        $this->expected = 1;
-        $this->actual = count($data);
+        $FlashSale = $this->flashSaleRepository->getAvailableFlashSale();
+        $this->expected = $this->eventName;
+        $this->actual = $FlashSale->getName();
         $this->verify();
     }
 
@@ -76,15 +76,6 @@ class FlashSaleRepositoryTest extends AbstractRepositoryTestCase
 
         $this->expected = $name;
         $this->actual = $this->flashSaleRepository->findOneBy(['name' => $name])->getName();
-        $this->verify();
-    }
-
-    public function testQueryBuilderAll()
-    {
-        $FlashSale = $this->flashSaleRepository->getQueryBuilderAll();
-
-        $this->expected = 1;
-        $this->actual = count($FlashSale);
         $this->verify();
     }
 }

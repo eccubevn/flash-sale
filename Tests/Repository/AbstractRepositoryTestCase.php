@@ -33,6 +33,8 @@ abstract class AbstractRepositoryTestCase extends EccubeTestCase
      */
     protected $flashSaleRepository;
 
+    protected $eventName = 'Event name - test only';
+
     protected $tables = [
         'plg_flash_sale_promotion',
         'plg_flash_sale_condition',
@@ -50,7 +52,7 @@ abstract class AbstractRepositoryTestCase extends EccubeTestCase
         $this->flashSaleRepository = $this->container->get(FlashSaleRepository::class);
 
         $this->deleteAllRows($this->tables);
-        $this->createFlashSaleAndRules('Event name - test only');
+        $this->createFlashSaleAndRules($this->eventName);
     }
 
     public function createFlashSaleAndRules($evenName)
