@@ -13,6 +13,7 @@
 
 namespace Plugin\FlashSale\Test\Web;
 
+use Eccube\Entity\ProductClass;
 use Eccube\Tests\Web\Admin\AbstractAdminWebTestCase;
 use Plugin\FlashSale\Entity\Condition\ProductClassIdCondition;
 use Plugin\FlashSale\Entity\FlashSale;
@@ -220,6 +221,13 @@ class FlashSaleControllerTest extends AbstractAdminWebTestCase
 
     public function rulesData()
     {
+        $Product = $this->createProduct();
+        $productClassIds = [];
+        /** @var ProductClass $productClass */
+        foreach ($Product->getProductClasses() as $productClass) {
+            $productClassIds[] = $productClass->getId();
+        }
+
         $rules[] = [
             'id' => '',
             'type' => ProductClassRule::TYPE,
@@ -234,7 +242,7 @@ class FlashSaleControllerTest extends AbstractAdminWebTestCase
                     'id' => '',
                     'type' => ProductClassIdCondition::TYPE,
                     'operator' => InOperator::TYPE,
-                    'value' => 99,
+                    'value' => implode(',', $productClassIds),
                 ],
             ],
         ];

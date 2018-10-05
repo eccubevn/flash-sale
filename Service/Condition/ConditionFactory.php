@@ -27,12 +27,16 @@ class ConditionFactory
      */
     public static function createFromArray(array $data)
     {
+        if (!isset($data['type'])) {
+            throw new \InvalidArgumentException('$data[type] must be required');
+        }
+
         switch ($data['type']) {
             case ProductClassIdCondition::TYPE:
                 $Condition = new ProductClassIdCondition();
                 break;
             default:
-                throw new \InvalidArgumentException('$data[type] must be required');
+                throw new \InvalidArgumentException($data['type'].' unsupported');
         }
 
         if (isset($data['value'])) {

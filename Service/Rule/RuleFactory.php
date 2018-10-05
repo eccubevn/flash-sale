@@ -27,12 +27,16 @@ class RuleFactory
      */
     public static function createFromArray(array $data)
     {
+        if (!isset($data['type'])) {
+            throw new \InvalidArgumentException('$data[type] must be required');
+        }
+
         switch ($data['type']) {
             case Rule\ProductClassRule::TYPE:
                 $Rule = new ProductClassRule();
                 break;
             default:
-                throw new \InvalidArgumentException('$data[type] must be required');
+                throw new \InvalidArgumentException($data['type'].' unsupported');
         }
         if (isset($data['operator'])) {
             $Rule->setOperator($data['operator']);

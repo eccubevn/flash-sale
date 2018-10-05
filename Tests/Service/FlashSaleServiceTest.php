@@ -11,12 +11,9 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\FlashSale\Test\Service;
+namespace Plugin\FlashSale\Tests\Service;
 
-use Doctrine\Common\Annotations\AnnotationReader;
-use Eccube\Tests\Service\AbstractServiceTestCase;
 use Plugin\FlashSale\Service\FlashSaleService;
-use Plugin\FlashSale\Service\Metadata\DiscriminatorManager;
 
 class FlashSaleServiceTest extends AbstractServiceTestCase
 {
@@ -30,35 +27,66 @@ class FlashSaleServiceTest extends AbstractServiceTestCase
     {
         parent::setUp();
 
-        $this->flashSaleService = new FlashSaleService(new AnnotationReader(), new DiscriminatorManager());
+        $this->flashSaleService = $this->container->get(FlashSaleService::class);
     }
 
-    public function testGetMetadata()
+    public function testGetMetadata_rule_types()
     {
         $data = $this->flashSaleService->getMetadata();
+
         $this->expected = true;
         $this->actual = array_key_exists('rule_types', $data);
         $this->verify();
+    }
+
+    public function testGetMetadata_rule_product_class()
+    {
+        $data = $this->flashSaleService->getMetadata();
 
         $this->expected = true;
         $this->actual = array_key_exists('rule_product_class', $data['rule_types']);
         $this->verify();
+    }
+
+    public function testGetMetadata_name()
+    {
+        $data = $this->flashSaleService->getMetadata();
 
         $this->expected = true;
         $this->actual = array_key_exists('name', $data['rule_types']['rule_product_class']);
         $this->verify();
+    }
+
+    public function testGetMetadata_description()
+    {
+        $data = $this->flashSaleService->getMetadata();
 
         $this->expected = true;
         $this->actual = array_key_exists('description', $data['rule_types']['rule_product_class']);
         $this->verify();
+    }
+
+    public function testGetMetadata_operator_types()
+    {
+        $data = $this->flashSaleService->getMetadata();
 
         $this->expected = true;
         $this->actual = array_key_exists('operator_types', $data['rule_types']['rule_product_class']);
         $this->verify();
+    }
+
+    public function testGetMetadata_condition_types()
+    {
+        $data = $this->flashSaleService->getMetadata();
 
         $this->expected = true;
         $this->actual = array_key_exists('condition_types', $data['rule_types']['rule_product_class']);
         $this->verify();
+    }
+
+    public function testGetMetadata_promotion_types()
+    {
+        $data = $this->flashSaleService->getMetadata();
 
         $this->expected = true;
         $this->actual = array_key_exists('promotion_types', $data['rule_types']['rule_product_class']);
