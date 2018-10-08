@@ -47,7 +47,7 @@ class ProductClassPricePercentPromotion extends Promotion implements PromotionIn
     public function getDiscountItems($ProductClass)
     {
         if (!$ProductClass instanceof ProductClass) {
-            throw new \InvalidArgumentException(sprintf('$ProductClass must be %s type', ProductClass::class));
+            return [];
         }
 
         $DiscountType = $this->entityManager->find(OrderItemType::class,  OrderItemType::DISCOUNT);

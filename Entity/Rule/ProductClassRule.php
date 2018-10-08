@@ -18,6 +18,11 @@ class ProductClassRule extends Rule implements RuleInterface
     const TYPE = 'rule_product_class';
 
     /**
+     * @var array
+     */
+    protected $cached;
+
+    /**
      * @var Operator\OperatorFactory
      */
     protected $operatorFactory;
@@ -100,10 +105,17 @@ class ProductClassRule extends Rule implements RuleInterface
     public function match($ProductClass): bool
     {
         if (!$ProductClass instanceof ProductClass) {
-            throw new \InvalidArgumentException(sprintf('$ProductClass must be %s object', ProductClass::class));
+            return false;
         }
 
-        return $this->operatorFactory->createByType($this->getOperator())->match($this->getConditions(), $ProductClass);
+        if (isset($this->cached[__METHOD__ . $ProductClass->getId()])) {
+            return $this->cached[__METHOD__ . $ProductClass->getId()];
+        }
+
+        $this->cached[__METHOD__ . $ProductClass->getId()] = $this->operatorFactory
+            ->createByType($this->getOperator())->match($this->getConditions(), $ProductClass);
+
+        return $this->cached[__METHOD__ . $ProductClass->getId()];
     }
 
     /**
@@ -115,9 +127,19 @@ class ProductClassRule extends Rule implements RuleInterface
     public function getDiscountItems($ProductClass): array
     {
         if (!$ProductClass instanceof ProductClass) {
-            throw new \InvalidArgumentException(sprintf('$ProductClass must be %s object', ProductClass::class));
+            return [];
         }
 
-        return $this->getPromotion()->getDiscountItems($ProductClass);
+        if (!$this->match($ProductClass)) {
+            return [];
+        }
+
+        if (isset($this->cached[__METHOD__ . $ProductClass->getId()])) {
+            return $this->cached[__METHOD__ . $ProductClass->getId()];
+        }
+
+        $this->cached[__METHOD__ . $ProductClass->getId()] = $this->getPromotion()->getDiscountItems($ProductClass);
+
+        return $this->cached[__METHOD__ . $ProductClass->getId()];
     }
 }
