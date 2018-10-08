@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\FlashSale\Service\Rule;
+namespace Plugin\FlashSale\Service\Event;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Eccube\Event\TemplateEvent;
@@ -20,6 +20,7 @@ use Eccube\Entity\ProductClass;
 use Eccube\Common\EccubeConfig;
 use Plugin\FlashSale\Repository\FlashSaleRepository;
 use Plugin\FlashSale\Entity\FlashSale;
+use Plugin\FlashSale\Service\Rule\RuleInterface;
 
 class ProductClassRuleEventSubscriber implements EventSubscriberInterface
 {
@@ -63,6 +64,9 @@ class ProductClassRuleEventSubscriber implements EventSubscriberInterface
         return [
             'Product/detail.twig' => 'onTemplateProductDetail',
             'Product/list.twig' => 'onTemplateProductList',
+            'Cart/index.twig' => 'onTemplateCartIndex',
+            'Shopping/index.twig' => 'onTemplateShoppingIndex',
+            'Shopping/confirm.twig' => 'onTemplateShoppingConfirm',
         ];
     }
 
@@ -90,7 +94,7 @@ class ProductClassRuleEventSubscriber implements EventSubscriberInterface
                     $discountPrice = -1 * $discountItem->getPrice();
                     $discountPercent = round($discountPrice * 100 / $ProductClass->getPrice02());
                     $json[$ProductClass->getId()] = [
-                        'message' => '<p><span>'.$this->formatter->formatCurrency($ProductClass->getPrice02IncTax() - $discountPrice, $this->eccubeConfig['currency']).'</span> (-'.$discountPercent.'%)</p>',
+                        'message' => '<p class="ec-color-red"><span>'.$this->formatter->formatCurrency($ProductClass->getPrice02IncTax() - $discountPrice, $this->eccubeConfig['currency']).'</span> (-'.$discountPercent.'%)</p>',
                     ];
                 }
             }
@@ -130,7 +134,7 @@ class ProductClassRuleEventSubscriber implements EventSubscriberInterface
                         $discountPrice = -1 * $discountItem->getPrice();
                         $discountPercent = round($discountPrice * 100 / $ProductClass->getPrice02());
                         $json[$ProductClass->getId()] = [
-                            'message' => '<p><span>'.$this->formatter->formatCurrency($ProductClass->getPrice02IncTax() - $discountPrice, $this->eccubeConfig['currency']).'</span> (-'.$discountPercent.'%)</p>',
+                            'message' => '<p class="ec-color-red"><span>'.$this->formatter->formatCurrency($ProductClass->getPrice02IncTax() - $discountPrice, $this->eccubeConfig['currency']).'</span> (-'.$discountPercent.'%)</p>',
                         ];
                     }
                 }
@@ -143,5 +147,47 @@ class ProductClassRuleEventSubscriber implements EventSubscriberInterface
 
         $event->setParameter('ProductFlashSale', json_encode($json));
         $event->addSnippet('@FlashSale/default/list.twig');
+    }
+
+    /**
+     * Display price of flashsale on cart index template
+     *
+     * @param TemplateEvent $event
+     */
+    public function onTemplateCartIndex(TemplateEvent $event)
+    {
+        $source = $event->getSource();
+
+        $source = str_replace('CartItem.price|price', 'flashSalePrice(CartItem, CartItem.price)|raw', $source);
+
+        $event->setSource($source);
+    }
+
+    /**
+     * Display price of flashsale on shopping index template
+     *
+     * @param TemplateEvent $event
+     */
+    public function onTemplateShoppingIndex(TemplateEvent $event)
+    {
+        $source = $event->getSource();
+
+        $source = str_replace('orderItem.priceIncTax|price', 'flashSalePrice(orderItem,orderItem.priceIncTax)|raw', $source);
+
+        $event->setSource($source);
+    }
+
+    /**
+     * Display price of flashsale on shopping confirm template
+     *
+     * @param TemplateEvent $event
+     */
+    public function onTemplateShoppingConfirm(TemplateEvent $event)
+    {
+        $source = $event->getSource();
+
+        $source = str_replace('orderItem.priceIncTax|price', 'flashSalePrice(orderItem,orderItem.priceIncTax)|raw', $source);
+
+        $event->setSource($source);
     }
 }

@@ -124,7 +124,7 @@ class FlashSaleController extends AbstractController
                 foreach ($FlashSale->getRules() as $Rule) {
                     $Promotion = $Rule->getPromotion();
                     if ($Promotion instanceof Promotion) {
-                        if (isset($Rule->modified)) {
+                        if (isset($Promotion->modified)) {
                             $this->entityManager->persist($Promotion);
                         } else {
                             $this->entityManager->remove($Promotion);
@@ -142,6 +142,12 @@ class FlashSaleController extends AbstractController
                         $this->entityManager->persist($Rule);
                     } else {
                         $this->entityManager->remove($Rule);
+                    }
+
+                    if (isset($Rule->removed)) {
+                        foreach ($Rule->removed as $removedEntity) {
+                            $this->entityManager->remove($removedEntity);
+                        }
                     }
                 }
 

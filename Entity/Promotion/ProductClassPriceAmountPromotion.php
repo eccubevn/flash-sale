@@ -27,9 +27,9 @@ use Plugin\FlashSale\Entity\Promotion;
 /**
  * @ORM\Entity
  */
-class ProductClassPricePercentPromotion extends Promotion implements PromotionInterface
+class ProductClassPriceAmountPromotion extends Promotion implements PromotionInterface
 {
-    const TYPE = 'promotion_product_class_price_percent';
+    const TYPE = 'promotion_product_class_price_amount';
 
     /**
      * @var EntityManagerInterface
@@ -68,11 +68,9 @@ class ProductClassPricePercentPromotion extends Promotion implements PromotionIn
         $TaxInclude = $this->entityManager->find(TaxDisplayType::class, TaxDisplayType::INCLUDED);
         $Taxation = $this->entityManager->find(TaxType::class, TaxType::NON_TAXABLE);
 
-        $price = $ProductClass->getPrice02() / 100 * $this->getValue();
-
         $OrderItem = new OrderItem();
         $OrderItem->setProductName($DiscountType->getName())
-            ->setPrice(-1 * $price)
+            ->setPrice(-1 * $this->getValue())
             ->setQuantity(1)
             ->setTax(0)
             ->setTaxRate(0)
