@@ -8,18 +8,6 @@
  * file that was distributed with this source code.
  */
 #}
-
-<style type="text/css">
-    .line-through {
-        text-decoration: line-through;
-    }
-
-    .discount p {
-        font-weight: bold;
-        color: red;
-    }
-</style>
-
 <script type="text/javascript">
     $(function () {
         var _flashSaleProductJson = $.parseJSON({{ ProductFlashSale|json_encode|raw }});
@@ -28,14 +16,13 @@
             var ProductClassId = formProductClass.find('form input[name="ProductClass"]').val();
             _resetDiscount(formProductClass);
             if (_flashSaleProductJson[ProductClassId]) {
-                console.log(ProductClassId, _flashSaleProductJson[ProductClassId]);
-                $('.price02-default', formProductClass).addClass('line-through');
+                $('.price02-default', formProductClass).html('<del>' + $('.price02-default', formProductClass).html() + '</del>');
                 $('.price02-default', formProductClass).after('<div class="discount">' + _flashSaleProductJson[ProductClassId].message + '</div>');
             }
         };
 
         var _resetDiscount = function (formProductClass) {
-            $('.price02-default', formProductClass).removeClass('line-through');
+            $('.price02-default', formProductClass).html($('.price02-default', formProductClass).text());
             formProductClass.find('.discount').remove();
         };
 

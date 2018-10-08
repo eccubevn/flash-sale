@@ -18,6 +18,7 @@ use Eccube\Entity\ProductClass;
 use Plugin\FlashSale\Entity\Rule;
 use Plugin\FlashSale\Entity\Condition\ProductClassIdCondition;
 use Plugin\FlashSale\Entity\Promotion\ProductClassPricePercentPromotion;
+use Plugin\FlashSale\Entity\Promotion\ProductClassPriceAmountPromotion;
 use Plugin\FlashSale\Service\Rule\RuleInterface;
 use Plugin\FlashSale\Service\Operator as Operator;
 use Plugin\FlashSale\Service\Metadata\DiscriminatorManager;
@@ -107,6 +108,7 @@ class ProductClassRule extends Rule implements RuleInterface
     {
         return [
             ProductClassPricePercentPromotion::TYPE,
+            ProductClassPriceAmountPromotion::TYPE,
         ];
     }
 

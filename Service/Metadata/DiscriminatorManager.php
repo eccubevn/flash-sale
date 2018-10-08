@@ -17,6 +17,7 @@ use Plugin\FlashSale\Entity\Rule\ProductClassRule;
 use Plugin\FlashSale\Entity\Condition\ProductClassIdCondition;
 use Plugin\FlashSale\Entity\Promotion\ProductClassPricePercentPromotion;
 use Plugin\FlashSale\Service\Operator as Operator;
+use Plugin\FlashSale\Entity\Promotion\ProductClassPriceAmountPromotion;
 
 class DiscriminatorManager
 {
@@ -97,6 +98,15 @@ class DiscriminatorManager
                     ->setDescription('');
 
                 return $this->container[ProductClassPricePercentPromotion::TYPE];
+
+            case ProductClassPriceAmountPromotion::TYPE:
+                $this->container[ProductClassPriceAmountPromotion::TYPE] = (new Discriminator())
+                    ->setType(ProductClassPriceAmountPromotion::TYPE)
+                    ->setName('Product Class Price Amount Promotion')
+                    ->setClass(ProductClassPriceAmountPromotion::class)
+                    ->setDescription('');
+
+                return $this->container[ProductClassPriceAmountPromotion::TYPE];
 
             default:
         }

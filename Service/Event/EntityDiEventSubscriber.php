@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\FlashSale\Service\Doctrine;
+namespace Plugin\FlashSale\Service\Event;
 
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\EntityManagerInterface;
@@ -24,7 +24,7 @@ use Plugin\FlashSale\Service\Operator\OperatorInterface;
 use Plugin\FlashSale\Service\Operator\OperatorFactory;
 use Plugin\FlashSale\Service\Metadata\DiscriminatorManager;
 
-class DiEventSubscriber implements EventSubscriber
+class EntityDiEventSubscriber implements EventSubscriber
 {
     /**
      * @var array

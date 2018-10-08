@@ -342,7 +342,11 @@ class FlashSale
                 $Promotion = $Rule->getPromotion();
                 if (!$Promotion) {
                     $Promotion = PromotionFactory::createFromArray($rule['promotion']);
+                } elseif ($Promotion::TYPE != $rule['promotion']['type']) {
+                    $Rule->removed[] = $Promotion;
+                    $Promotion = PromotionFactory::createFromArray($rule['promotion']);
                 }
+                $Promotion->modified = true;
                 $Promotion->setValue($rule['promotion']['value']);
                 $Promotion->setRule($Rule);
                 $Rule->setPromotion($Promotion);
@@ -354,6 +358,12 @@ class FlashSale
                 foreach ($rule['conditions'] as $condition) {
                     if (!empty($condition['id'])) {
                         $Condition = $Rule->getConditions()->get($condition['id']);
+                        if ($Condition::TYPE != $condition['type']) {
+                            $Rule->getConditions()->remove($Condition);
+                            $Rule->removed[] = $Condition;
+                            $Condition = ConditionFactory::createFromArray($condition);
+                            $Rule->getConditions()->add($Condition);
+                        }
                     } else {
                         $Condition = ConditionFactory::createFromArray($condition);
                         $Rule->getConditions()->add($Condition);

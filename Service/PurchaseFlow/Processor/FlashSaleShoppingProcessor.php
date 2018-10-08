@@ -81,8 +81,10 @@ class FlashSaleShoppingProcessor implements DiscountProcessor
                 }
 
                 $DiscountItems = $Rule->getDiscountItems($OrderItem->getProductClass());
+                /** @var OrderItem $DiscountItem */
                 foreach ($DiscountItems as $DiscountItem) {
                     $DiscountItem->setProcessorName(static::class)
+                        ->setQuantity($OrderItem->getQuantity())
                         ->setOrder($itemHolder);
                     $itemHolder->addItem($DiscountItem);
                 }
