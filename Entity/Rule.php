@@ -1,12 +1,22 @@
 <?php
+
+/*
+ * This file is part of EC-CUBE
+ *
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * http://www.lockon.co.jp/
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Plugin\FlashSale\Entity;
 
-use Doctrine\Common\Collections\Collection as DoctrineCollection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Eccube\Entity\AbstractEntity;
 use Plugin\FlashSale\Entity\Rule\ProductClassRule;
-use Plugin\FlashSale\Repository\RuleRepository;
 use Plugin\FlashSale\Service\Metadata\DiscriminatorInterface;
 use Plugin\FlashSale\Service\Promotion\PromotionInterface;
 
@@ -90,6 +100,7 @@ abstract class Rule extends AbstractEntity
 
     /**
      * @param Condition $condition
+     *
      * @return bool
      */
     public function removeCondition(Condition $condition)
@@ -106,11 +117,13 @@ abstract class Rule extends AbstractEntity
      * Set FlashSale
      *
      * @param $FlashSale
+     *
      * @return $this
      */
     public function setFlashSale(FlashSale $FlashSale)
     {
         $this->FlashSale = $FlashSale;
+
         return $this;
     }
 
@@ -176,6 +189,7 @@ abstract class Rule extends AbstractEntity
      * Get data as array
      *
      * @param $data
+     *
      * @return array
      */
     public function rawData($data = null)
@@ -186,7 +200,7 @@ abstract class Rule extends AbstractEntity
             $result = [
                 'id' => intval($this->getId()),
                 'type' => static::TYPE,
-                'operator' => $this->getOperator()
+                'operator' => $this->getOperator(),
             ];
             /** @var Condition $Condition */
             foreach ($this->getConditions() as $Condition) {

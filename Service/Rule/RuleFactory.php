@@ -1,8 +1,20 @@
 <?php
+
+/*
+ * This file is part of EC-CUBE
+ *
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * http://www.lockon.co.jp/
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Plugin\FlashSale\Service\Rule;
 
 use Plugin\FlashSale\Entity\Rule;
-use Plugin\FlashSale\Entity\ProductClassRule;
+use Plugin\FlashSale\Entity\Rule\ProductClassRule;
 
 class RuleFactory
 {
@@ -10,16 +22,21 @@ class RuleFactory
      * Create Rule from array
      *
      * @param array $data
+     *
      * @return Rule
      */
     public static function createFromArray(array $data)
     {
+        if (!isset($data['type'])) {
+            throw new \InvalidArgumentException('$data[type] must be required');
+        }
+
         switch ($data['type']) {
-            case ProductClassRule::TYPE:
+            case Rule\ProductClassRule::TYPE:
                 $Rule = new ProductClassRule();
                 break;
             default:
-                $Rule = new Rule();
+                throw new \InvalidArgumentException($data['type'].' unsupported');
         }
         if (isset($data['operator'])) {
             $Rule->setOperator($data['operator']);

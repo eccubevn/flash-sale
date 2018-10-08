@@ -1,4 +1,16 @@
 <?php
+
+/*
+ * This file is part of EC-CUBE
+ *
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * http://www.lockon.co.jp/
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Plugin\FlashSale\Service\Metadata;
 
 use Plugin\FlashSale\Entity\Rule\ProductClassRule;
@@ -17,6 +29,7 @@ class DiscriminatorManager
      * Create a discriminator
      *
      * @param $discriminatorType
+     *
      * @return DiscriminatorInterface
      */
     public function create($discriminatorType)
@@ -28,6 +41,7 @@ class DiscriminatorManager
                     ->setName('is all of')
                     ->setClass(Operator\AllOperator::class)
                     ->setDescription('');
+
                 return $this->container[Operator\AllOperator::TYPE];
 
             case Operator\InOperator::TYPE:
@@ -36,6 +50,7 @@ class DiscriminatorManager
                     ->setName('is one of')
                     ->setClass(Operator\InOperator::class)
                     ->setDescription('');
+
                 return $this->container[Operator\InOperator::TYPE];
 
             case Operator\EqualOperator::TYPE:
@@ -44,6 +59,7 @@ class DiscriminatorManager
                     ->setName('is equal to')
                     ->setClass(Operator\EqualOperator::class)
                     ->setDescription('');
+
                 return $this->container[Operator\EqualOperator::TYPE];
 
             case Operator\NotEqualOperator::TYPE:
@@ -52,6 +68,7 @@ class DiscriminatorManager
                     ->setName('is not equal to')
                     ->setClass(Operator\NotEqualOperator::class)
                     ->setDescription('');
+
                 return $this->container[Operator\NotEqualOperator::TYPE];
 
             case ProductClassRule::TYPE:
@@ -69,6 +86,7 @@ class DiscriminatorManager
                     ->setName('Product Class Id Condition')
                     ->setClass(ProductClassIdCondition::class)
                     ->setDescription('');
+
                 return $this->container[ProductClassIdCondition::TYPE];
 
             case ProductClassPricePercentPromotion::TYPE:
@@ -77,18 +95,20 @@ class DiscriminatorManager
                     ->setName('Product Class Price Percent Promotion')
                     ->setClass(ProductClassPricePercentPromotion::class)
                     ->setDescription('');
+
                 return $this->container[ProductClassPricePercentPromotion::TYPE];
 
             default:
         }
 
-        throw new \InvalidArgumentException('Unsupported ' . $discriminatorType . ' type');
+        throw new \InvalidArgumentException('Unsupported '.$discriminatorType.' type');
     }
 
     /**
      * Get a discriminator
      *
      * @param $discriminatorType
+     *
      * @return DiscriminatorInterface
      */
     public function get($discriminatorType)

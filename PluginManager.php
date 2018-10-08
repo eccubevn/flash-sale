@@ -40,6 +40,7 @@ class PluginManager extends AbstractPluginManager
      * @var string
      */
     private $blockFileName = 'flash_sale';
+
     /**
      * PluginManager constructor.
      */
@@ -93,7 +94,6 @@ class PluginManager extends AbstractPluginManager
     }
 
     /**
-     *
      * @param ContainerInterface $container
      *
      * @throws \Exception
@@ -142,7 +142,6 @@ class PluginManager extends AbstractPluginManager
     }
 
     /**
-     *
      * @param ContainerInterface $container
      *
      * @throws \Exception

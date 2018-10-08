@@ -1,4 +1,16 @@
 <?php
+
+/*
+ * This file is part of EC-CUBE
+ *
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * http://www.lockon.co.jp/
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Plugin\FlashSale\Service\Rule;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -6,11 +18,8 @@ use Eccube\Event\TemplateEvent;
 use Eccube\Entity\Product;
 use Eccube\Entity\ProductClass;
 use Eccube\Common\EccubeConfig;
-use Plugin\FlashSale\Service\Rule\RuleInterface;
 use Plugin\FlashSale\Repository\FlashSaleRepository;
 use Plugin\FlashSale\Entity\FlashSale;
-
-
 
 class ProductClassRuleEventSubscriber implements EventSubscriberInterface
 {
@@ -31,6 +40,7 @@ class ProductClassRuleEventSubscriber implements EventSubscriberInterface
 
     /**
      * ProductClassRuleEventSubscriber constructor.
+     *
      * @param FlashSaleRepository $flashSaleRepository
      * @param EccubeConfig $eccubeConfig
      */
@@ -40,7 +50,7 @@ class ProductClassRuleEventSubscriber implements EventSubscriberInterface
     ) {
         $this->eccubeConfig = $eccubeConfig;
         $this->flashSaleRepository = $flashSaleRepository;
-        $this->formatter =  new \NumberFormatter($this->eccubeConfig['locale'], \NumberFormatter::CURRENCY);
+        $this->formatter = new \NumberFormatter($this->eccubeConfig['locale'], \NumberFormatter::CURRENCY);
     }
 
     /**
@@ -78,9 +88,9 @@ class ProductClassRuleEventSubscriber implements EventSubscriberInterface
                     $discountItems = $Rule->getDiscountItems($ProductClass);
                     $discountItem = current($discountItems);
                     $discountPrice = -1 * $discountItem->getPrice();
-                    $discountPercent = round($discountPrice*100/$ProductClass->getPrice02());
+                    $discountPercent = round($discountPrice * 100 / $ProductClass->getPrice02());
                     $json[$ProductClass->getId()] = [
-                        'message' => '<p><span>'.$this->formatter->formatCurrency($ProductClass->getPrice02IncTax() - $discountPrice, $this->eccubeConfig['currency']).'</span> (-'.$discountPercent.'%)</p>'
+                        'message' => '<p><span>'.$this->formatter->formatCurrency($ProductClass->getPrice02IncTax() - $discountPrice, $this->eccubeConfig['currency']).'</span> (-'.$discountPercent.'%)</p>',
                     ];
                 }
             }
@@ -118,9 +128,9 @@ class ProductClassRuleEventSubscriber implements EventSubscriberInterface
                         $discountItems = $Rule->getDiscountItems($ProductClass);
                         $discountItem = current($discountItems);
                         $discountPrice = -1 * $discountItem->getPrice();
-                        $discountPercent = round($discountPrice*100/$ProductClass->getPrice02());
+                        $discountPercent = round($discountPrice * 100 / $ProductClass->getPrice02());
                         $json[$ProductClass->getId()] = [
-                            'message' => '<p><span>'.$this->formatter->formatCurrency($ProductClass->getPrice02IncTax() - $discountPrice, $this->eccubeConfig['currency']).'</span> (-'.$discountPercent.'%)</p>'
+                            'message' => '<p><span>'.$this->formatter->formatCurrency($ProductClass->getPrice02IncTax() - $discountPrice, $this->eccubeConfig['currency']).'</span> (-'.$discountPercent.'%)</p>',
                         ];
                     }
                 }
