@@ -8,18 +8,6 @@
  * file that was distributed with this source code.
  */
 #}
-
-<style type="text/css">
-    .line-through {
-        text-decoration: line-through;
-    }
-
-    .discount p {
-        padding: 0.3em;
-        font-weight: bold;
-    }
-</style>
-
 <script type="text/javascript">
     $(function () {
         var _flashSaleProductJson = $.parseJSON({{ ProductFlashSale|json_encode|raw }});
@@ -27,14 +15,13 @@
         var _setDiscount = function (ProductClassId) {
             _resetDiscount();
             if (_flashSaleProductJson[ProductClassId]) {
-                console.log(ProductClassId, _flashSaleProductJson[ProductClassId]);
-                $('.ec-price__price', productPriceEl).addClass('line-through');
+                $('.ec-price__price', productPriceEl).html('<del>' + $('.ec-price__price', productPriceEl).html() + '</del>');
                 $('.ec-price', productPriceEl).after('<div class="discount">' + _flashSaleProductJson[ProductClassId].message + '</div>');
             }
         };
 
         var _resetDiscount = function () {
-            $('.ec-price__price', productPriceEl).removeClass('line-through');
+            $('.ec-price__price', productPriceEl).html($('.ec-price__price', productPriceEl).text());
             productPriceEl.find('.discount').remove();
         };
 

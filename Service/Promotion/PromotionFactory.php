@@ -14,6 +14,7 @@
 namespace Plugin\FlashSale\Service\Promotion;
 
 use Plugin\FlashSale\Entity\Promotion\ProductClassPricePercentPromotion;
+use Plugin\FlashSale\Entity\Promotion\ProductClassPriceAmountPromotion;
 
 class PromotionFactory
 {
@@ -34,6 +35,10 @@ class PromotionFactory
             case ProductClassPricePercentPromotion::TYPE:
                 $Promotion = new ProductClassPricePercentPromotion();
                 break;
+            case ProductClassPriceAmountPromotion::TYPE:
+                $Promotion = new ProductClassPriceAmountPromotion();
+                break;
+
             default:
                 throw new \InvalidArgumentException($data['type'].' unsupported');
         }

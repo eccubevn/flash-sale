@@ -17,6 +17,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Eccube\Entity\AbstractEntity;
 use Plugin\FlashSale\Repository\PromotionRepository;
 use Plugin\FlashSale\Entity\Promotion\ProductClassPricePercentPromotion;
+use Plugin\FlashSale\Entity\Promotion\ProductClassPriceAmountPromotion;
 use Plugin\FlashSale\Service\Promotion\PromotionInterface;
 
 /**
@@ -24,7 +25,10 @@ use Plugin\FlashSale\Service\Promotion\PromotionInterface;
  * @ORM\Entity(repositoryClass=PromotionRepository::class)
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="discriminator_type", type="string", length=255)
- * @ORM\DiscriminatorMap({ProductClassPricePercentPromotion::TYPE=ProductClassPricePercentPromotion::class})
+ * @ORM\DiscriminatorMap({
+ *     ProductClassPricePercentPromotion::TYPE=ProductClassPricePercentPromotion::class,
+ *     ProductClassPriceAmountPromotion::TYPE=ProductClassPriceAmountPromotion::class,
+ * })
  */
 abstract class Promotion extends AbstractEntity implements PromotionInterface
 {
