@@ -38,6 +38,8 @@ class InOperator implements OperatorInterface
         foreach ($condition as $cond) {
             if ($cond instanceof ConditionInterface) {
                 $result = $cond->match($data);
+                dump($result);
+                die;
             } else {
                 $result = ($cond == $data);
             }

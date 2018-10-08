@@ -31,11 +31,6 @@ use Plugin\FlashSale\Service\FlashSaleService;
 class FlashSaleController extends AbstractController
 {
     /**
-     * @var ConfigRepository
-     */
-    protected $configRepository;
-
-    /**
      * @var FlashSaleRepository
      */
     protected $flashSaleRepository;
@@ -53,18 +48,15 @@ class FlashSaleController extends AbstractController
     /**
      * FlashSaleController constructor.
      *
-     * @param ConfigRepository $configRepository
      * @param FlashSaleRepository $flashSaleRepository
      * @param PageMaxRepository $pageMaxRepository
      * @param FlashSaleService $flashSaleService
      */
     public function __construct(
-        ConfigRepository $configRepository,
         FlashSaleRepository $flashSaleRepository,
         PageMaxRepository $pageMaxRepository,
         FlashSaleService $flashSaleService
     ) {
-        $this->configRepository = $configRepository;
         $this->flashSaleRepository = $flashSaleRepository;
         $this->pageMaxRepository = $pageMaxRepository;
         $this->flashSaleService = $flashSaleService;

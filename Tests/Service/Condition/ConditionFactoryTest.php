@@ -11,8 +11,9 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\FlashSale\Service\Condition;
+namespace Plugin\FlashSale\Tests\Service\Condition;
 
+use Plugin\FlashSale\Service\Condition\ConditionFactory;
 use Plugin\FlashSale\Tests\Service\AbstractServiceTestCase;
 
 class ConditionFactoryTest extends AbstractServiceTestCase

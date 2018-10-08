@@ -21,6 +21,7 @@ use Plugin\FlashSale\Entity\Promotion;
 use Plugin\FlashSale\Entity\Rule\ProductClassRule;
 use Plugin\FlashSale\Repository\FlashSaleRepository;
 use Plugin\FlashSale\Service\Operator\InOperator;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class FlashSaleControllerTest.
@@ -156,6 +157,55 @@ class FlashSaleControllerTest extends AbstractAdminWebTestCase
         $this->verify();
     }
 
+    public function testUpdateNotFound()
+    {
+        $faker = $this->getFaker('en_US');
+        $newName = $faker->name().rand(111, 999);
+        $rules[] = $this->rulesData();
+
+        $flash_sale_admin = [
+            '_token' => 'dummy',
+            'name' => $newName,
+            'description' => $faker->text(),
+            'from_time' => [
+                'date' => [
+                    'year' => 2019,
+                    'month' => 1,
+                    'day' => 1,
+                ],
+                'time' => [
+                    'hour' => 0,
+                    'minute' => 0,
+                ],
+            ],
+            'to_time' => [
+                'date' => [
+                    'year' => 2019,
+                    'month' => 1,
+                    'day' => 1,
+                ],
+                'time' => [
+                    'hour' => 23,
+                    'minute' => 59,
+                ],
+            ],
+            'rules' => json_encode($rules),
+            'status' => FlashSale::STATUS_ACTIVATED,
+        ];
+
+        $this->client->request(
+            'POST',
+            $this->generateUrl('flash_sale_admin_edit', ['id' => 99999999]),
+            [
+                'flash_sale_admin' => $flash_sale_admin,
+            ]
+        );
+
+        $this->expected = Response::HTTP_NOT_FOUND;
+        $this->actual = $this->client->getResponse()->getStatusCode();
+        $this->verify();
+    }
+
     public function testDelete()
     {
         $FlashSales = $this->flashSaleRepository->findBy(['status' => FlashSale::STATUS_ACTIVATED]);
@@ -215,6 +265,7 @@ class FlashSaleControllerTest extends AbstractAdminWebTestCase
                 $this->entityManager->remove($Rule);
             }
         }
+        $this->entityManager->flush();
 
         return $FlashSale;
     }
