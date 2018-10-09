@@ -15,6 +15,7 @@ namespace Plugin\FlashSale\Tests\Entity;
 
 use Eccube\Tests\EccubeTestCase;
 use Plugin\FlashSale\Entity\Condition\ProductClassIdCondition;
+use Plugin\FlashSale\Entity\FlashSale;
 use Plugin\FlashSale\Entity\Promotion\ProductClassPricePercentPromotion;
 use Plugin\FlashSale\Entity\Rule\ProductClassRule;
 use Plugin\FlashSale\Service\Metadata\DiscriminatorManager;
@@ -27,7 +28,7 @@ use Plugin\FlashSale\Service\Operator\OperatorFactory;
  *
  * @author Kentaro Ohkouchi
  */
-class ProductClassRuleTest extends EccubeTestCase
+class ProductClassRuleTest extends AbstractEntityTest
 {
     public function setUp()
     {
@@ -37,11 +38,14 @@ class ProductClassRuleTest extends EccubeTestCase
     public function testConstructor()
     {
         $productClassRule = new ProductClassRule();
+        $productClassRule->setId(1);
         $productClassRule = $productClassRule->toArray();
 
-        $this->expected = null;
+        $this->expected = 1;
         $this->actual = $productClassRule['id'];
         $this->verify();
+
+        $this->expected = null;
 
         $this->actual = $productClassRule['operator'];
         $this->verify();
@@ -60,6 +64,31 @@ class ProductClassRuleTest extends EccubeTestCase
 
         $this->actual = $productClassRule['discriminatorManager'];
         $this->verify();
+    }
+
+    public function testAddConditions()
+    {
+        $condition = new ProductClassIdCondition();
+        $condition->setId(100);
+        $condition->setValue(5);
+        $productClassRule = new ProductClassRule();
+        $productClassRule->addConditions($condition);
+
+        self::assertEquals($condition->getId(), $productClassRule->getConditions()->get(0)->getId());
+    }
+
+
+    public function testRemoveConditions()
+    {
+        $condition = new ProductClassIdCondition();
+        $condition->setId(100);
+        $condition->setValue(5);
+        $productClassRule = new ProductClassRule();
+        $productClassRule->addConditions($condition);
+        self::assertEquals($condition->getId(), $productClassRule->getConditions()->get(0)->getId());
+
+        $productClassRule->removeCondition($condition);
+        self::assertEquals([], $productClassRule->getConditions()->getKeys());
     }
 
     public function testDiscriminatorManager()
@@ -103,5 +132,14 @@ class ProductClassRuleTest extends EccubeTestCase
         $data = $productClassRule->getPromotionTypes();
 
         self::assertArraySubset([ProductClassPricePercentPromotion::TYPE], $data);
+    }
+
+    public function testGetFlashSale()
+    {
+        $FlashSale = new FlashSale();
+        $productClassRule = new ProductClassRule();
+        $productClassRule->setFlashSale($FlashSale);
+
+        self::assertEquals($FlashSale, $productClassRule->getFlashSale());
     }
 }

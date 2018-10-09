@@ -15,6 +15,7 @@ namespace Plugin\FlashSale\Tests\Entity;
 
 use Doctrine\ORM\Mapping\Id;
 use Eccube\Entity\AbstractEntity;
+use Eccube\Tests\EccubeTestCase;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -22,7 +23,7 @@ use PHPUnit\Framework\TestCase;
  *
  * @author Kentaro Ohkouchi
  */
-class AbstractEntityTest extends TestCase
+class AbstractEntityTest extends EccubeTestCase
 {
     private $objEntity;
 
