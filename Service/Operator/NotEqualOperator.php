@@ -44,20 +44,28 @@ class NotEqualOperator implements OperatorInterface
         $rule = $condition->getRule();
         switch ($rule->getOperator()) {
             case AllOperator::TYPE:
-                $qb->andWhere($qb->expr()->neq('pc.'.$condition->getAttribute(), $condition->getValue()));
+                if ($condition instanceof Condition\ProductClassIdCondition) {
+                    $qb->andWhere($qb->expr()->neq('pc.id', $condition->getValue()));
+                }
                 break;
 
             case EqualOperator::TYPE:
-                $qb->andWhere($qb->expr()->neq('pc.'.$condition->getAttribute(), $condition->getValue()));
+                if ($condition instanceof Condition\ProductClassIdCondition) {
+                    $qb->andWhere($qb->expr()->neq('pc.id', $condition->getValue()));
+                }
                 break;
 
             case InOperator::TYPE:
-                $qb->orWhere($qb->expr()->neq('pc.'.$condition->getAttribute(), $condition->getValue()));
+                if ($condition instanceof Condition\ProductClassIdCondition) {
+                    $qb->orWhere($qb->expr()->neq('pc.id', $condition->getValue()));
+                }
                 break;
 
                 // Todo: confuse
             case NotEqualOperator::TYPE:
-                $qb->andWhere($qb->expr()->neq('pc.'.$condition->getAttribute(), $condition->getValue()));
+                if ($condition instanceof Condition\ProductClassIdCondition) {
+                    $qb->andWhere($qb->expr()->neq('pc.id', $condition->getValue()));
+                }
                 break;
             default:
                 break;

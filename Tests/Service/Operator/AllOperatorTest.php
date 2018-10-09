@@ -15,13 +15,13 @@ namespace Plugin\FlashSale\Service\Operator;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Plugin\FlashSale\Entity\Condition\ProductClassIdCondition;
-use Plugin\FlashSale\Entity\Rule;
 use Plugin\FlashSale\Tests\Service\AbstractServiceTestCase;
+use Plugin\FlashSale\Entity\Rule;
 
-class InOperatorTest extends AbstractServiceTestCase
+class AllOperatorTest extends AbstractServiceTestCase
 {
     /**
-     * @var InOperator
+     * @var AllOperator
      */
     protected $operator;
 
@@ -32,28 +32,29 @@ class InOperatorTest extends AbstractServiceTestCase
     {
         parent::setUp();
 
-        $this->operator = new InOperator();
+        $this->operator = new AllOperator();
     }
 
     public function testGetName()
     {
-        self::assertEquals('is one of', $this->operator->getName());
+        self::assertEquals('is all of', $this->operator->getName());
     }
 
     public function testGetType()
     {
-        self::assertEquals(InOperator::TYPE, $this->operator->getType());
+        self::assertEquals(AllOperator::TYPE, $this->operator->getType());
     }
 
     public function testMatchScalarTypeTrue()
     {
-        self::assertTrue($this->operator->match([1, 2, 3, 5, 6], 5));
-        self::assertTrue($this->operator->match('1,2,3,5,6', 5));
+        self::assertTrue($this->operator->match([5, 5, 5, 5, 5], 5));
+        self::assertTrue($this->operator->match('5,5,5,5,5', 5));
     }
 
     public function testMatchScalarTypeFalse()
     {
         self::assertFalse($this->operator->match([1, 2, 3, 5, 6], 10));
+        self::assertFalse($this->operator->match('1,2,3,4,5,6', 10));
     }
 
     public function testMatchConditionTrue()
@@ -76,7 +77,7 @@ class InOperatorTest extends AbstractServiceTestCase
         $condition1 = $this->getMockBuilder(ProductClassIdCondition::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $condition1->method('match')->willReturn(false);
+        $condition1->method('match')->willReturn(true);
         $condition2 = $this->getMockBuilder(ProductClassIdCondition::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -135,6 +136,6 @@ class InOperatorTest extends AbstractServiceTestCase
         $qb = $this->entityManager->createQueryBuilder();
         $this->operator->parseCondition($qb, $Condition);
 
-        self::assertEquals('pc.id NOT IN(1)', (string)$qb->getDQLPart('where'));
+        self::assertEquals('pc.id <> 1', (string)$qb->getDQLPart('where'));
     }
 }
