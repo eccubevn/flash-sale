@@ -13,6 +13,8 @@
 
 namespace Plugin\FlashSale\Service\Promotion;
 
+use Plugin\FlashSale\Entity\Promotion\ProductClassPriceAmountPromotion;
+use Plugin\FlashSale\Entity\Promotion\ProductClassPricePercentPromotion;
 use Plugin\FlashSale\Tests\Service\AbstractServiceTestCase;
 
 class PromotionFactoryTest extends AbstractServiceTestCase
@@ -25,16 +27,10 @@ class PromotionFactoryTest extends AbstractServiceTestCase
         parent::setUp();
     }
 
-    public function testCreateFromArray()
+    public function testCreateFromArray_Invalid_Type()
     {
         $rules = $this->rulesData();
         $promotion = $rules['promotion'];
-        $data = PromotionFactory::createFromArray($promotion);
-
-        $this->expected = true;
-        $this->actual = is_object($data);
-        $this->verify();
-
         $promotion['type'] = 'promotion_test_only';
         try {
             $data = PromotionFactory::createFromArray($promotion);
@@ -45,16 +41,35 @@ class PromotionFactoryTest extends AbstractServiceTestCase
         $this->expected = 'promotion_test_only unsupported';
         $this->actual = $data;
         $this->verify();
+    }
 
-        unset($promotion['type']);
+    public function testCreateFromArray_Valid_1()
+    {
+        $rules = $this->rulesData();
+        $rules['type'] = ProductClassPricePercentPromotion::TYPE;
         try {
-            $data = PromotionFactory::createFromArray($promotion);
+            $data = PromotionFactory::createFromArray($rules);
         } catch (\Exception $exception) {
-            $data = '$data[type] must be required';
+            $data = ProductClassPricePercentPromotion::TYPE.' unsupported';
         }
 
-        $this->expected = '$data[type] must be required';
-        $this->actual = $data;
+        $this->expected = true;
+        $this->actual = is_object($data);
+        $this->verify();
+    }
+
+    public function testCreateFromArray_Valid_2()
+    {
+        $rules = $this->rulesData();
+        $rules['type'] = ProductClassPriceAmountPromotion::TYPE;
+        try {
+            $data = PromotionFactory::createFromArray($rules);
+        } catch (\Exception $exception) {
+            $data = ProductClassPriceAmountPromotion::TYPE.' unsupported';
+        }
+
+        $this->expected = true;
+        $this->actual = is_object($data);
         $this->verify();
     }
 }

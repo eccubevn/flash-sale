@@ -152,6 +152,7 @@ class FlashSaleControllerTest extends AbstractAdminWebTestCase
         $this->expected = $newName;
         $this->actual = $newFlashSale->getName();
         $this->verify();
+
         $this->expected = $FlashSale->getFromTime();
         $this->actual = $newFlashSale->getFromTime();
         $this->verify();
@@ -224,6 +225,18 @@ class FlashSaleControllerTest extends AbstractAdminWebTestCase
         $countResult = $this->flashSaleRepository->findBy(['status' => FlashSale::STATUS_ACTIVATED]);
         $this->expected = $count - 1;
         $this->actual = count($countResult);
+        $this->verify();
+    }
+
+    public function testDeleteFail()
+    {
+        $this->client->request(
+            'DELETE',
+            $this->generateUrl('flash_sale_admin_delete', ['id' => 999999])
+        );
+
+        $this->expected = Response::HTTP_NOT_FOUND;
+        $this->actual = $this->client->getResponse()->getStatusCode();
         $this->verify();
     }
 

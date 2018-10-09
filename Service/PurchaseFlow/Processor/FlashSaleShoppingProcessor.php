@@ -68,6 +68,7 @@ class FlashSaleShoppingProcessor implements DiscountProcessor
     public function addDiscountItem(ItemHolderInterface $itemHolder, PurchaseContext $context)
     {
         $FlashSale = $this->flashSaleRepository->getAvailableFlashSale();
+
         if (!$FlashSale instanceof FlashSale) {
             return null;
         }
@@ -81,6 +82,7 @@ class FlashSaleShoppingProcessor implements DiscountProcessor
                 }
 
                 $DiscountItems = $Rule->getDiscountItems($OrderItem->getProductClass());
+
                 /** @var OrderItem $DiscountItem */
                 foreach ($DiscountItems as $DiscountItem) {
                     $DiscountItem->setProcessorName(static::class)
