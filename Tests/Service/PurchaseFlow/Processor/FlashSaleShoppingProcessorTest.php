@@ -13,15 +13,21 @@
 
 namespace Plugin\FlashSale\Tests\Service;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Eccube\Entity\Customer;
+use Eccube\Entity\Order;
 use Eccube\Repository\ProductClassRepository;
 use Eccube\Repository\ProductRepository;
 use Eccube\Service\CartService;
 use Eccube\Service\PurchaseFlow\PurchaseContext;
 use Eccube\Service\PurchaseFlow\PurchaseFlow;
 use Eccube\Util\StringUtil;
+use Plugin\FlashSale\Entity\FlashSale;
+use Plugin\FlashSale\Repository\FlashSaleRepository;
 use Plugin\FlashSale\Service\FlashSaleService;
+use Plugin\FlashSale\Service\PurchaseFlow\Processor\FlashSaleShoppingProcessor;
 
-class FlashSaleCartProcessorTest extends AbstractServiceTestCase
+class FlashSaleShoppingProcessorTest extends AbstractServiceTestCase
 {
     /** @var FlashSaleService */
     protected $flashSaleService;
@@ -38,6 +44,9 @@ class FlashSaleCartProcessorTest extends AbstractServiceTestCase
     /** @var PurchaseFlow */
     protected $purchaseFlow;
 
+    /** @var FlashSaleShoppingProcessor */
+    protected $flashSaleShoppingProcessor;
+
     /**
      * {@inheritdoc}
      */
@@ -45,31 +54,35 @@ class FlashSaleCartProcessorTest extends AbstractServiceTestCase
     {
         parent::setUp();
 
-        $this->flashSaleService = $this->container->get(FlashSaleService::class);
+        /*$this->flashSaleService = $this->container->get(FlashSaleService::class);
         $this->productRepository = $this->container->get(ProductRepository::class);
         $this->productClassRepository = $this->container->get(ProductClassRepository::class);
         $this->cartService = $this->container->get(CartService::class);
         $this->purchaseFlow = $this->container->get(PurchaseFlow::class);
+        $registry = $this->getMockBuilder('Symfony\Bridge\Doctrine\RegistryInterface')->getMock();
+        $mockFlashSaleRepo = $this->getMockBuilder(FlashSaleRepository::class)
+
+            ->setConstructorArgs([$this->container->get('doctrine')])
+            ->setMethods([
+                'getAvailableFlashSale' => function(){
+                return new FlashSale();
+                }
+            ])
+            ->getMock();
+        dump($mockFlashSaleRepo->getAvailableFlashSale());
+        die;
+
+        $this->flashSaleShoppingProcessor = new FlashSaleShoppingProcessor($this->container->get(EntityManagerInterface::class), $mockFlashSaleRepo);
+        */
+    }
+
+    public function testRemoveDiscountItem()
+    {
+
     }
 
     public function testProcessor()
     {
-        $data = $this->createFlashSaleAndRules(__METHOD__.' - test only');
-        /** @var Product $Product */
-        $Product = $data['Product'];
 
-        foreach ($Product->getProductClasses() as $productClass) {
-            $preOrderId = sha1(StringUtil::random(32));
-
-            $this->cartService->addProduct($productClass, 1);
-            $this->cartService->setPreOrderId($preOrderId);
-            $this->purchaseFlow->validate($this->cartService->getCart(), new PurchaseContext());
-
-            $this->cartService->save();
-
-            $this->expected = $preOrderId;
-            $this->actual = $this->cartService->getCart()->getPreOrderId();
-            $this->verify();
-        }
     }
 }
