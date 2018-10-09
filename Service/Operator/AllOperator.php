@@ -13,6 +13,7 @@
 
 namespace Plugin\FlashSale\Service\Operator;
 
+use Doctrine\Common\Collections\Collection as DoctrineCollection;
 use Doctrine\ORM\QueryBuilder;
 use Plugin\FlashSale\Entity\Condition;
 use Plugin\FlashSale\Service\Condition\ConditionInterface;
@@ -31,6 +32,9 @@ class AllOperator implements OperatorInterface
      */
     public function match($condition, $data)
     {
+        if (!is_array($condition) && !$condition instanceof DoctrineCollection) {
+            $condition = explode(',', $condition);
+        }
         foreach ($condition as $cond) {
             if ($cond instanceof ConditionInterface) {
                 $result = $cond->match($data);
@@ -57,19 +61,27 @@ class AllOperator implements OperatorInterface
         $rule = $condition->getRule();
         switch ($rule->getOperator()) {
             case AllOperator::TYPE:
-                $qb->andWhere($qb->expr()->in('pc.'.$condition->getAttribute(), $condition->getValue()));
+                if ($condition instanceof Condition\ProductClassIdCondition) {
+                    $qb->andWhere($qb->expr()->in('pc.id', $condition->getValue()));
+                }
                 break;
 
             case EqualOperator::TYPE:
-                $qb->andWhere($qb->expr()->in('pc.'.$condition->getAttribute(), $condition->getValue()));
+                if ($condition instanceof Condition\ProductClassIdCondition) {
+                    $qb->andWhere($qb->expr()->in('pc.id', $condition->getValue()));
+                }
                 break;
 
             case InOperator::TYPE:
-                $qb->andWhere($qb->expr()->in('pc.'.$condition->getAttribute(), $condition->getValue()));
+                if ($condition instanceof Condition\ProductClassIdCondition) {
+                    $qb->orWhere($qb->expr()->in('pc.id', $condition->getValue()));
+                }
                 break;
 
             case NotEqualOperator::TYPE:
-                $qb->andWhere($qb->expr()->neq('pc.'.$condition->getAttribute(), $condition->getValue()));
+                if ($condition instanceof Condition\ProductClassIdCondition) {
+                    $qb->andWhere($qb->expr()->neq('pc.id', $condition->getValue()));
+                }
                 break;
             default:
                 break;
