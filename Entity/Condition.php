@@ -17,13 +17,14 @@ use Doctrine\ORM\Mapping as ORM;
 use Eccube\Entity\AbstractEntity;
 use Plugin\FlashSale\Repository\ConditionRepository;
 use Plugin\FlashSale\Entity\Condition\ProductClassIdCondition;
+use Plugin\FlashSale\Entity\Condition\ProductCategoryIdCondition;
 
 /**
  * @ORM\Table("plg_flash_sale_condition")
  * @ORM\Entity(repositoryClass=ConditionRepository::class)
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="discriminator_type", type="string", length=255)
- * @ORM\DiscriminatorMap({ProductClassIdCondition::TYPE=ProductClassIdCondition::class})
+ * @ORM\DiscriminatorMap({ProductClassIdCondition::TYPE=ProductClassIdCondition::class, ProductCategoryIdCondition::TYPE=ProductCategoryIdCondition::class})
  */
 abstract class Condition extends AbstractEntity
 {

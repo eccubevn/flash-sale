@@ -15,6 +15,7 @@ namespace Plugin\FlashSale\Entity\Rule;
 
 use Doctrine\ORM\Mapping as ORM;
 use Eccube\Entity\ProductClass;
+use Plugin\FlashSale\Entity\Condition\ProductCategoryIdCondition;
 use Plugin\FlashSale\Entity\Rule;
 use Plugin\FlashSale\Entity\Condition\ProductClassIdCondition;
 use Plugin\FlashSale\Entity\Promotion\ProductClassPricePercentPromotion;
@@ -26,9 +27,9 @@ use Plugin\FlashSale\Service\Metadata\DiscriminatorManager;
 /**
  * @ORM\Entity
  */
-class ProductClassRule extends Rule implements RuleInterface
+class ProductCategoryRule extends Rule implements RuleInterface
 {
-    const TYPE = 'rule_product_class';
+    const TYPE = 'rule_product_category';
 
     /**
      * @var array
@@ -95,7 +96,7 @@ class ProductClassRule extends Rule implements RuleInterface
     public function getConditionTypes(): array
     {
         return [
-            ProductClassIdCondition::TYPE,
+            ProductCategoryIdCondition::TYPE,
         ];
     }
 
