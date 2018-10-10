@@ -13,7 +13,8 @@
 
 namespace Plugin\FlashSale\Tests\Entity;
 
-use Eccube\Tests\EccubeTestCase;
+use Eccube\Entity\Product;
+use Eccube\Entity\ProductClass;
 use Plugin\FlashSale\Entity\Condition\ProductClassIdCondition;
 use Plugin\FlashSale\Entity\FlashSale;
 use Plugin\FlashSale\Entity\Promotion\ProductClassPricePercentPromotion;
@@ -30,9 +31,18 @@ use Plugin\FlashSale\Service\Operator\OperatorFactory;
  */
 class ProductClassRuleTest extends AbstractEntityTest
 {
+    /** @var Product */
+    protected $Product;
+
+    /** @var ProductClass */
+    protected $ProductClass1;
+
     public function setUp()
     {
         parent::setUp();
+
+        $this->Product = $this->createProduct('テスト商品', 3);
+        $this->ProductClass1 = $this->Product->getProductClasses()[0];
     }
 
     public function testConstructor()
@@ -141,5 +151,19 @@ class ProductClassRuleTest extends AbstractEntityTest
         $productClassRule->setFlashSale($FlashSale);
 
         self::assertEquals($FlashSale, $productClassRule->getFlashSale());
+    }
+
+    public function testMatch_Invalid_ProductClass()
+    {
+        $productClassRule = new ProductClassRule();
+        $this->actual = false;
+        $this->actual = $productClassRule->match(new \stdClass());
+        $this->verify();
+    }
+
+    public function testGetDiscountItems_Not_instanceof()
+    {
+        $productClassRule = new ProductClassRule();
+        self::assertEquals([], $productClassRule->getDiscountItems(new \stdClass()));
     }
 }

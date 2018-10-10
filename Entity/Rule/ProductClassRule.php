@@ -149,8 +149,15 @@ class ProductClassRule extends Rule implements RuleInterface
         }
 
         if (!$this->match($ProductClass)) {
+            dump(121);
+            die;
             return [];
         }
+
+        echo '<pre>';
+        print_r(11111111111);
+        echo '</pre>';
+        die;
 
         if (isset($this->cached[__METHOD__ . $ProductClass->getId()])) {
             return $this->cached[__METHOD__ . $ProductClass->getId()];
