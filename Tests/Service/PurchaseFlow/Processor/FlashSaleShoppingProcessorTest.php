@@ -29,7 +29,6 @@ use Eccube\Service\PurchaseFlow\DiscountProcessor;
 use Eccube\Service\PurchaseFlow\ItemHolderPreprocessor;
 use Eccube\Service\PurchaseFlow\PurchaseContext;
 use Eccube\Service\PurchaseFlow\PurchaseFlow;
-use Eccube\Util\StringUtil;
 use Plugin\FlashSale\Entity\FlashSale;
 use Plugin\FlashSale\Entity\Rule;
 use Plugin\FlashSale\Repository\FlashSaleRepository;

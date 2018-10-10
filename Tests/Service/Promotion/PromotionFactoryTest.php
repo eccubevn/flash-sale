@@ -72,4 +72,19 @@ class PromotionFactoryTest extends AbstractServiceTestCase
         $this->actual = is_object($data);
         $this->verify();
     }
+
+    public function testCreateFromArray_Valid_33()
+    {
+        $rules = $this->rulesData();
+        $rules['type'] = ProductClassPriceAmountPromotion::TYPE;
+        try {
+            $data = PromotionFactory::createFromArray($rules);
+        } catch (\Exception $exception) {
+            $data = ProductClassPriceAmountPromotion::TYPE.' unsupported';
+        }
+
+        $this->expected = true;
+        $this->actual = is_object($data);
+        $this->verify();
+    }
 }

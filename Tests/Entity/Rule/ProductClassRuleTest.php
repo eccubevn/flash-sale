@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\FlashSale\Tests\Entity;
+namespace Plugin\FlashSale\Tests\Entity\Rule;
 
 use Eccube\Entity\Product;
 use Eccube\Entity\ProductClass;
@@ -23,11 +23,11 @@ use Plugin\FlashSale\Service\Metadata\DiscriminatorManager;
 use Plugin\FlashSale\Service\Operator\AllOperator;
 use Plugin\FlashSale\Service\Operator\InOperator;
 use Plugin\FlashSale\Service\Operator\OperatorFactory;
+use Plugin\FlashSale\Tests\Entity\AbstractEntityTest;
 
 /**
- * AbstractEntity test cases.
- *
- * @author Kentaro Ohkouchi
+ * Class ProductClassRuleTest
+ * @package Plugin\FlashSale\Tests\Entity\Rule
  */
 class ProductClassRuleTest extends AbstractEntityTest
 {
