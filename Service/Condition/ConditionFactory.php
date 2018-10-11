@@ -14,7 +14,6 @@
 namespace Plugin\FlashSale\Service\Condition;
 
 use Plugin\FlashSale\Entity\Condition;
-use Plugin\FlashSale\Entity\Condition\ProductClassIdCondition;
 
 class ConditionFactory
 {
@@ -32,8 +31,11 @@ class ConditionFactory
         }
 
         switch ($data['type']) {
-            case ProductClassIdCondition::TYPE:
-                $Condition = new ProductClassIdCondition();
+            case Condition\ProductClassIdCondition::TYPE:
+                $Condition = new Condition\ProductClassIdCondition();
+                break;
+            case Condition\ProductCategoryIdCondition::TYPE:
+                $Condition = new Condition\ProductCategoryIdCondition();
                 break;
             default:
                 throw new \InvalidArgumentException($data['type'].' unsupported');

@@ -83,7 +83,6 @@ class ProductClassRuleEventSubscriber implements EventSubscriberInterface
         }
 
         $json = [];
-
         /** @var RuleInterface $Rule */
         foreach ($FlashSale->getRules() as $Rule) {
             /** @var ProductClass $ProductClass */

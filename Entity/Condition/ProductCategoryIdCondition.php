@@ -14,6 +14,7 @@
 namespace Plugin\FlashSale\Entity\Condition;
 
 use Doctrine\ORM\Mapping as ORM;
+use Eccube\Entity\Product;
 use Eccube\Entity\ProductClass;
 use Plugin\FlashSale\Entity\Condition;
 use Plugin\FlashSale\Service\Condition\ConditionInterface;
@@ -53,15 +54,17 @@ class ProductCategoryIdCondition extends Condition implements ConditionInterface
      */
     public function match($ProductClass)
     {
-        // TODO: check
-
-
-        /** @var ProductClass $ProductClass */
+        /** @var Product $ProductClass */
         if (!$ProductClass instanceof ProductClass) {
             return false;
         }
 
-        return $this->operatorFactory->createByType($this->getOperator())->match($this->value, $ProductClass->getId());
+        $cateIds = [];
+        foreach ($ProductClass->getProduct()->getProductCategories() as $category) {
+            $cateIds[] = $category->getCategoryId();
+        }
+
+        return $this->operatorFactory->createByType($this->getOperator())->match($this->value, $cateIds);
     }
 
     /**

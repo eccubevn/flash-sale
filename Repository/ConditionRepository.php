@@ -60,6 +60,12 @@ class ConditionRepository extends AbstractRepository
                     $Condition = $this->operatorFactory->createByType($condOperator);
                     $qbItem = $Condition->parseCondition($qbItem, $condition);
                 }
+
+                if ($condition instanceof Condition\ProductCategoryIdCondition) {
+                    $condOperator = $condition->getOperator();
+                    $Condition = $this->operatorFactory->createByType($condOperator);
+                    $qbItem = $Condition->parseCondition($qbItem, $condition);
+                }
             }
 
             $arrayProductTmp[$rule->getId()]['product'] = $qbItem->getQuery()->getResult();

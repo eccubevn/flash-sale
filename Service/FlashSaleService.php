@@ -85,6 +85,7 @@ class FlashSaleService
                     'description' => $discriminator->getDescription(),
                     'operator_types' => [],
                 ];
+
                 /** @var ConditionInterface $conditionEntity */
                 $conditionClass = $discriminator->getClass();
                 $conditionEntity = new $conditionClass();

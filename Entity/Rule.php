@@ -17,7 +17,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Eccube\Entity\AbstractEntity;
 use Plugin\FlashSale\Entity\Rule\ProductClassRule;
-use Plugin\FlashSale\Entity\Rule\ProductCategoryRule;
 use Plugin\FlashSale\Service\Metadata\DiscriminatorInterface;
 use Plugin\FlashSale\Service\Promotion\PromotionInterface;
 
@@ -26,7 +25,7 @@ use Plugin\FlashSale\Service\Promotion\PromotionInterface;
  * @ORM\Entity(repositoryClass="Plugin\FlashSale\Repository\RuleRepository")
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="discriminator_type", type="string", length=255)
- * @ORM\DiscriminatorMap({ProductClassRule::TYPE=ProductClassRule::class, ProductCategoryRule::TYPE=ProductCategoryRule::class})
+ * @ORM\DiscriminatorMap({ProductClassRule::TYPE=ProductClassRule::class})
  */
 abstract class Rule extends AbstractEntity
 {
