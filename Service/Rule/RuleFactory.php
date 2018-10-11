@@ -14,7 +14,6 @@
 namespace Plugin\FlashSale\Service\Rule;
 
 use Plugin\FlashSale\Entity\Rule;
-use Plugin\FlashSale\Entity\Rule\ProductClassRule;
 
 class RuleFactory
 {
@@ -33,7 +32,10 @@ class RuleFactory
 
         switch ($data['type']) {
             case Rule\ProductClassRule::TYPE:
-                $Rule = new ProductClassRule();
+                $Rule = new Rule\ProductClassRule();
+                break;
+            case Rule\CartRule::TYPE:
+                $Rule = new Rule\CartRule();
                 break;
             default:
                 throw new \InvalidArgumentException($data['type'].' unsupported');
