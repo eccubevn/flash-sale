@@ -330,6 +330,16 @@ class FlashSale
         foreach ($data['rules'] as $rule) {
             if (!empty($rule['id'])) {
                 $Rule = $this->getRules()->get($rule['id']);
+                if ($Rule::TYPE != $rule['type']) {
+                    $this->getRules()->remove($Rule->getId());
+                    $this->removed[] = $Rule;
+                    $this->removed[] = $Rule->getPromotion();
+                    foreach ($Rule->getConditions() as $Condition) {
+                        $this->removed[] = $Condition;
+                    }
+                    $Rule = RuleFactory::createFromArray($rule);
+                    $this->getRules()->add($Rule);
+                }
             } else {
                 $Rule = RuleFactory::createFromArray($rule);
                 $this->getRules()->add($Rule);
@@ -343,7 +353,7 @@ class FlashSale
                 if (!$Promotion) {
                     $Promotion = PromotionFactory::createFromArray($rule['promotion']);
                 } elseif ($Promotion::TYPE != $rule['promotion']['type']) {
-                    $Rule->removed[] = $Promotion;
+                    $this->removed[] = $Promotion;
                     $Promotion = PromotionFactory::createFromArray($rule['promotion']);
                 }
                 $Promotion->modified = true;
@@ -356,11 +366,11 @@ class FlashSale
                     $Rule->setConditions(new ArrayCollection());
                 }
                 foreach ($rule['conditions'] as $condition) {
-                    if (!empty($condition['id'])) {
+                    if (!empty($condition['id']) && $Rule->getConditions()->containsKey($condition['id'])) {
                         $Condition = $Rule->getConditions()->get($condition['id']);
                         if ($Condition::TYPE != $condition['type']) {
                             $Rule->getConditions()->remove($Condition);
-                            $Rule->removed[] = $Condition;
+                            $this->removed[] = $Condition;
                             $Condition = ConditionFactory::createFromArray($condition);
                             $Rule->getConditions()->add($Condition);
                         }

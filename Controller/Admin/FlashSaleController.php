@@ -143,11 +143,10 @@ class FlashSaleController extends AbstractController
                     } else {
                         $this->entityManager->remove($Rule);
                     }
-
-                    if (isset($Rule->removed)) {
-                        foreach ($Rule->removed as $removedEntity) {
-                            $this->entityManager->remove($removedEntity);
-                        }
+                }
+                if (isset($FlashSale->removed)) {
+                    foreach ($FlashSale->removed as $removedEntity) {
+                        $this->entityManager->remove($removedEntity);
                     }
                 }
 

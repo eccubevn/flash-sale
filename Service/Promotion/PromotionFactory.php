@@ -15,6 +15,8 @@ namespace Plugin\FlashSale\Service\Promotion;
 
 use Plugin\FlashSale\Entity\Promotion\ProductClassPricePercentPromotion;
 use Plugin\FlashSale\Entity\Promotion\ProductClassPriceAmountPromotion;
+use Plugin\FlashSale\Entity\Promotion\CartTotalPercentPromotion;
+use Plugin\FlashSale\Entity\Promotion\CartTotalAmountPromotion;
 
 class PromotionFactory
 {
@@ -37,6 +39,12 @@ class PromotionFactory
                 break;
             case ProductClassPriceAmountPromotion::TYPE:
                 $Promotion = new ProductClassPriceAmountPromotion();
+                break;
+            case CartTotalPercentPromotion::TYPE:
+                $Promotion = new CartTotalPercentPromotion();
+                break;
+            case CartTotalAmountPromotion::TYPE:
+                $Promotion = new CartTotalAmountPromotion();
                 break;
 
             default:
