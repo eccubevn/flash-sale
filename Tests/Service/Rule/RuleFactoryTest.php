@@ -13,6 +13,8 @@
 
 namespace Plugin\FlashSale\Service\Rule;
 
+use Plugin\FlashSale\Entity\Rule\CartRule;
+use Plugin\FlashSale\Entity\Rule\ProductClassRule;
 use Plugin\FlashSale\Tests\Service\AbstractServiceTestCase;
 
 class RuleFactoryTest extends AbstractServiceTestCase
@@ -29,11 +31,12 @@ class RuleFactoryTest extends AbstractServiceTestCase
     {
         $rules = $this->rulesData();
         $data = RuleFactory::createFromArray($rules);
+        self::assertInstanceOf(ProductClassRule::class, $data);
 
-        // TODO: change verify this case
+        $rules['type'] = CartRule::TYPE;
         $this->expected = true;
-        $this->actual = is_object($data);
-        $this->verify();
+        $data = RuleFactory::createFromArray($rules);
+        self::assertInstanceOf(CartRule::class, $data);
 
         $rules['type'] = 'rule_test_only';
         try {
