@@ -14,6 +14,7 @@
 namespace Plugin\FlashSale\Service\Condition;
 
 use Plugin\FlashSale\Entity\Condition;
+use Plugin\FlashSale\Entity\Condition\CartTotalCondition;
 
 class ConditionFactory
 {
@@ -36,6 +37,9 @@ class ConditionFactory
                 break;
             case Condition\ProductCategoryIdCondition::TYPE:
                 $Condition = new Condition\ProductCategoryIdCondition();
+                break;
+            case CartTotalCondition::TYPE:
+                $Condition = new CartTotalCondition();
                 break;
             default:
                 throw new \InvalidArgumentException($data['type'].' unsupported');

@@ -6,6 +6,36 @@
             }
         }, options);
         var self = $(this), fn = this;
+
+        this.changeRule = function (e) {
+            var value = $(e.target).val(),
+                container = $(e.target).closest('.rule-entity');
+
+            container.find('select[name="rule[operator]"]').html('');
+            $.each(settings.setup.rule_types[value].operator_types, function(key, operator) {
+                container.find('[name="rule[operator]"]')
+                    .append('<option value="'+key+'">'+ operator.name +'</option>');
+            });
+
+            container.find('select[name="promotion[type]"]').html('');
+            container.find('[name="promotion[value]"]').val('');
+            $.each(settings.setup.rule_types[value].promotion_types, function(key, promotion) {
+                container.find('[name="promotion[type]"]').append('<option value="'+key+'">'+ promotion.name +'</option>');
+            });
+
+            $.each(container.find('.condition-entity'), function(key, conditionContainer) {
+                $(conditionContainer).find('[name="condition[type]"]').html('');
+                $(conditionContainer).find('[name="condition[operator]"]').html('');
+                $(conditionContainer).find('[name="condition[value]"]').val('');
+                $.each(settings.setup.rule_types[value].condition_types, function(key, condition) {
+                    $(conditionContainer).find('[name="condition[type]"]').append('<option value="'+key+'">'+ condition.name +'</option>');
+                    $.each(condition.operator_types, function(key, operator) {
+                        $(conditionContainer).find('[name="condition[operator]"]').append('<option value="'+key+'">'+ operator.name +'</option>');
+                    });
+                });
+            });
+        };
+
         this.addRule = function(e) {
             var data = $.extend({
                 id: '',
@@ -13,31 +43,30 @@
                 operator: '',
                 promotion: {
                     type: '',
-                    attribute: '',
                     value: ''
                 }
             }, e);
+            var ruleId = (data.id ? data.id : self.find('.rule').length);
             var template = self.find('[data-template="rule"]').clone()
                 .removeClass('d-none')
                 .addClass('rule-entity')
                 .attr('data-template', '')
-                .attr('id', 'rule' + (data.id ? data.id : self.find('.rule').length));
+                .attr('id', 'rule' + ruleId);
             $.each(settings.setup.rule_types, function(key) {
                 $(template).find('[name="rule[type]"]').append('<option value="'+key+'" ' + (data.type === key ? 'selected' : '') +'>'+ this.name +'</option>');
                 $.each(this.operator_types, function(key, operator) {
                     $(template).find('[name="rule[operator]"]').append('<option value="'+key+'" '+ (data.operator === key ? 'selected' : '') +'>'+ operator.name +'</option>');
                 });
-
-                $.each(this.promotion_types, function(key) {
-                    $(template).find('[name="promotion[type]"]').append('<option value="'+key+'" '+ (data.promotion.type === key ? 'selected' : '') +'>'+ this.name +'</option>');
-                    $(template).find('[name="promotion[value]"]').val(data.promotion.value);
-                    $(template).find('[name="promotion[id]"]').val(data.promotion.id);
-                });
-
-                template.find('[data-bind="addCondition"]').on('click', fn.addCondition);
-                template.find('[data-bind="removeRule"]').on('click', fn.removeRule);
             });
             $(template).find('[name="rule[id]"]').val(data.id);
+
+            var ruleType = $(template).find('[name="rule[type]"]').val();
+            $.each(settings.setup.rule_types[ruleType].promotion_types, function(key) {
+                $(template).find('[name="promotion[type]"]').append('<option value="'+key+'" '+ (data.promotion.type === key ? 'selected' : '') +'>'+ this.name +'</option>');
+                $(template).find('[name="promotion[value]"]').val(data.promotion.value);
+                $(template).find('[name="promotion[id]"]').val(data.promotion.id);
+            });
+
             self.find('[data-container="rule"]').append(template);
         };
 
@@ -65,7 +94,7 @@
                 $(template).find('[name="condition[value]"]').val(data.value);
                 $(template).find('[name="condition[id]"]').val(data.id);
 
-                template.find('[data-bind="removeCondition"]').on('click', fn.removeCondition);
+
             });
             container.append(template);
         };
@@ -79,6 +108,12 @@
         };
 
         function bind() {
+            self.find('[data-bind="addRule"]').on('click', fn.addRule);
+            self.closest('form').on('change', '[data-bind="changeRule"]', fn.changeRule);
+            self.closest('form').on('click', '[data-bind="removeRule"]', fn.removeRule);
+            self.closest('form').on('click', '[data-bind="addCondition"]', fn.addCondition);
+            self.closest('form').on('click', '[data-bind="removeCondition"]', fn.removeCondition);
+
             self.closest('form').on('submit', function (e) {
                 var rules = [];
                 $.each($(this).find('.rule-entity'), function () {
@@ -105,7 +140,6 @@
                 });
                 $(this).find('[name*="[rules]"]').val(JSON.stringify(rules));
             });
-            self.find('[data-bind="addRule"]').on('click', fn.addRule);
         }
 
         function render() {

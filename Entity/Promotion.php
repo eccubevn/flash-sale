@@ -18,6 +18,8 @@ use Eccube\Entity\AbstractEntity;
 use Plugin\FlashSale\Repository\PromotionRepository;
 use Plugin\FlashSale\Entity\Promotion\ProductClassPricePercentPromotion;
 use Plugin\FlashSale\Entity\Promotion\ProductClassPriceAmountPromotion;
+use Plugin\FlashSale\Entity\Promotion\CartTotalAmountPromotion;
+use Plugin\FlashSale\Entity\Promotion\CartTotalPercentPromotion;
 use Plugin\FlashSale\Service\Promotion\PromotionInterface;
 
 /**
@@ -28,6 +30,8 @@ use Plugin\FlashSale\Service\Promotion\PromotionInterface;
  * @ORM\DiscriminatorMap({
  *     ProductClassPricePercentPromotion::TYPE=ProductClassPricePercentPromotion::class,
  *     ProductClassPriceAmountPromotion::TYPE=ProductClassPriceAmountPromotion::class,
+ *     CartTotalAmountPromotion::TYPE=CartTotalAmountPromotion::class,
+ *     CartTotalPercentPromotion::TYPE=CartTotalPercentPromotion::class,
  * })
  */
 abstract class Promotion extends AbstractEntity implements PromotionInterface

@@ -19,13 +19,14 @@ use Eccube\Entity\AbstractEntity;
 use Plugin\FlashSale\Entity\Rule\ProductClassRule;
 use Plugin\FlashSale\Service\Metadata\DiscriminatorInterface;
 use Plugin\FlashSale\Service\Promotion\PromotionInterface;
+use Plugin\FlashSale\Entity\Rule\CartRule;
 
 /**
  * @ORM\Table("plg_flash_sale_rule")
  * @ORM\Entity(repositoryClass="Plugin\FlashSale\Repository\RuleRepository")
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="discriminator_type", type="string", length=255)
- * @ORM\DiscriminatorMap({ProductClassRule::TYPE=ProductClassRule::class})
+ * @ORM\DiscriminatorMap({ProductClassRule::TYPE=ProductClassRule::class, CartRule::TYPE=CartRule::class})
  */
 abstract class Rule extends AbstractEntity
 {

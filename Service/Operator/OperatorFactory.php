@@ -36,6 +36,12 @@ class OperatorFactory
 
             case NotEqualOperator::TYPE:
                 return new NotEqualOperator();
+
+            case GreaterThanOperator::TYPE:
+                return new GreaterThanOperator();
+
+            case LessThanOperator::TYPE:
+                return new LessThanOperator();
         }
 
         throw new \InvalidArgumentException('Not found operator have type '.$type);

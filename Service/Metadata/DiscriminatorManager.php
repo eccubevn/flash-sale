@@ -19,6 +19,10 @@ use Plugin\FlashSale\Entity\Condition\ProductClassIdCondition;
 use Plugin\FlashSale\Entity\Promotion\ProductClassPricePercentPromotion;
 use Plugin\FlashSale\Service\Operator as Operator;
 use Plugin\FlashSale\Entity\Promotion\ProductClassPriceAmountPromotion;
+use Plugin\FlashSale\Entity\Rule\CartRule;
+use Plugin\FlashSale\Entity\Condition\CartTotalCondition;
+use Plugin\FlashSale\Entity\Promotion\CartTotalPercentPromotion;
+use Plugin\FlashSale\Entity\Promotion\CartTotalAmountPromotion;
 
 class DiscriminatorManager
 {
@@ -73,6 +77,24 @@ class DiscriminatorManager
 
                 return $this->container[Operator\NotEqualOperator::TYPE];
 
+            case Operator\GreaterThanOperator::TYPE:
+                $this->container[Operator\GreaterThanOperator::TYPE] = (new Discriminator())
+                    ->setType(Operator\GreaterThanOperator::TYPE)
+                    ->setName('is greater than to')
+                    ->setClass(Operator\GreaterThanOperator::class)
+                    ->setDescription('');
+
+                return $this->container[Operator\GreaterThanOperator::TYPE];
+
+            case Operator\LessThanOperator::TYPE:
+                $this->container[Operator\LessThanOperator::TYPE] = (new Discriminator())
+                    ->setType(Operator\LessThanOperator::TYPE)
+                    ->setName('is less than to')
+                    ->setClass(Operator\LessThanOperator::class)
+                    ->setDescription('');
+
+                return $this->container[Operator\LessThanOperator::TYPE];
+
             case ProductClassRule::TYPE:
                 $this->container[ProductClassRule::TYPE] = (new Discriminator())
                     ->setType(ProductClassRule::TYPE)
@@ -81,6 +103,15 @@ class DiscriminatorManager
                     ->setDescription('');
 
                 return $this->container[ProductClassRule::TYPE];
+
+            case CartRule::TYPE:
+                $this->container[CartRule::TYPE] = (new Discriminator())
+                    ->setType(CartRule::TYPE)
+                    ->setName('Cart Rule')
+                    ->setClass(CartRule::class)
+                    ->setDescription('');
+
+                return $this->container[CartRule::TYPE];
 
             case ProductClassIdCondition::TYPE:
                 $this->container[ProductClassIdCondition::TYPE] = (new Discriminator())
@@ -100,6 +131,15 @@ class DiscriminatorManager
 
                 return $this->container[ProductCategoryIdCondition::TYPE];
 
+            case CartTotalCondition::TYPE:
+                $this->container[CartTotalCondition::TYPE] = (new Discriminator())
+                    ->setType(CartTotalCondition::TYPE)
+                    ->setName('Cart Total Condition')
+                    ->setClass(CartTotalCondition::class)
+                    ->setDescription('');
+
+                return $this->container[CartTotalCondition::TYPE];
+
             case ProductClassPricePercentPromotion::TYPE:
                 $this->container[ProductClassPricePercentPromotion::TYPE] = (new Discriminator())
                     ->setType(ProductClassPricePercentPromotion::TYPE)
@@ -117,6 +157,24 @@ class DiscriminatorManager
                     ->setDescription('');
 
                 return $this->container[ProductClassPriceAmountPromotion::TYPE];
+
+            case CartTotalAmountPromotion::TYPE:
+                $this->container[CartTotalAmountPromotion::TYPE] = (new Discriminator())
+                    ->setType(CartTotalAmountPromotion::TYPE)
+                    ->setName('Cart Total Amount Promotion')
+                    ->setClass(CartTotalAmountPromotion::class)
+                    ->setDescription('');
+
+                return $this->container[CartTotalAmountPromotion::TYPE];
+
+            case CartTotalPercentPromotion::TYPE:
+                $this->container[CartTotalPercentPromotion::TYPE] = (new Discriminator())
+                    ->setType(CartTotalPercentPromotion::TYPE)
+                    ->setName('Cart Total Percent Promotion')
+                    ->setClass(CartTotalPercentPromotion::class)
+                    ->setDescription('');
+
+                return $this->container[CartTotalPercentPromotion::TYPE];
 
             default:
         }
