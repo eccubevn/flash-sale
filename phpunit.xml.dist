@@ -36,6 +36,8 @@
             <exclude>
                 <directory suffix=".php">./Tests</directory>
                 <directory suffix=".php">./Resource</directory>
+                <file>./FlashSaleEvent.php</file>
+                <file>./FlashSaleNav.php</file>
                 <file>./PluginManager.php</file>
             </exclude>
         </whitelist>

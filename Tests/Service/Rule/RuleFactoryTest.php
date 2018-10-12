@@ -30,6 +30,7 @@ class RuleFactoryTest extends AbstractServiceTestCase
         $rules = $this->rulesData();
         $data = RuleFactory::createFromArray($rules);
 
+        // TODO: change verify this case
         $this->expected = true;
         $this->actual = is_object($data);
         $this->verify();

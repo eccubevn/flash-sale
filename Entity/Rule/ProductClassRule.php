@@ -19,6 +19,7 @@ use Eccube\Entity\OrderItem;
 use Eccube\Entity\Order;
 use Plugin\FlashSale\Entity\Rule;
 use Plugin\FlashSale\Entity\Condition\ProductClassIdCondition;
+use Plugin\FlashSale\Entity\Condition\ProductCategoryIdCondition;
 use Plugin\FlashSale\Entity\Promotion\ProductClassPricePercentPromotion;
 use Plugin\FlashSale\Entity\Promotion\ProductClassPriceAmountPromotion;
 use Plugin\FlashSale\Service\Rule\RuleInterface;
@@ -99,6 +100,7 @@ class ProductClassRule extends Rule implements RuleInterface
     {
         return [
             ProductClassIdCondition::TYPE,
+            ProductCategoryIdCondition::TYPE,
         ];
     }
 
@@ -173,7 +175,7 @@ class ProductClassRule extends Rule implements RuleInterface
         if (isset($this->cached[__METHOD__ . $ProductClass->getId()])) {
             return $this->cached[__METHOD__ . $ProductClass->getId()];
         }
-        
+
         $this->cached[__METHOD__ . $ProductClass->getId()] = $this->getPromotion()->getDiscountItems($ProductClass);
 
         return $this->cached[__METHOD__ . $ProductClass->getId()];

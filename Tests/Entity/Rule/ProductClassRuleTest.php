@@ -11,37 +11,51 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\FlashSale\Tests\Entity;
+namespace Plugin\FlashSale\Tests\Entity\Rule;
 
-use Eccube\Tests\EccubeTestCase;
+use Eccube\Entity\Product;
+use Eccube\Entity\ProductClass;
 use Plugin\FlashSale\Entity\Condition\ProductClassIdCondition;
+use Plugin\FlashSale\Entity\FlashSale;
 use Plugin\FlashSale\Entity\Promotion\ProductClassPricePercentPromotion;
 use Plugin\FlashSale\Entity\Rule\ProductClassRule;
 use Plugin\FlashSale\Service\Metadata\DiscriminatorManager;
 use Plugin\FlashSale\Service\Operator\AllOperator;
 use Plugin\FlashSale\Service\Operator\InOperator;
 use Plugin\FlashSale\Service\Operator\OperatorFactory;
+use Plugin\FlashSale\Tests\Entity\AbstractEntityTest;
 
 /**
- * AbstractEntity test cases.
- *
- * @author Kentaro Ohkouchi
+ * Class ProductClassRuleTest
+ * @package Plugin\FlashSale\Tests\Entity\Rule
  */
-class ProductClassRuleTest extends EccubeTestCase
+class ProductClassRuleTest extends AbstractEntityTest
 {
+    /** @var Product */
+    protected $Product;
+
+    /** @var ProductClass */
+    protected $ProductClass1;
+
     public function setUp()
     {
         parent::setUp();
+
+        $this->Product = $this->createProduct('テスト商品', 3);
+        $this->ProductClass1 = $this->Product->getProductClasses()[0];
     }
 
     public function testConstructor()
     {
         $productClassRule = new ProductClassRule();
+        $productClassRule->setId(1);
         $productClassRule = $productClassRule->toArray();
 
-        $this->expected = null;
+        $this->expected = 1;
         $this->actual = $productClassRule['id'];
         $this->verify();
+
+        $this->expected = null;
 
         $this->actual = $productClassRule['operator'];
         $this->verify();
@@ -60,6 +74,31 @@ class ProductClassRuleTest extends EccubeTestCase
 
         $this->actual = $productClassRule['discriminatorManager'];
         $this->verify();
+    }
+
+    public function testAddConditions()
+    {
+        $condition = new ProductClassIdCondition();
+        $condition->setId(100);
+        $condition->setValue(5);
+        $productClassRule = new ProductClassRule();
+        $productClassRule->addConditions($condition);
+
+        self::assertEquals($condition->getId(), $productClassRule->getConditions()->get(0)->getId());
+    }
+
+
+    public function testRemoveConditions()
+    {
+        $condition = new ProductClassIdCondition();
+        $condition->setId(100);
+        $condition->setValue(5);
+        $productClassRule = new ProductClassRule();
+        $productClassRule->addConditions($condition);
+        self::assertEquals($condition->getId(), $productClassRule->getConditions()->get(0)->getId());
+
+        $productClassRule->removeCondition($condition);
+        self::assertEquals([], $productClassRule->getConditions()->getKeys());
     }
 
     public function testDiscriminatorManager()
@@ -103,5 +142,28 @@ class ProductClassRuleTest extends EccubeTestCase
         $data = $productClassRule->getPromotionTypes();
 
         self::assertArraySubset([ProductClassPricePercentPromotion::TYPE], $data);
+    }
+
+    public function testGetFlashSale()
+    {
+        $FlashSale = new FlashSale();
+        $productClassRule = new ProductClassRule();
+        $productClassRule->setFlashSale($FlashSale);
+
+        self::assertEquals($FlashSale, $productClassRule->getFlashSale());
+    }
+
+    public function testMatch_Invalid_ProductClass()
+    {
+        $productClassRule = new ProductClassRule();
+        $this->actual = false;
+        $this->actual = $productClassRule->match(new \stdClass());
+        $this->verify();
+    }
+
+    public function testGetDiscountItems_Not_instanceof()
+    {
+        $productClassRule = new ProductClassRule();
+        self::assertEquals([], $productClassRule->getDiscountItems(new \stdClass()));
     }
 }

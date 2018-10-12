@@ -30,6 +30,10 @@ class NotEqualOperator implements OperatorInterface
      */
     public function match($condition, $data)
     {
+        if (is_array($data)) {
+            return (bool)!in_array($condition, $data);
+        }
+
         return $condition != $data;
     }
 
@@ -58,6 +62,11 @@ class NotEqualOperator implements OperatorInterface
             case InOperator::TYPE:
                 if ($condition instanceof Condition\ProductClassIdCondition) {
                     $qb->orWhere($qb->expr()->neq('pc.id', $condition->getValue()));
+                }
+
+                if ($condition instanceof Condition\ProductCategoryIdCondition) {
+                    $qb->join('p.ProductCategories', 'pct');
+                    $qb->orWhere($qb->expr()->notIn('pct.category_id', $condition->getValue()));
                 }
                 break;
 

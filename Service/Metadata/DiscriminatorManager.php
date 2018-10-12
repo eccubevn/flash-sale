@@ -13,6 +13,7 @@
 
 namespace Plugin\FlashSale\Service\Metadata;
 
+use Plugin\FlashSale\Entity\Condition\ProductCategoryIdCondition;
 use Plugin\FlashSale\Entity\Rule\ProductClassRule;
 use Plugin\FlashSale\Entity\Condition\ProductClassIdCondition;
 use Plugin\FlashSale\Entity\Promotion\ProductClassPricePercentPromotion;
@@ -120,6 +121,15 @@ class DiscriminatorManager
                     ->setDescription('');
 
                 return $this->container[ProductClassIdCondition::TYPE];
+
+            case ProductCategoryIdCondition::TYPE:
+                $this->container[ProductCategoryIdCondition::TYPE] = (new Discriminator())
+                    ->setType(ProductCategoryIdCondition::TYPE)
+                    ->setName('Product Category Id Condition')
+                    ->setClass(ProductCategoryIdCondition::class)
+                    ->setDescription('');
+
+                return $this->container[ProductCategoryIdCondition::TYPE];
 
             case CartTotalCondition::TYPE:
                 $this->container[CartTotalCondition::TYPE] = (new Discriminator())

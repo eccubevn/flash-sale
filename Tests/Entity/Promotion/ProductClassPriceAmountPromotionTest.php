@@ -19,14 +19,14 @@ use Eccube\Entity\Master\TaxType;
 use Eccube\Entity\Product;
 use Eccube\Entity\ProductClass;
 use Eccube\Tests\EccubeTestCase;
-use Plugin\FlashSale\Entity\Promotion\ProductClassPricePercentPromotion;
+use Plugin\FlashSale\Entity\Promotion\ProductClassPriceAmountPromotion;
 
 /**
  * AbstractEntity test cases.
  *
  * @author Kentaro Ohkouchi
  */
-class ProductClassPricePercentPromotionTest extends EccubeTestCase
+class ProductClassPriceAmountPromotionTest extends EccubeTestCase
 {
     /** @var Product */
     protected $Product;
@@ -44,11 +44,11 @@ class ProductClassPricePercentPromotionTest extends EccubeTestCase
 
     public function testGetDiscountItems_Invalid_ProductClass()
     {
-        $ProductClassPricePercentPromotion = new ProductClassPricePercentPromotion();
-        $ProductClassPricePercentPromotion->setEntityManager($this->entityManager);
-        $ProductClassPricePercentPromotion->setValue(5);
+        $ProductClassPriceAmountPromotion = new ProductClassPriceAmountPromotion();
+        $ProductClassPriceAmountPromotion->setEntityManager($this->entityManager);
+        $ProductClassPriceAmountPromotion->setValue(150);
 
-        $OrderItem = $ProductClassPricePercentPromotion->getDiscountItems(new \stdClass());
+        $OrderItem = $ProductClassPriceAmountPromotion->getDiscountItems(new \stdClass());
 
         self::assertEmpty($OrderItem);
     }
@@ -59,13 +59,13 @@ class ProductClassPricePercentPromotionTest extends EccubeTestCase
         $TaxInclude = $this->entityManager->find(TaxDisplayType::class, TaxDisplayType::INCLUDED);
         $Taxation = $this->entityManager->find(TaxType::class, TaxType::NON_TAXABLE);
 
-        $ProductClassPricePercentPromotion = new ProductClassPricePercentPromotion();
-        $ProductClassPricePercentPromotion->setEntityManager($this->entityManager);
-        $ProductClassPricePercentPromotion->setValue(5);
+        $ProductClassPriceAmountPromotion = new ProductClassPriceAmountPromotion();
+        $ProductClassPriceAmountPromotion->setEntityManager($this->entityManager);
+        $ProductClassPriceAmountPromotion->setValue(150);
 
-        $OrderItem = $ProductClassPricePercentPromotion->getDiscountItems($this->ProductClass1);
+        $OrderItem = $ProductClassPriceAmountPromotion->getDiscountItems($this->ProductClass1);
 
-        $price = -1 * ($this->ProductClass1->getPrice02() / 100 * $ProductClassPricePercentPromotion->getValue());
+        $price = -1 * $ProductClassPriceAmountPromotion->getValue();
 
         self::assertEquals($price, $OrderItem[0]->getPrice());
         self::assertEquals(1, $OrderItem[0]->getQuantity());
