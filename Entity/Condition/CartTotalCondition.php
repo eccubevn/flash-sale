@@ -6,11 +6,12 @@ use Eccube\Entity\Cart;
 use Eccube\Entity\Order;
 use Plugin\FlashSale\Entity\Condition;
 use Plugin\FlashSale\Service\Operator;
+use Plugin\FlashSale\Service\Condition\ConditionInterface;
 
 /**
  * @ORM\Entity()
  */
-class CartTotalCondition extends Condition
+class CartTotalCondition extends Condition implements ConditionInterface
 {
     const TYPE = 'condition_cart_total';
 
@@ -41,10 +42,6 @@ class CartTotalCondition extends Condition
      */
     public function match($data)
     {
-        if ($data instanceof Cart) {
-            return $this->operatorFactory->createByType($this->getOperator())->match($this->value, $data->getTotal());
-        }
-
         if ($data instanceof Order) {
             return $this->operatorFactory->createByType($this->getOperator())->match($this->value, $data->getSubtotal());
         }
