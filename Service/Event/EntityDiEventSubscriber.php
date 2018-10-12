@@ -87,6 +87,7 @@ class EntityDiEventSubscriber implements EventSubscriber
         ) {
             return;
         }
+
         $refClass = new \ReflectionClass($entity);
         foreach ($refClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $refMethod) {
             if (false !== stripos($refMethod->getDocComment(), '@required') && preg_match('#(?:^/\*\*|\n\s*+\*)\s*+@required(?:\s|\*/$)#i', $refMethod->getDocComment())) {
