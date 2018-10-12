@@ -29,19 +29,6 @@ class DiscriminatorManagerTest extends AbstractServiceTestCase
 
     }
 
-    public function testCreate_EqualOperator()
-    {
-        $DiscriminatorManager = new DiscriminatorManager();
-        $data = $DiscriminatorManager->create(EqualOperator::TYPE);
-        $test = (new Discriminator())
-            ->setType(EqualOperator::TYPE)
-            ->setName('is equal to')
-            ->setClass(EqualOperator::class)
-            ->setDescription('');
-
-        self::assertEquals($test, $data);
-    }
-
     public function testCreate_InvalidArgumentException()
     {
         $discriminatorType = 'test only';
@@ -53,5 +40,18 @@ class DiscriminatorManagerTest extends AbstractServiceTestCase
         }
 
         self::assertFalse($data);
+    }
+
+    public function testCreate_EqualOperator()
+    {
+        $DiscriminatorManager = new DiscriminatorManager();
+        $data = $DiscriminatorManager->create(EqualOperator::TYPE);
+        $test = (new Discriminator())
+            ->setType(EqualOperator::TYPE)
+            ->setName('is equal to')
+            ->setClass(EqualOperator::class)
+            ->setDescription('');
+
+        self::assertEquals($test, $data);
     }
 }

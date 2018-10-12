@@ -43,53 +43,41 @@ class FlashSaleServiceTest extends AbstractServiceTestCase
     {
         $data = $this->flashSaleService->getMetadata();
 
-        $this->expected = true;
-        $this->actual = array_key_exists('rule_product_class', $data['rule_types']);
-        $this->verify();
+        self::assertTrue(array_key_exists('rule_product_class', $data['rule_types']));
     }
 
     public function testGetMetadata_name()
     {
         $data = $this->flashSaleService->getMetadata();
 
-        $this->expected = true;
-        $this->actual = array_key_exists('name', $data['rule_types']['rule_product_class']);
-        $this->verify();
+        self::assertTrue(array_key_exists('name', $data['rule_types']['rule_product_class']));
     }
 
     public function testGetMetadata_description()
     {
         $data = $this->flashSaleService->getMetadata();
 
-        $this->expected = true;
-        $this->actual = array_key_exists('description', $data['rule_types']['rule_product_class']);
-        $this->verify();
+        self::assertTrue(array_key_exists('description', $data['rule_types']['rule_product_class']));
     }
 
     public function testGetMetadata_operator_types()
     {
         $data = $this->flashSaleService->getMetadata();
 
-        $this->expected = true;
-        $this->actual = array_key_exists('operator_types', $data['rule_types']['rule_product_class']);
-        $this->verify();
+        self::assertTrue(array_key_exists('operator_types', $data['rule_types']['rule_product_class']));
     }
 
     public function testGetMetadata_condition_types()
     {
         $data = $this->flashSaleService->getMetadata();
 
-        $this->expected = true;
-        $this->actual = array_key_exists('condition_types', $data['rule_types']['rule_product_class']);
-        $this->verify();
+        self::assertTrue(array_key_exists('condition_types', $data['rule_types']['rule_product_class']));
     }
 
     public function testGetMetadata_promotion_types()
     {
         $data = $this->flashSaleService->getMetadata();
 
-        $this->expected = true;
-        $this->actual = array_key_exists('promotion_types', $data['rule_types']['rule_product_class']);
-        $this->verify();
+        self::assertTrue(array_key_exists('promotion_types', $data['rule_types']['rule_product_class']));
     }
 }
