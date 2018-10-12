@@ -35,15 +35,22 @@ class InOperator implements OperatorInterface
         if (!is_array($condition) && !$condition instanceof DoctrineCollection) {
             $condition = explode(',', $condition);
         }
-        foreach ($condition as $cond) {
-            if ($cond instanceof ConditionInterface) {
-                $result = $cond->match($data);
-            } else {
-                $result = ($cond == $data);
-            }
 
-            if ($result) {
-                return true;
+        if (is_array($data)) {
+            if (!$condition instanceof DoctrineCollection) {
+                return (bool)array_intersect($condition, $data);
+            }
+        } else {
+            foreach ($condition as $cond) {
+                if ($cond instanceof ConditionInterface) {
+                    $result = $cond->match($data);
+                } else {
+                    $result = ($cond == $data);
+                }
+
+                if ($result) {
+                    return true;
+                }
             }
         }
 
@@ -76,6 +83,11 @@ class InOperator implements OperatorInterface
                 if ($condition instanceof Condition\ProductClassIdCondition) {
                     $qb->orWhere($qb->expr()->in('pc.id', $condition->getValue()));
                 }
+
+                if ($condition instanceof Condition\ProductCategoryIdCondition) {
+                    $qb->join('p.ProductCategories', 'pct');
+                    $qb->orWhere($qb->expr()->in('pct.category_id', $condition->getValue()));
+                }
                 break;
 
                 // Todo: I'm not sure
@@ -83,6 +95,7 @@ class InOperator implements OperatorInterface
                 if ($condition instanceof Condition\ProductClassIdCondition) {
                     $qb->andWhere($qb->expr()->notIn('pc.id', $condition->getValue()));
                 }
+
                 break;
             default:
             break;

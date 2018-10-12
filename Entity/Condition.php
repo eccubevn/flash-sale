@@ -17,6 +17,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Eccube\Entity\AbstractEntity;
 use Plugin\FlashSale\Repository\ConditionRepository;
 use Plugin\FlashSale\Entity\Condition\ProductClassIdCondition;
+use Plugin\FlashSale\Entity\Condition\ProductCategoryIdCondition;
 use Plugin\FlashSale\Entity\Condition\CartTotalCondition;
 
 /**
@@ -26,6 +27,7 @@ use Plugin\FlashSale\Entity\Condition\CartTotalCondition;
  * @ORM\DiscriminatorColumn(name="discriminator_type", type="string", length=255)
  * @ORM\DiscriminatorMap({
  *     ProductClassIdCondition::TYPE=ProductClassIdCondition::class,
+ *     ProductCategoryIdCondition::TYPE=ProductCategoryIdCondition::class,
  *     CartTotalCondition::TYPE=CartTotalCondition::class,
  * })
  */
