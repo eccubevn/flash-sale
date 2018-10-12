@@ -81,6 +81,7 @@ class PluginManager extends AbstractPluginManager
      */
     public function disable(array $meta = null, ContainerInterface $container)
     {
+        $this->removeDataBlock($container);
         $this->removeBlock($container);
     }
 
