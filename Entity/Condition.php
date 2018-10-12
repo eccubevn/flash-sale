@@ -29,7 +29,7 @@ use Plugin\FlashSale\Entity\Condition\CartTotalCondition;
  *     ProductClassIdCondition::TYPE=ProductClassIdCondition::class,
  *     ProductCategoryIdCondition::TYPE=ProductCategoryIdCondition::class,
  *     CartTotalCondition::TYPE=CartTotalCondition::class,
- *})
+ * })
  */
 abstract class Condition extends AbstractEntity
 {
