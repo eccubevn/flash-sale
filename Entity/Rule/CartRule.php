@@ -3,6 +3,8 @@ namespace Plugin\FlashSale\Entity\Rule;
 
 use Doctrine\ORM\Mapping as ORM;
 use Eccube\Entity\Cart;
+use Eccube\Entity\Order;
+use Plugin\FlashSale\Service\Rule\RuleInterface;
 use Plugin\FlashSale\Entity\Rule;
 use Plugin\FlashSale\Service\Operator;
 use Plugin\FlashSale\Service\Metadata\DiscriminatorManager;
@@ -13,7 +15,7 @@ use Plugin\FlashSale\Entity\Promotion\CartTotalAmountPromotion;
 /**
  * @ORM\Entity
  */
-class CartRule extends Rule
+class CartRule extends Rule implements RuleInterface
 {
     const TYPE = 'rule_cart';
 
@@ -102,24 +104,24 @@ class CartRule extends Rule
     /**
      * Check a product class is matching condition
      *
-     * @param Cart $Cart
+     * @param Order $Order
      *
      * @return bool
      */
-    public function match($Cart): bool
+    public function match($Order): bool
     {
-        if (!$Cart instanceof Cart) {
+        if (!$Order instanceof Order) {
             return false;
         }
 
-        if (isset($this->cached[__METHOD__ . $Cart->getId()])) {
-            return $this->cached[__METHOD__ . $Cart->getId()];
+        if (isset($this->cached[__METHOD__ . $Order->getId()])) {
+            return $this->cached[__METHOD__ . $Order->getId()];
         }
 
-        $this->cached[__METHOD__ . $Cart->getId()] = $this->operatorFactory
-            ->createByType($this->getOperator())->match($this->getConditions(), $Cart);
+        $this->cached[__METHOD__ . $Order->getId()] = $this->operatorFactory
+            ->createByType($this->getOperator())->match($this->getConditions(), $Order);
 
-        return $this->cached[__METHOD__ . $Cart->getId()];
+        return $this->cached[__METHOD__ . $Order->getId()];
     }
 
     /**
@@ -131,20 +133,53 @@ class CartRule extends Rule
      */
     public function getDiscountItems($object): array
     {
-        if (!$object instanceof Cart) {
+        if ($object instanceof Order) {
+            return $this->getDiscountItemsFromOrder($object);
+        } elseif ($object instanceof Cart) {
+            return $this->getDiscountItemsFromCart($object);
+        }
+
+        return [];
+    }
+
+    /**
+     * Get discount items from cart
+     *
+     * @param Cart $Cart
+     * @return array
+     */
+    protected function getDiscountItemsFromCart(Cart $Cart): array
+    {
+        if (isset($this->cached[__METHOD__ . $Cart->getId()])) {
+            return $this->cached[__METHOD__ . $Cart->getId()];
+        }
+
+        $Order = new Order();
+        $Order->setSubtotal($Cart->getTotal());
+
+        $this->cached[__METHOD__ . $Cart->getId()] = $this->getDiscountItemsFromOrder($Order);
+
+        return $this->cached[__METHOD__ . $Cart->getId()];
+    }
+
+    /**
+     * Get discount items from order
+     *
+     * @param Order $Order
+     * @return array
+     */
+    protected function getDiscountItemsFromOrder(Order $Order): array
+    {
+        if (!$this->match($Order)) {
             return [];
         }
 
-        if (!$this->match($object)) {
-            return [];
+        if (isset($this->cached[__METHOD__ . $Order->getId()])) {
+            return $this->cached[__METHOD__ . $Order->getId()];
         }
 
-        if (isset($this->cached[__METHOD__ . $object->getId()])) {
-            return $this->cached[__METHOD__ . $object->getId()];
-        }
+        $this->cached[__METHOD__ . $Order->getId()] = $this->getPromotion()->getDiscountItems($Order);
 
-        $this->cached[__METHOD__ . $object->getId()] = $this->getPromotion()->getDiscountItems($object);
-
-        return $this->cached[__METHOD__ . $object->getId()];
+        return $this->cached[__METHOD__ . $Order->getId()];
     }
 }

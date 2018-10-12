@@ -4,7 +4,7 @@ namespace Plugin\FlashSale\Service\Twig\Extension;
 use Eccube\Entity\CartItem;
 use Eccube\Common\EccubeConfig;
 use Eccube\Entity\OrderItem;
-use Eccube\Entity\ProductClass;
+use Eccube\Entity\Cart;
 use Plugin\FlashSale\Repository\FlashSaleRepository;
 use Plugin\FlashSale\Service\Rule\RuleInterface;
 
@@ -98,6 +98,23 @@ class TwigExtension extends \Twig_Extension
                     continue;
                 }
                 foreach ($Rule->getDiscountItems($ProductClass) as $discountItem) {
+                    $price += $discountItem->getPrice();
+                }
+            }
+
+            if ($price != $default) {
+                $percent = 100 - floor($price * 100 / $default);
+                $price = $this->formatter->formatCurrency($price, $this->eccubeConfig['currency']);
+                $default = $this->formatter->formatCurrency($default, $this->eccubeConfig['currency']);
+
+                return "<del>{$default}</del><span class='ec-color-red'>{$price} (-{$percent}%)</span>";
+            }
+        } elseif ($object instanceof Cart) {
+            $price = $object->getTotal();
+
+            /** @var RuleInterface $Rule */
+            foreach ($FlashSale->getRules() as $Rule) {
+                foreach ($Rule->getDiscountItems($object) as $discountItem) {
                     $price += $discountItem->getPrice();
                 }
             }

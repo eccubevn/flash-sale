@@ -74,20 +74,12 @@ class FlashSaleShoppingProcessor implements DiscountProcessor
 
         /** @var RuleInterface $Rule */
         foreach ($FlashSale->getRules() as $Rule) {
-            /** @var OrderItem $OrderItem */
-            foreach ($itemHolder->getItems() as $OrderItem) {
-                if (!$Rule->match($OrderItem->getProductClass())) {
-                    continue;
-                }
-
-                $DiscountItems = $Rule->getDiscountItems($OrderItem->getProductClass());
-                /** @var OrderItem $DiscountItem */
-                foreach ($DiscountItems as $DiscountItem) {
-                    $DiscountItem->setProcessorName(static::class)
-                        ->setQuantity($OrderItem->getQuantity())
-                        ->setOrder($itemHolder);
-                    $itemHolder->addItem($DiscountItem);
-                }
+            $DiscountItems = $Rule->getDiscountItems($itemHolder);
+            /** @var OrderItem $DiscountItem */
+            foreach ($DiscountItems as $DiscountItem) {
+                $DiscountItem->setProcessorName(static::class)
+                    ->setOrder($itemHolder);
+                $itemHolder->addItem($DiscountItem);
             }
         }
 
