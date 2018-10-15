@@ -168,7 +168,7 @@ class CartRule extends Rule implements RuleInterface
      * @param Order $Order
      * @return array
      */
-    protected function getDiscountItemsFromOrder(Order $Order): array
+    public function getDiscountItemsFromOrder(Order $Order): array
     {
         if (!$this->match($Order)) {
             return [];

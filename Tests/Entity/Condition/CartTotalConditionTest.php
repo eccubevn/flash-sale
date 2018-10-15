@@ -54,23 +54,6 @@ class CartTotalConditionTest extends AbstractEntityTest
         self::assertFalse($data);
     }
 
-    public function testMatch_InOperator_Valid_Cart()
-    {
-        $CartTotalCondition = new CartTotalCondition();
-        $CartTotalCondition->setOperator(GreaterThanOperator::TYPE);
-        $CartTotalCondition->setValue($this->ProductClass1->getPrice02IncTax());
-        $CartTotalCondition->setOperatorFactory(new OperatorFactory());
-
-        $cart = new Cart();
-        $item = new CartItem();
-        $item->setProductClass($this->ProductClass1);
-        $cart->addItem($item);
-        $cart->setTotal(100000);
-        $data = $CartTotalCondition->match($cart);
-
-        self::assertTrue($data);
-    }
-
     public function testMatch_InOperator_InValid_Cart()
     {
         $CartTotalCondition = new CartTotalCondition();
