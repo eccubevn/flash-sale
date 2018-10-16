@@ -1,5 +1,6 @@
 (function($){
     $.fn.initRulePanel = function (options) {
+        var responseData = [];
         var settings = $.extend({
             setup: {
                 rules_types: {}
@@ -153,11 +154,57 @@
             });
         }
 
+        var dataCat = [];
+        var getProducts = function (conditionType, dataIds) {
+            var mdAddCondition = $('.mdAddCondition');
+            var inputConditionId = mdAddCondition.find('.inputConditionId');
+            if (inputConditionId.length == 0) {
+                mdAddCondition.find('.searchDataModalList').before('<input class="inputConditionId form-control mb-2" value="' + dataIds + '">');
+            } else {
+                inputConditionId.val(dataIds);
+            }
+
+            if (conditionType == 'condition_product_class_id') {
+                $('#addProduct').modal('show');
+            } else {
+                var addProductCategory = $('#addProductCategory');
+                addProductCategory.find('.inputConditionId').attr('readonly', true);
+                if (dataCat['cat'] == undefined) {
+                    $.ajax({
+                        url: addProductCategory.data('url'),
+                        type: 'GET',
+                        dataType: 'html'
+                    }).done(function (data) {
+                        dataCat['cat'] = data;
+                        addProductCategory.find('.searchDataModalList').html(dataCat['cat']);
+                        addProductCategory.modal('show');
+                    }).fail(function () {
+                        alert('Search category failed.');
+                    });
+                } else {
+                    addProductCategory.find('.searchDataModalList').html(dataCat['cat']);
+                    addProductCategory.modal('show');
+                }
+            }
+        };
+
+        function addDataConditionId() {
+            fn.on('click', 'div.findProductIds', function (e) {
+                $(this).closest('td').find('.onFocus').removeClass('onFocus');
+                $(this).closest('.condition-entity').addClass('onFocus');
+                var conditionType = $(this).closest('.onFocus').find('[name="condition[type]"]').val();
+                var dataIds = $(this).closest('.onFocus').find('[name="condition[value]"]').val();
+                if (conditionType == 'condition_product_class_id' || conditionType == 'condition_product_category_id') {
+                    getProducts(conditionType, dataIds);
+                }
+            });
+        }
+
         function initialize() {
             render();
             bind();
+            addDataConditionId();
         }
-
         initialize();
         return this;
     }

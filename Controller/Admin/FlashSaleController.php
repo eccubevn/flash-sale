@@ -14,12 +14,13 @@
 namespace Plugin\FlashSale\Controller\Admin;
 
 use Eccube\Controller\AbstractController;
+use Eccube\Form\Type\Admin\SearchProductType;
+use Eccube\Repository\CategoryRepository;
 use Eccube\Repository\Master\PageMaxRepository;
 use Eccube\Util\CacheUtil;
 use Knp\Component\Pager\Paginator;
 use Plugin\FlashSale\Entity\FlashSale;
 use Plugin\FlashSale\Form\Type\Admin\FlashSaleType;
-use Plugin\FlashSale\Repository\ConfigRepository;
 use Plugin\FlashSale\Repository\FlashSaleRepository;
 use Plugin\FlashSale\Entity\Promotion;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -45,22 +46,29 @@ class FlashSaleController extends AbstractController
      */
     protected $flashSaleService;
 
+    /** @var CategoryRepository */
+    protected $categoryRepository;
+
     /**
      * FlashSaleController constructor.
      *
      * @param FlashSaleRepository $flashSaleRepository
      * @param PageMaxRepository $pageMaxRepository
      * @param FlashSaleService $flashSaleService
+     * @param CategoryRepository $categoryRepository
      */
     public function __construct(
         FlashSaleRepository $flashSaleRepository,
         PageMaxRepository $pageMaxRepository,
-        FlashSaleService $flashSaleService
+        FlashSaleService $flashSaleService,
+        CategoryRepository $categoryRepository
     ) {
         $this->flashSaleRepository = $flashSaleRepository;
         $this->pageMaxRepository = $pageMaxRepository;
         $this->flashSaleService = $flashSaleService;
+        $this->categoryRepository = $categoryRepository;
     }
+
 
     /**
      * @Route("/%eccube_admin_route%/flash_sale/list", name="flash_sale_admin_list")
@@ -164,11 +172,31 @@ class FlashSaleController extends AbstractController
             }
         }
 
+        $builder = $this->formFactory
+            ->createBuilder(SearchProductType::class);
+        $searchProductModalForm = $builder->getForm();
+
         return [
             'form' => $form->createView(),
             'FlashSale' => $FlashSale,
             'metadata' => $this->flashSaleService->getMetadata(),
+            'searchProductModalForm' => $searchProductModalForm->createView(),
         ];
+    }
+
+    /**
+     * @Route("/%eccube_admin_route%/flash_sale/get/category", name="flash_sale_admin_get_category", methods={"GET"})
+     * @Template("@FlashSale/admin/template_category.twig")
+     */
+    public function getCategory(Request $request)
+    {
+        if ($request->isXmlHttpRequest() && $this->isTokenValid()) {
+            $Categories = $this->categoryRepository->getList();
+
+            return [
+                'Categories' => $Categories
+            ];
+        }
     }
 
     /**
