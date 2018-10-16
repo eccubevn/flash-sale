@@ -369,7 +369,7 @@ class FlashSale
                     if (!empty($condition['id']) && $Rule->getConditions()->containsKey($condition['id'])) {
                         $Condition = $Rule->getConditions()->get($condition['id']);
                         if ($Condition::TYPE != $condition['type']) {
-                            $Rule->getConditions()->remove($Condition);
+                            $Rule->getConditions()->remove($Condition->getId());
                             $this->removed[] = $Condition;
                             $Condition = ConditionFactory::createFromArray($condition);
                             $Rule->getConditions()->add($Condition);

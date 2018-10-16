@@ -165,7 +165,7 @@ class FlashSaleType extends AbstractType
                 ->select('count(fl.id)')
                 ->where('(:from_time >= fl.from_time AND :from_time < fl.to_time) OR (:to_time > fl.to_time AND :to_time <= fl.to_time)')
                 ->setParameters(['from_time' => $FlashSale->getFromTime(), 'to_time' => $FlashSale->getToTime()])
-                ->andWhere('fl.status <> :status')->setParameter('status', FlashSale::STATUS_DELETED);
+                ->andWhere('fl.status = :status')->setParameter('status', FlashSale::STATUS_ACTIVATED);
 
             if ($FlashSale->getId()) {
                 $qb
