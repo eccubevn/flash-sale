@@ -155,6 +155,11 @@ class FlashSaleType extends AbstractType
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
             /** @var FlashSale $FlashSale */
             $FlashSale = $event->getData();
+
+            if (in_array($FlashSale->getStatus(), [FlashSale::STATUS_DELETED, FlashSale::STATUS_DRAFT])) {
+                return;
+            }
+
             $qb = $this->flashSaleRepository->createQueryBuilder('fl');
             $qb
                 ->select('count(fl.id)')
