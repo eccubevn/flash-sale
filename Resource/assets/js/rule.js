@@ -1,6 +1,5 @@
 (function($){
     $.fn.initRulePanel = function (options) {
-        var responseData = [];
         var settings = $.extend({
             setup: {
                 rules_types: {}
