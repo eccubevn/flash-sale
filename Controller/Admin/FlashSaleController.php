@@ -139,9 +139,10 @@ class FlashSaleController extends AbstractController
                         }
                     }
                     foreach ($Rule->getConditions() as $Condition) {
-                        if (isset($Rule->modified)) {
+                        if (isset($Condition->modified)) {
                             $this->entityManager->persist($Condition);
                         } else {
+                            $Rule->getConditions()->remove($Condition->getId());
                             $this->entityManager->remove($Condition);
                         }
                     }
@@ -149,6 +150,7 @@ class FlashSaleController extends AbstractController
                     if (isset($Rule->modified)) {
                         $this->entityManager->persist($Rule);
                     } else {
+                        $FlashSale->getRules()->remove($Rule->getId());
                         $this->entityManager->remove($Rule);
                     }
                 }
