@@ -267,8 +267,8 @@ file that was distributed with this source code.
                                     <thead class="table-active">
                                     <tr>
                                         <th width="10%">Rule Type</th>
-                                        <th width="10%">Rule Operator</th>
                                         <th width="25%">Rule Promotion</th>
+                                        <th width="10%">Rule Operator</th>
                                         <th width="45%">Rule Condition</th>
                                         <th width="5%"></th>
                                     </tr>
@@ -280,7 +280,6 @@ file that was distributed with this source code.
                                             <select class="form-control" name="rule[type]"
                                                     data-bind="changeRule"></select>
                                         </td>
-                                        <td><select class="form-control" name="rule[operator]"></select></td>
                                         <td class="promotion">
                                             <div class="row">
                                                 <div class="col-8">
@@ -292,6 +291,7 @@ file that was distributed with this source code.
                                                 </div>
                                             </div>
                                         </td>
+                                        <td><select class="form-control" name="rule[operator]"></select></td>
                                         <td class="condition">
                                             <a class="btn btn-ec-regular mr-2 add" data-bind="addCondition">Add
                                                 Condition</a>
