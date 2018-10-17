@@ -68,7 +68,7 @@ class ProductClassPricePercentPromotion extends Promotion implements PromotionIn
         $TaxInclude = $this->entityManager->find(TaxDisplayType::class, TaxDisplayType::INCLUDED);
         $Taxation = $this->entityManager->find(TaxType::class, TaxType::NON_TAXABLE);
 
-        $price = $ProductClass->getPrice02() / 100 * $this->getValue();
+        $price = floor($ProductClass->getPrice02IncTax() / 100 * $this->getValue());
 
         $OrderItem = new OrderItem();
         $OrderItem->setProductName($DiscountType->getName())
