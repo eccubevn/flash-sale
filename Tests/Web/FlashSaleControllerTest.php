@@ -240,6 +240,24 @@ class FlashSaleControllerTest extends AbstractAdminWebTestCase
         $this->verify();
     }
 
+    public function testGetCategory()
+    {
+        $this->client->request(
+            'GET',
+            $this->generateUrl('flash_sale_admin_get_category'),
+            [],
+            [],
+            [
+                'HTTP_X-Requested-With' => 'XMLHttpRequest',
+                'CONTENT_TYPE' => 'application/json',
+            ]
+        );
+
+        $this->expected = Response::HTTP_OK;
+        $this->actual = $this->client->getResponse()->getStatusCode();
+        $this->verify();
+    }
+
     public function createFlashSaleAndRules($i)
     {
         $rules['rules'] = $this->rulesData();
