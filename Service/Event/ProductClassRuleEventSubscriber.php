@@ -131,10 +131,10 @@ class ProductClassRuleEventSubscriber implements EventSubscriberInterface
                     if ($Rule->match($ProductClass)) {
                         $discountItems = $Rule->getDiscountItems($ProductClass);
                         $discountItem = current($discountItems);
-                        $discountPrice = -1 * $discountItem->getPrice();
-                        $discountPercent = floor($discountPrice * 100 / $ProductClass->getPrice02IncTax());
+                        $discountPrice = $ProductClass->getPrice02IncTax() + $discountItem->getPrice();
+                        $discountPercent = 100 - floor($discountPrice * 100 / $ProductClass->getPrice02IncTax());
                         $json[$ProductClass->getId()] = [
-                            'message' => '<p class="ec-color-red"><span>'.$this->formatter->formatCurrency($ProductClass->getPrice02IncTax() - $discountPrice, $this->eccubeConfig['currency']).'</span> (-'.$discountPercent.'%)</p>',
+                            'message' => '<p class="ec-color-red"><span>'.$this->formatter->formatCurrency($discountPrice, $this->eccubeConfig['currency']).'</span> (-'.$discountPercent.'%)</p>',
                         ];
                     }
                 }
