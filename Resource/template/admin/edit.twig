@@ -171,7 +171,6 @@ file that was distributed with this source code.
                 }).done(function (data) {
                     list.html(data);
                     productsClassData = productsClassCategories;
-                    console.log(productsClassCategories);
                     var _button = list.find('table tbody tr td button');
                     $.each(_button, function () {
                         var dataAttr = $(this).attr('onclick');
@@ -291,7 +290,6 @@ file that was distributed with this source code.
                                             <select class="form-control" name="rule[type]"
                                                     data-bind="changeRule"></select>
                                         </td>
-                                        <td><select class="form-control" name="rule[operator]"></select></td>
                                         <td class="promotion">
                                             <div class="row">
                                                 <div class="col-8">
@@ -303,6 +301,7 @@ file that was distributed with this source code.
                                                 </div>
                                             </div>
                                         </td>
+                                        <td><select class="form-control" name="rule[operator]"></select></td>
                                         <td class="condition">
                                             <a class="btn btn-ec-regular mr-2 add" data-bind="addCondition">{{ 'flash_sale.admin.form.rule.condition.add'|trans }}</a>
                                             <div data-container="condition">
