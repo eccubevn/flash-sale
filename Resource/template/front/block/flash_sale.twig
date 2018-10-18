@@ -1,9 +1,13 @@
+{% set flashSale = repository('Plugin\\FlashSale\\Entity\\FlashSale').getAvailableFlashSale %}
 {% set items = repository('Plugin\\FlashSale\\Entity\\Condition').getProductList %}
-{% if items %}
+
+{% if flashSale and items %}
     <!-- ▼item_list▼ -->
     <div class="ec-shelfRole">
         <div class="ec-secHeading">
-            <span class="ec-secHeading__en">フラッシュ販売</span>
+            <span class="ec-secHeading__en">{{ flashSale.getName }}</span>
+            <span class="ec-secHeading__line"></span>
+            <span class="ec-eyecatchRole__introEnTitle">{{ flashSale.getFromTime|date_min }} to {{ flashSale.getToTime|date_min }}</span>
         </div>
         <ul class="ec-shelfGrid">
             {% for item in items %}

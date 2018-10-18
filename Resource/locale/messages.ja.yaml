@@ -1,0 +1,30 @@
+flash_sale.admin.list.title: FlashSale
+flash_sale.admin.list.title.sub: プラグイン一覧
+
+flash_sale.admin.list.id: ID
+flash_sale.admin.list.title: Title
+flash_sale.admin.list.description: Description
+flash_sale.admin.list.time.start: Start time
+flash_sale.admin.list.time.end: End time
+flash_sale.admin.list.created.at: Created At
+flash_sale.admin.list.updated.at: Updated At
+flash_sale.admin.list.status: Status
+
+flash_sale.admin.form.title: FlashSale
+flash_sale.admin.form.title.sub: Edit
+
+flash_sale.admin.form.information: Information of event
+flash_sale.admin.form.name: Event name
+flash_sale.admin.form.note: Note
+flash_sale.admin.form.note.tooltip: This information will not be displayed outside the home page
+flash_sale.admin.form.rule.box: Rule not translate
+flash_sale.admin.form.rule.add: Add rule
+flash_sale.admin.form.rule.type: Rule Type
+flash_sale.admin.form.rule.operator: Rule Operator
+flash_sale.admin.form.rule.promotion: Rule Promotion
+flash_sale.admin.form.rule.condition: Rule Condition
+
+flash_sale.admin.form.rule.condition.add: Add Condition
+
+flash_sale.admin.form.remove: Remove
+flash_sale.admin.form.back.to.flash_sale.list: Back to list

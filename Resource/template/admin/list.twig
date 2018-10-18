@@ -2,8 +2,8 @@
 
 {% set menus = ['setting', 'flash_sales_admin'] %}
 
-{% block title %}FlashSale{% endblock %}
-{% block sub_title %}プラグイン一覧{% endblock %}
+{% block title %}{{ 'flash_sale.admin.list.title'|trans }}{% endblock %}
+{% block sub_title %}{{ 'flash_sale.admin.list.title.sub'|trans }}{% endblock %}
 
 {% block stylesheet %}{% endblock stylesheet %}
 
@@ -25,14 +25,14 @@
                                 <table class="table table-sm">
                                     <thead>
                                     <tr>
-                                        <th class="border-top-0 pt-2 pb-2 text-center">ID</th>
-                                        <th class="border-top-0 pt-2 pb-2">Title</th>
-                                        <th class="border-top-0 pt-2 pb-2">Description</th>
-                                        <th class="border-top-0 pt-2 pb-2">Start time</th>
-                                        <th class="border-top-0 pt-2 pb-2">End time</th>
-                                        <th class="border-top-0 pt-2 pb-2 text-nowrap">Created At</th>
-                                        <th class="border-top-0 pt-2 pb-2 text-nowrap">Updated At</th>
-                                        <th class="border-top-0 pt-2 pb-2">Status</th>
+                                        <th class="border-top-0 pt-2 pb-2 text-center">{{ 'flash_sale.admin.list.id'|trans }}</th>
+                                        <th class="border-top-0 pt-2 pb-2">{{ 'flash_sale.admin.list.title'|trans }}</th>
+                                        <th class="border-top-0 pt-2 pb-2">{{ 'flash_sale.admin.list.description'|trans }}</th>
+                                        <th class="border-top-0 pt-2 pb-2">{{ 'flash_sale.admin.list.time.start'|trans }}</th>
+                                        <th class="border-top-0 pt-2 pb-2">{{ 'flash_sale.admin.list.time.end'|trans }}</th>
+                                        <th class="border-top-0 pt-2 pb-2 text-nowrap">{{ 'flash_sale.admin.list.created.at'|trans }}</th>
+                                        <th class="border-top-0 pt-2 pb-2 text-nowrap">{{ 'flash_sale.admin.list.updated.at'|trans }}</th>
+                                        <th class="border-top-0 pt-2 pb-2">{{ 'flash_sale.admin.list.status'|trans }}</th>
                                         <th class="border-top-0 pt-2 pb-2 pr-3" colspan="3"></th>
                                     </tr>
                                     </thead>

@@ -13,14 +13,16 @@ file that was distributed with this source code.
 {% set menus = ['setting', 'flash_sales_admin'] %}
 
 
-{% block title %}{{ 'admin.content.news_management'|trans }}{% endblock %}
-{% block sub_title %}{{ 'admin.content.contents_management'|trans }}{% endblock %}
+{% block title %}{{ 'flash_sale.admin.form.title'|trans }}{% endblock %}
+{% block sub_title %}{{ 'flash_sale.admin.form.title.sub'|trans }}{% endblock %}
 
 {% form_theme searchProductModalForm '@admin/Form/bootstrap_4_horizontal_layout.html.twig' %}
 
 {% block stylesheet %}
     <style>
         .findProductIds{ cursor: pointer}
+        .table.table-striped.table-sm th:first-child{ width: 65px}
+        .table.table-striped.table-sm th:nth-child(3){ width: 300px}
     </style>
 {% endblock stylesheet %}
 
@@ -45,7 +47,17 @@ file that was distributed with this source code.
             });
 
             mdAddCondition.on('click', 'table > tbody > tr > td > button.btn-ec-actionIcon', function (e) {
+                var $sele1 = $(this).closest('tr').find('select[name=classcategory_id1]');
+                var $sele2 = $(this).closest('tr').find('select[name=classcategory_id2]');
                 var dataId = fnAddConditionsProductClass($(this).closest('tr'), $(this).data('id'));
+                if($sele1.length && $sele1.val() == '__unselected'){
+                    alert('{{ 'admin.product.unselected_class'|trans }}');
+                    return;
+                }
+                if($sele2.length && !$sele2.val()){
+                    alert('{{ 'admin.product.unselected_class'|trans }}');
+                    return;
+                }
                 handleInputData(dataId);
                 handlePlusButton($(this).closest('tr'));
             });
@@ -113,7 +125,6 @@ file that was distributed with this source code.
                         class_category_id1 = $sele1.val();
                         class_cateogry_id2 = $sele2.val();
                         if (class_category_id1 == '__unselected' || !class_cateogry_id2) {
-                            alert('{{ 'admin.product.unselected_class'|trans }}');
                             return;
                         }
                         product = productsClassData[product_id][class_category_id1]['#' + class_cateogry_id2];
@@ -121,7 +132,6 @@ file that was distributed with this source code.
                     } else {
                         class_category_id1 = $sele1.val();
                         if (class_category_id1 == '__unselected') {
-                            alert('{{ 'admin.product.unselected_class'|trans }}');
                             return;
                         }
                         product = productsClassData[product_id][class_category_id1]['#'];
@@ -161,6 +171,7 @@ file that was distributed with this source code.
                 }).done(function (data) {
                     list.html(data);
                     productsClassData = productsClassCategories;
+                    console.log(productsClassCategories);
                     var _button = list.find('table tbody tr td button');
                     $.each(_button, function () {
                         var dataAttr = $(this).attr('onclick');
@@ -192,7 +203,7 @@ file that was distributed with this source code.
                         <div class="card-header">
                             <div class="row">
                                 <div class="col-8">
-                                    <span class="card-title">{{ 'admin.content.news.news_registration'|trans }}</span>
+                                    <span class="card-title">{{ 'flash_sale.admin.form.information'|trans }}</span>
                                 </div>
                                 <div class="col-4 text-right">
                                     <a data-toggle="collapse" href="#newsForm" aria-expanded="true"
@@ -202,7 +213,7 @@ file that was distributed with this source code.
                         <div class="ec-cardCollapse collapse show" id="newsForm" style="">
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="col-3"><span>{{ 'admin.content.news.title'|trans }}</span></div>
+                                    <div class="col-3"><span>{{ 'flash_sale.admin.form.name'|trans }}</span></div>
                                     <div class="col mb-2">
                                         {{ form_widget(form.name) }}
                                         {{ form_errors(form.name) }}
@@ -210,7 +221,7 @@ file that was distributed with this source code.
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-3"><span>From time</span></div>
+                                    <div class="col-3"><span>{{ 'flash_sale.admin.list.time.start'|trans }}</span></div>
                                     <div class="col mb-2">
                                         {{ form_widget(form.from_time) }}
                                         {{ form_errors(form.from_time) }}
@@ -218,7 +229,7 @@ file that was distributed with this source code.
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-3"><span>To time</span></div>
+                                    <div class="col-3"><span>{{ 'flash_sale.admin.list.time.end'|trans }}</span></div>
                                     <div class="col mb-2">
                                         {{ form_widget(form.to_time) }}
                                         {{ form_errors(form.to_time) }}
@@ -228,8 +239,8 @@ file that was distributed with this source code.
                                 <div class="row">
                                     <div class="col-3">
                                         <div class="d-inline-block" data-tooltip="true" data-placement="top"
-                                             title="{{ 'tooltip.content.news.body'|trans }}">
-                                            <span>{{ 'admin.content.news.body'|trans }}</span><i
+                                             title="{{ 'flash_sale.admin.form.note.tooltip'|trans }}">
+                                            <span>{{ 'flash_sale.admin.form.note'|trans }}</span><i
                                                     class="fa fa-question-circle fa-lg ml-1"></i>
                                         </div>
                                     </div>
@@ -246,7 +257,7 @@ file that was distributed with this source code.
                         <div class="card-header">
                             <div class="row">
                                 <div class="col-8">
-                                    <span class="card-title">Rule not translate</span></div>
+                                    <span class="card-title">{{ 'flash_sale.admin.form.rule.box'|trans }}</span></div>
                                 <div class="col-4 text-right">
                                     <a data-toggle="collapse" href="#ruleForm" aria-expanded="true"
                                        aria-controls="ruleForm"><i class="fa fa-lg fa-angle-up"></i></a></div>
@@ -256,7 +267,7 @@ file that was distributed with this source code.
                             <div class="card-body">
                                 <div class="row justify-content-start mb-2">
                                     <div class="col-auto">
-                                        <a class="btn btn-ec-regular mr-2 add" data-bind="addRule">Add Rule</a>
+                                        <a class="btn btn-ec-regular mr-2 add" data-bind="addRule">{{ 'flash_sale.admin.form.rule.add'|trans }}</a>
                                     </div>
                                     <div class="col-auto">
                                         {{ form_widget(form.rules) }}
@@ -266,10 +277,10 @@ file that was distributed with this source code.
                                 <table class="table table-striped table-sm mb-0">
                                     <thead class="table-active">
                                     <tr>
-                                        <th width="10%">Rule Type</th>
-                                        <th width="10%">Rule Operator</th>
-                                        <th width="25%">Rule Promotion</th>
-                                        <th width="45%">Rule Condition</th>
+                                        <th width="10%">{{ 'flash_sale.admin.form.rule.type'|trans }}</th>
+                                        <th width="10%">{{ 'flash_sale.admin.form.rule.operator'|trans }}</th>
+                                        <th width="25%">{{ 'flash_sale.admin.form.rule.promotion'|trans }}</th>
+                                        <th width="45%">{{ 'flash_sale.admin.form.rule.condition'|trans }}</th>
                                         <th width="5%"></th>
                                     </tr>
                                     </thead>
@@ -293,8 +304,7 @@ file that was distributed with this source code.
                                             </div>
                                         </td>
                                         <td class="condition">
-                                            <a class="btn btn-ec-regular mr-2 add" data-bind="addCondition">Add
-                                                Condition</a>
+                                            <a class="btn btn-ec-regular mr-2 add" data-bind="addCondition">{{ 'flash_sale.admin.form.rule.condition.add'|trans }}</a>
                                             <div data-container="condition">
                                                 <div class="d-none" data-template="condition">
                                                     <div class="row mt-2">
@@ -317,7 +327,7 @@ file that was distributed with this source code.
                                                         </div>
                                                         <div class="col-2">
                                                             <a class="btn btn-ec-regular mr-2 add"
-                                                               data-bind="removeCondition">Remove</a>
+                                                               data-bind="removeCondition">{{ 'flash_sale.admin.form.remove'|trans }}</a>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -377,7 +387,7 @@ file that was distributed with this source code.
                                 <div class="c-conversionArea__leftBlockItem">
                                     <a class="c-baseLink" href="{{ url('flash_sale_admin_list') }}">
                                         <i class="fa fa-backward" aria-hidden="true"></i>
-                                        <span>Back to list</span></a>
+                                        <span>{{ 'flash_sale.admin.form.back.to.flash_sale.list'|trans }}</span></a>
                                 </div>
                             </div>
                             <div class="col-6">
