@@ -48,7 +48,7 @@ class DiscriminatorManagerTest extends AbstractServiceTestCase
         $data = $DiscriminatorManager->create(EqualOperator::TYPE);
         $test = (new Discriminator())
             ->setType(EqualOperator::TYPE)
-            ->setName('is equal to')
+            ->setName(trans('flash_sale.admin.form.rule.operator.is_equal_to'))
             ->setClass(EqualOperator::class)
             ->setDescription('');
 

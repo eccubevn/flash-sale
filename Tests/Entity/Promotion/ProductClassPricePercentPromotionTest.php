@@ -65,7 +65,7 @@ class ProductClassPricePercentPromotionTest extends EccubeTestCase
 
         $OrderItem = $ProductClassPricePercentPromotion->getDiscountItems($this->ProductClass1);
 
-        $price = -1 * ($this->ProductClass1->getPrice02() / 100 * $ProductClassPricePercentPromotion->getValue());
+        $price = -1 * floor($this->ProductClass1->getPrice02IncTax() / 100 * $ProductClassPricePercentPromotion->getValue());
 
         self::assertEquals($price, $OrderItem[0]->getPrice());
         self::assertEquals(1, $OrderItem[0]->getQuantity());

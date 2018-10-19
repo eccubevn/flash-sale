@@ -34,8 +34,8 @@ class FlashSale
     const STATUS_DELETED = 2;
 
     public static $statusList = [
-        self::STATUS_DRAFT => 'Draft',
-        self::STATUS_ACTIVATED => 'Activated',
+        self::STATUS_DRAFT => 'flash_sale.admin.list.status.draft',
+        self::STATUS_ACTIVATED => 'flash_sale.admin.list.status.activated',
     ];
 
     /**

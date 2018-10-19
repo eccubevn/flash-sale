@@ -11,6 +11,8 @@ flash_sale.admin.list.time.end: 終了日
 flash_sale.admin.list.created.at: 登録日
 flash_sale.admin.list.updated.at: 更新日
 flash_sale.admin.list.status: ステータス
+flash_sale.admin.list.status.draft: 公開
+flash_sale.admin.list.status.activated: 非公開
 
 flash_sale.admin.form.title: FlashSale
 flash_sale.admin.form.title.sub: FlashSale編集
