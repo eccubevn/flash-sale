@@ -44,7 +44,7 @@ class DiscriminatorManager
             case Operator\AllOperator::TYPE:
                 $this->container[Operator\AllOperator::TYPE] = (new Discriminator())
                     ->setType(Operator\AllOperator::TYPE)
-                    ->setName('is all of')
+                    ->setName(trans('flash_sale.admin.form.rule.operator.is_all_of'))
                     ->setClass(Operator\AllOperator::class)
                     ->setDescription('');
 
@@ -53,7 +53,7 @@ class DiscriminatorManager
             case Operator\InOperator::TYPE:
                 $this->container[Operator\InOperator::TYPE] = (new Discriminator())
                     ->setType(Operator\InOperator::TYPE)
-                    ->setName('is one of')
+                    ->setName(trans('flash_sale.admin.form.rule.operator.is_one_of'))
                     ->setClass(Operator\InOperator::class)
                     ->setDescription('');
 
@@ -62,7 +62,7 @@ class DiscriminatorManager
             case Operator\EqualOperator::TYPE:
                 $this->container[Operator\EqualOperator::TYPE] = (new Discriminator())
                     ->setType(Operator\EqualOperator::TYPE)
-                    ->setName('is equal to')
+                    ->setName(trans('flash_sale.admin.form.rule.operator.is_equal_to'))
                     ->setClass(Operator\EqualOperator::class)
                     ->setDescription('');
 
@@ -71,7 +71,7 @@ class DiscriminatorManager
             case Operator\NotEqualOperator::TYPE:
                 $this->container[Operator\NotEqualOperator::TYPE] = (new Discriminator())
                     ->setType(Operator\NotEqualOperator::TYPE)
-                    ->setName('is not equal to')
+                    ->setName(trans('flash_sale.admin.form.rule.operator.is_not_equal_to'))
                     ->setClass(Operator\NotEqualOperator::class)
                     ->setDescription('');
 
@@ -80,7 +80,7 @@ class DiscriminatorManager
             case Operator\GreaterThanOperator::TYPE:
                 $this->container[Operator\GreaterThanOperator::TYPE] = (new Discriminator())
                     ->setType(Operator\GreaterThanOperator::TYPE)
-                    ->setName('is greater than to')
+                    ->setName(trans('flash_sale.admin.form.rule.operator.is_greater_than_to'))
                     ->setClass(Operator\GreaterThanOperator::class)
                     ->setDescription('');
 
@@ -89,7 +89,7 @@ class DiscriminatorManager
             case Operator\LessThanOperator::TYPE:
                 $this->container[Operator\LessThanOperator::TYPE] = (new Discriminator())
                     ->setType(Operator\LessThanOperator::TYPE)
-                    ->setName('is less than to')
+                    ->setName(trans('flash_sale.admin.form.rule.operator.is_less_than_to'))
                     ->setClass(Operator\LessThanOperator::class)
                     ->setDescription('');
 
@@ -98,7 +98,7 @@ class DiscriminatorManager
             case ProductClassRule::TYPE:
                 $this->container[ProductClassRule::TYPE] = (new Discriminator())
                     ->setType(ProductClassRule::TYPE)
-                    ->setName('Product Class Rule')
+                    ->setName(trans('flash_sale.admin.form.rule.product_class_rule'))
                     ->setClass(ProductClassRule::class)
                     ->setDescription('');
 
@@ -107,7 +107,7 @@ class DiscriminatorManager
             case CartRule::TYPE:
                 $this->container[CartRule::TYPE] = (new Discriminator())
                     ->setType(CartRule::TYPE)
-                    ->setName('Cart Rule')
+                    ->setName(trans('flash_sale.admin.form.rule.cart_rule'))
                     ->setClass(CartRule::class)
                     ->setDescription('');
 
@@ -116,7 +116,7 @@ class DiscriminatorManager
             case ProductClassIdCondition::TYPE:
                 $this->container[ProductClassIdCondition::TYPE] = (new Discriminator())
                     ->setType(ProductClassIdCondition::TYPE)
-                    ->setName('Product Class Id Condition')
+                    ->setName(trans('flash_sale.admin.form.rule.condition.product_class_id_condition'))
                     ->setClass(ProductClassIdCondition::class)
                     ->setDescription('');
 
@@ -125,7 +125,7 @@ class DiscriminatorManager
             case ProductCategoryIdCondition::TYPE:
                 $this->container[ProductCategoryIdCondition::TYPE] = (new Discriminator())
                     ->setType(ProductCategoryIdCondition::TYPE)
-                    ->setName('Product Category Id Condition')
+                    ->setName(trans('flash_sale.admin.form.rule.condition.product_category_id_condition'))
                     ->setClass(ProductCategoryIdCondition::class)
                     ->setDescription('');
 
@@ -134,7 +134,7 @@ class DiscriminatorManager
             case CartTotalCondition::TYPE:
                 $this->container[CartTotalCondition::TYPE] = (new Discriminator())
                     ->setType(CartTotalCondition::TYPE)
-                    ->setName('Cart Total Condition')
+                    ->setName(trans('flash_sale.admin.form.rule.condition.cart_total_condition'))
                     ->setClass(CartTotalCondition::class)
                     ->setDescription('');
 
@@ -143,7 +143,7 @@ class DiscriminatorManager
             case ProductClassPricePercentPromotion::TYPE:
                 $this->container[ProductClassPricePercentPromotion::TYPE] = (new Discriminator())
                     ->setType(ProductClassPricePercentPromotion::TYPE)
-                    ->setName('Product Class Price Percent Promotion')
+                    ->setName(trans('flash_sale.admin.form.rule.product_class_price_percent_promotion'))
                     ->setClass(ProductClassPricePercentPromotion::class)
                     ->setDescription('');
 
@@ -152,7 +152,7 @@ class DiscriminatorManager
             case ProductClassPriceAmountPromotion::TYPE:
                 $this->container[ProductClassPriceAmountPromotion::TYPE] = (new Discriminator())
                     ->setType(ProductClassPriceAmountPromotion::TYPE)
-                    ->setName('Product Class Price Amount Promotion')
+                    ->setName(trans('flash_sale.admin.form.rule.product_class_price_amount_promotion'))
                     ->setClass(ProductClassPriceAmountPromotion::class)
                     ->setDescription('');
 
@@ -161,7 +161,7 @@ class DiscriminatorManager
             case CartTotalAmountPromotion::TYPE:
                 $this->container[CartTotalAmountPromotion::TYPE] = (new Discriminator())
                     ->setType(CartTotalAmountPromotion::TYPE)
-                    ->setName('Cart Total Amount Promotion')
+                    ->setName(trans('flash_sale.admin.form.rule.cart_total_amount_promotion'))
                     ->setClass(CartTotalAmountPromotion::class)
                     ->setDescription('');
 
@@ -170,7 +170,7 @@ class DiscriminatorManager
             case CartTotalPercentPromotion::TYPE:
                 $this->container[CartTotalPercentPromotion::TYPE] = (new Discriminator())
                     ->setType(CartTotalPercentPromotion::TYPE)
-                    ->setName('Cart Total Percent Promotion')
+                    ->setName(trans('flash_sale.admin.form.rule.cart_total_percent_promotion'))
                     ->setClass(CartTotalPercentPromotion::class)
                     ->setDescription('');
 
