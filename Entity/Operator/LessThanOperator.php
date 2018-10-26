@@ -11,13 +11,16 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\FlashSale\Service\Operator;
+namespace Plugin\FlashSale\Entity\Operator;
 
 use Doctrine\ORM\QueryBuilder;
 use Plugin\FlashSale\Entity\Condition;
+use Plugin\FlashSale\Entity\OperatorInterface;
 
 class LessThanOperator implements OperatorInterface
 {
+    use \Plugin\FlashSale\Entity\Discriminator\DiscriminatorTrait;
+
     const TYPE = 'operator_less_than';
 
     /**

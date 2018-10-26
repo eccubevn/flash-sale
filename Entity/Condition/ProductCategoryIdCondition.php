@@ -14,31 +14,30 @@
 namespace Plugin\FlashSale\Entity\Condition;
 
 use Doctrine\ORM\Mapping as ORM;
-use Eccube\Entity\Product;
 use Eccube\Entity\ProductClass;
 use Plugin\FlashSale\Entity\Condition;
-use Plugin\FlashSale\Service\Condition\ConditionInterface;
-use Plugin\FlashSale\Service\Operator as Operator;
+use Plugin\FlashSale\Entity\Operator as Operator;
+use Plugin\FlashSale\Factory\OperatorFactory;
 
 /**
  * @ORM\Entity
  */
-class ProductCategoryIdCondition extends Condition implements ConditionInterface
+class ProductCategoryIdCondition extends Condition
 {
     const TYPE = 'condition_product_category_id';
 
     /**
-     * @var Operator\OperatorFactory
+     * @var OperatorFactory
      */
     protected $operatorFactory;
 
     /**
-     * @param Operator\OperatorFactory $operatorFactory
+     * @param OperatorFactory $operatorFactory
      *
      * @return $this
      * @required
      */
-    public function setOperatorFactory(Operator\OperatorFactory $operatorFactory)
+    public function setOperatorFactory(OperatorFactory $operatorFactory)
     {
         $this->operatorFactory = $operatorFactory;
 
@@ -54,17 +53,20 @@ class ProductCategoryIdCondition extends Condition implements ConditionInterface
      */
     public function match($ProductClass)
     {
-        /** @var Product $ProductClass */
+        /** @var ProductClass $ProductClass */
         if (!$ProductClass instanceof ProductClass) {
             return false;
         }
 
         $cateIds = [];
+
         foreach ($ProductClass->getProduct()->getProductCategories() as $category) {
             $cateIds[] = $category->getCategoryId();
         }
 
-        return $this->operatorFactory->createByType($this->getOperator())->match($this->value, $cateIds);
+        return $this->operatorFactory->create([
+            'type' => $this->getOperator()
+        ])->match($this->value, $cateIds);
     }
 
     /**

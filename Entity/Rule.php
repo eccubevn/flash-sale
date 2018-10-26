@@ -17,8 +17,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Eccube\Entity\AbstractEntity;
 use Plugin\FlashSale\Entity\Rule\ProductClassRule;
-use Plugin\FlashSale\Service\Metadata\DiscriminatorInterface;
-use Plugin\FlashSale\Service\Promotion\PromotionInterface;
 use Plugin\FlashSale\Entity\Rule\CartRule;
 
 /**
@@ -28,8 +26,10 @@ use Plugin\FlashSale\Entity\Rule\CartRule;
  * @ORM\DiscriminatorColumn(name="discriminator_type", type="string", length=255)
  * @ORM\DiscriminatorMap({ProductClassRule::TYPE=ProductClassRule::class, CartRule::TYPE=CartRule::class})
  */
-abstract class Rule extends AbstractEntity
+abstract class Rule extends AbstractEntity implements RuleInterface
 {
+    use \Plugin\FlashSale\Entity\Discriminator\DiscriminatorTrait;
+
     const TYPE = 'rule';
 
     /**
@@ -69,11 +69,6 @@ abstract class Rule extends AbstractEntity
      * @ORM\OneToOne(targetEntity=Promotion::class, mappedBy="Rule", cascade={"persist"})
      */
     protected $Promotion;
-
-    /**
-     * @var DiscriminatorInterface
-     */
-    protected $discriminator;
 
     /**
      * Rule constructor.
@@ -174,16 +169,6 @@ abstract class Rule extends AbstractEntity
     public function setPromotion(Promotion $Promotion): void
     {
         $this->Promotion = $Promotion;
-    }
-
-    /**
-     * Get $discriminator
-     *
-     * @return DiscriminatorInterface
-     */
-    public function getDiscriminator(): DiscriminatorInterface
-    {
-        return $this->discriminator;
     }
 
     /**

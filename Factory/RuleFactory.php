@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\FlashSale\Service\Rule;
+namespace Plugin\FlashSale\Factory;
 
 use Plugin\FlashSale\Entity\Rule;
 
@@ -20,17 +20,17 @@ class RuleFactory
     /**
      * Create Rule from array
      *
-     * @param array $data
+     * @param array $options
      *
      * @return Rule
      */
-    public static function createFromArray(array $data)
+    public function create(array $options)
     {
-        if (!isset($data['type'])) {
+        if (!isset($options['type'])) {
             throw new \InvalidArgumentException('$data[type] must be required');
         }
 
-        switch ($data['type']) {
+        switch ($options['type']) {
             case Rule\ProductClassRule::TYPE:
                 $Rule = new Rule\ProductClassRule();
                 break;
@@ -38,10 +38,10 @@ class RuleFactory
                 $Rule = new Rule\CartRule();
                 break;
             default:
-                throw new \InvalidArgumentException($data['type'].' unsupported');
+                throw new \InvalidArgumentException($options['type'].' unsupported');
         }
-        if (isset($data['operator'])) {
-            $Rule->setOperator($data['operator']);
+        if (isset($options['operator'])) {
+            $Rule->setOperator($options['operator']);
         }
 
         return $Rule;

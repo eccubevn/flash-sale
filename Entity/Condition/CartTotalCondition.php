@@ -2,31 +2,30 @@
 namespace Plugin\FlashSale\Entity\Condition;
 
 use Doctrine\ORM\Mapping as ORM;
-use Eccube\Entity\Cart;
 use Eccube\Entity\Order;
 use Plugin\FlashSale\Entity\Condition;
-use Plugin\FlashSale\Service\Operator;
-use Plugin\FlashSale\Service\Condition\ConditionInterface;
+use Plugin\FlashSale\Entity\Operator;
+use Plugin\FlashSale\Factory\OperatorFactory;
 
 /**
  * @ORM\Entity()
  */
-class CartTotalCondition extends Condition implements ConditionInterface
+class CartTotalCondition extends Condition
 {
     const TYPE = 'condition_cart_total';
 
     /**
-     * @var Operator\OperatorFactory
+     * @var OperatorFactory
      */
     protected $operatorFactory;
 
     /**
-     * @param Operator\OperatorFactory $operatorFactory
+     * @param OperatorFactory $operatorFactory
      *
      * @return $this
      * @required
      */
-    public function setOperatorFactory(Operator\OperatorFactory $operatorFactory)
+    public function setOperatorFactory(OperatorFactory $operatorFactory)
     {
         $this->operatorFactory = $operatorFactory;
 
@@ -43,7 +42,9 @@ class CartTotalCondition extends Condition implements ConditionInterface
     public function match($data)
     {
         if ($data instanceof Order) {
-            return $this->operatorFactory->createByType($this->getOperator())->match($this->value, $data->getSubtotal());
+            return $this->operatorFactory->create([
+                'type' => $this->getOperator()
+            ])->match($this->value, $data->getSubtotal());
         }
 
         return false;

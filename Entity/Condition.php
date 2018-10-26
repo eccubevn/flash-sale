@@ -31,8 +31,10 @@ use Plugin\FlashSale\Entity\Condition\CartTotalCondition;
  *     CartTotalCondition::TYPE=CartTotalCondition::class,
  * })
  */
-abstract class Condition extends AbstractEntity
+abstract class Condition extends AbstractEntity implements ConditionInterface
 {
+    use \Plugin\FlashSale\Entity\Discriminator\DiscriminatorTrait;
+
     const TYPE = 'condition';
 
     /**

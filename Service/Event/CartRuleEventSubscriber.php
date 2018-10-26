@@ -20,7 +20,7 @@ use Eccube\Entity\ProductClass;
 use Eccube\Common\EccubeConfig;
 use Plugin\FlashSale\Repository\FlashSaleRepository;
 use Plugin\FlashSale\Entity\FlashSale;
-use Plugin\FlashSale\Service\Rule\RuleInterface;
+use Plugin\FlashSale\Entity\RuleInterface;
 
 class CartRuleEventSubscriber implements EventSubscriberInterface
 {

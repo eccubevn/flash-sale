@@ -6,7 +6,7 @@ use Eccube\Common\EccubeConfig;
 use Eccube\Entity\OrderItem;
 use Eccube\Entity\Cart;
 use Plugin\FlashSale\Repository\FlashSaleRepository;
-use Plugin\FlashSale\Service\Rule\RuleInterface;
+use Plugin\FlashSale\Entity\RuleInterface;
 
 
 class TwigExtension extends \Twig_Extension

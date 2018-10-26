@@ -17,12 +17,17 @@ use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Events as DoctrineEvents;
 use Doctrine\ORM\Event\LifecycleEventArgs;
-use Plugin\FlashSale\Service\Promotion\PromotionInterface;
-use Plugin\FlashSale\Service\Rule\RuleInterface;
-use Plugin\FlashSale\Service\Condition\ConditionInterface;
-use Plugin\FlashSale\Service\Operator\OperatorInterface;
-use Plugin\FlashSale\Service\Operator\OperatorFactory;
-use Plugin\FlashSale\Service\Metadata\DiscriminatorManager;
+use Plugin\FlashSale\Entity\PromotionInterface;
+use Plugin\FlashSale\Entity\RuleInterface;
+use Plugin\FlashSale\Entity\ConditionInterface;
+use Plugin\FlashSale\Entity\OperatorInterface;
+use Plugin\FlashSale\Factory\OperatorFactory;
+use Plugin\FlashSale\Factory\ConditionFactory;
+use Plugin\FlashSale\Factory\PromotionFactory;
+use Plugin\FlashSale\Factory\RuleFactory;
+use Plugin\FlashSale\Repository\DiscriminatorRepository;
+use Plugin\FlashSale\Entity\FlashSale;
+use Plugin\FlashSale\Utils\Memoization;
 
 class EntityDiEventSubscriber implements EventSubscriber
 {
@@ -32,19 +37,31 @@ class EntityDiEventSubscriber implements EventSubscriber
     protected $container;
 
     /**
-     * DiEventSubscriber constructor.
+     * EntityDiEventSubscriber constructor.
      *
+     * @param Memoization $memoization
+     * @param ConditionFactory $conditionFactory
+     * @param PromotionFactory $promotionFactory
+     * @param RuleFactory $ruleFactory
      * @param OperatorFactory $operatorFactory
      * @param EntityManagerInterface $entityManager
-     * @param DiscriminatorManager $discriminatorManager
+     * @param DiscriminatorRepository $discriminatorRepository
      */
     public function __construct(
+        Memoization $memoization,
+        ConditionFactory $conditionFactory,
+        PromotionFactory $promotionFactory,
+        RuleFactory $ruleFactory,
         OperatorFactory $operatorFactory,
         EntityManagerInterface $entityManager,
-        DiscriminatorManager $discriminatorManager
+        DiscriminatorRepository $discriminatorRepository
     ) {
+        $this->defineDI($memoization);
+        $this->defineDI($conditionFactory);
+        $this->defineDI($promotionFactory);
+        $this->defineDI($ruleFactory);
         $this->defineDI($operatorFactory);
-        $this->defineDI($discriminatorManager);
+        $this->defineDI($discriminatorRepository);
         $this->container[EntityManagerInterface::class] = $entityManager;
     }
 
@@ -84,6 +101,7 @@ class EntityDiEventSubscriber implements EventSubscriber
             && !$entity instanceof ConditionInterface
             && !$entity instanceof OperatorInterface
             && !$entity instanceof PromotionInterface
+            && !$entity instanceof FlashSale
         ) {
             return;
         }

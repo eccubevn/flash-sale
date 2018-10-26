@@ -22,13 +22,12 @@ use Eccube\Entity\Master\TaxType;
 use Eccube\Entity\OrderItem;
 use Eccube\Entity\Cart;
 use Eccube\Entity\Order;
-use Plugin\FlashSale\Service\Promotion\PromotionInterface;
 use Plugin\FlashSale\Entity\Promotion;
 
 /**
  * @ORM\Entity
  */
-class CartTotalAmountPromotion extends Promotion implements PromotionInterface
+class CartTotalAmountPromotion extends Promotion
 {
     const TYPE = 'promotion_cart_total_amount';
 

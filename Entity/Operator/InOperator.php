@@ -11,14 +11,19 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\FlashSale\Service\Operator;
+namespace Plugin\FlashSale\Entity\Operator;
 
+use Doctrine\Common\Collections\Collection as DoctrineCollection;
 use Doctrine\ORM\QueryBuilder;
 use Plugin\FlashSale\Entity\Condition;
+use Plugin\FlashSale\Entity\ConditionInterface;
+use Plugin\FlashSale\Entity\OperatorInterface;
 
-class NotEqualOperator implements OperatorInterface
+class InOperator implements OperatorInterface
 {
-    const TYPE = 'operator_not_equal';
+    use \Plugin\FlashSale\Entity\Discriminator\DiscriminatorTrait;
+
+    const TYPE = 'operator_in';
 
     /**
      * {@inheritdoc}
@@ -30,11 +35,29 @@ class NotEqualOperator implements OperatorInterface
      */
     public function match($condition, $data)
     {
-        if (is_array($data)) {
-            return (bool)!in_array($condition, $data);
+        if (!is_array($condition) && !$condition instanceof DoctrineCollection) {
+            $condition = explode(',', $condition);
         }
 
-        return $condition != $data;
+        if (is_array($data)) {
+            if (!$condition instanceof DoctrineCollection) {
+                return (bool)array_intersect($condition, $data);
+            }
+        } else {
+            foreach ($condition as $cond) {
+                if ($cond instanceof ConditionInterface) {
+                    $result = $cond->match($data);
+                } else {
+                    $result = ($cond == $data);
+                }
+
+                if ($result) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -49,35 +72,36 @@ class NotEqualOperator implements OperatorInterface
         switch ($rule->getOperator()) {
             case AllOperator::TYPE:
                 if ($condition instanceof Condition\ProductClassIdCondition) {
-                    $qb->andWhere($qb->expr()->neq('pc.id', $condition->getValue()));
+                    $qb->andWhere($qb->expr()->in('pc.id', $condition->getValue()));
                 }
                 break;
 
             case EqualOperator::TYPE:
                 if ($condition instanceof Condition\ProductClassIdCondition) {
-                    $qb->andWhere($qb->expr()->neq('pc.id', $condition->getValue()));
+                    $qb->andWhere($qb->expr()->in('pc.id', $condition->getValue()));
                 }
                 break;
 
             case InOperator::TYPE:
                 if ($condition instanceof Condition\ProductClassIdCondition) {
-                    $qb->orWhere($qb->expr()->neq('pc.id', $condition->getValue()));
+                    $qb->orWhere($qb->expr()->in('pc.id', $condition->getValue()));
                 }
 
                 if ($condition instanceof Condition\ProductCategoryIdCondition) {
                     $qb->join('p.ProductCategories', 'pct');
-                    $qb->orWhere($qb->expr()->notIn('pct.category_id', $condition->getValue()));
+                    $qb->orWhere($qb->expr()->in('pct.category_id', $condition->getValue()));
                 }
                 break;
 
-                // Todo: confuse
+                // Todo: I'm not sure
             case NotEqualOperator::TYPE:
                 if ($condition instanceof Condition\ProductClassIdCondition) {
-                    $qb->andWhere($qb->expr()->neq('pc.id', $condition->getValue()));
+                    $qb->andWhere($qb->expr()->notIn('pc.id', $condition->getValue()));
                 }
+
                 break;
             default:
-                break;
+            break;
         }
 
         return $qb;
@@ -90,7 +114,7 @@ class NotEqualOperator implements OperatorInterface
      */
     public function getName(): string
     {
-        return 'is not equal to';
+        return 'is one of';
     }
 
     /**

@@ -14,170 +14,202 @@
 namespace Plugin\FlashSale\Tests\Entity\Rule;
 
 use Eccube\Entity\Order;
-use Eccube\Entity\Product;
-use Eccube\Entity\ProductClass;
-use Plugin\FlashSale\Entity\Condition\CartTotalCondition;
-use Plugin\FlashSale\Entity\Condition\ProductClassIdCondition;
-use Plugin\FlashSale\Entity\FlashSale;
-use Plugin\FlashSale\Entity\Promotion\CartTotalAmountPromotion;
+use Eccube\Entity\OrderItem;
+use Eccube\Entity\Cart;
+use Eccube\Tests\EccubeTestCase;
 use Plugin\FlashSale\Entity\Promotion\CartTotalPercentPromotion;
-use Plugin\FlashSale\Entity\Promotion\ProductClassPricePercentPromotion;
 use Plugin\FlashSale\Entity\Rule\CartRule;
-use Plugin\FlashSale\Entity\Rule\ProductClassRule;
-use Plugin\FlashSale\Service\Metadata\DiscriminatorManager;
-use Plugin\FlashSale\Service\Operator\AllOperator;
-use Plugin\FlashSale\Service\Operator\InOperator;
-use Plugin\FlashSale\Service\Operator\OperatorFactory;
-use Plugin\FlashSale\Tests\Entity\AbstractEntityTest;
+use Plugin\FlashSale\Entity\Operator as Operator;
+use Plugin\FlashSale\Entity\Condition as Condition;
+use Plugin\FlashSale\Entity\Promotion as Promotion;
+use Plugin\FlashSale\Factory\OperatorFactory;
+use Plugin\FlashSale\Utils\Memoization;
 
 /**
  * Class ProductClassRuleTest
  * @package Plugin\FlashSale\Tests\Entity\Rule
  */
-class CartRuleTest extends AbstractEntityTest
+class CartRuleTest extends EccubeTestCase
 {
-    /** @var Product */
-    protected $Product;
-
-    /** @var ProductClass */
-    protected $ProductClass1;
+    /**
+     * @var CartRule
+     */
+    protected $cartRule;
 
     public function setUp()
     {
         parent::setUp();
 
-        $this->Product = $this->createProduct('テスト商品', 3);
-        $this->ProductClass1 = $this->Product->getProductClasses()[0];
-    }
-
-    public function testConstructor()
-    {
-        $productClassRule = new CartRule();
-        $productClassRule->setId(1);
-        $productClassRule = $productClassRule->toArray();
-
-        $this->expected = 1;
-        $this->actual = $productClassRule['id'];
-        $this->verify();
-
-        $this->expected = null;
-
-        $this->actual = $productClassRule['operator'];
-        $this->verify();
-
-        $this->actual = $productClassRule['FlashSale'];
-        $this->verify();
-
-        $this->actual = $productClassRule['Promotion'];
-        $this->verify();
-
-        $this->actual = $productClassRule['discriminator'];
-        $this->verify();
-
-        $this->actual = $productClassRule['operatorFactory'];
-        $this->verify();
-
-        $this->actual = $productClassRule['discriminatorManager'];
-        $this->verify();
-    }
-
-    public function testAddConditions()
-    {
-        $condition = new CartTotalCondition();
-        $condition->setId(100);
-        $condition->setValue(5);
-        $CartRule = new CartRule();
-        $CartRule->addConditions($condition);
-
-        self::assertEquals($condition->getId(), $CartRule->getConditions()->get(0)->getId());
-    }
-
-
-    public function testRemoveConditions()
-    {
-        $condition = new CartTotalCondition();
-        $condition->setId(100);
-        $condition->setValue(5);
-        $productClassRule = new CartRule();
-        $productClassRule->addConditions($condition);
-        self::assertEquals($condition->getId(), $productClassRule->getConditions()->get(0)->getId());
-
-        $productClassRule->removeCondition($condition);
-        self::assertEquals([], $productClassRule->getConditions()->getKeys());
-    }
-
-    public function testDiscriminatorManager_AllOperator()
-    {
-        $operatorFactory = new OperatorFactory();
-        $operatorFactory->createByType(AllOperator::TYPE);
-
-        $discriminatorManager = new DiscriminatorManager();
-
-        $CartRule = new CartRule();
-        $CartRule->setOperatorFactory($operatorFactory);
-        $CartRule->setDiscriminatorManager($discriminatorManager);
-
-        self::assertEquals(CartRule::TYPE, $CartRule->getDiscriminator()->getType());
-    }
-
-    public function testDiscriminatorManager_InOperator()
-    {
-        $operatorFactory = new OperatorFactory();
-        $operatorFactory->createByType(InOperator::TYPE);
-
-        $discriminatorManager = new DiscriminatorManager();
-
-        $CartRule = new CartRule();
-        $CartRule->setOperatorFactory($operatorFactory);
-        $CartRule->setDiscriminatorManager($discriminatorManager);
-
-        self::assertEquals(CartRule::TYPE, $CartRule->getDiscriminator()->getType());
+        $this->cartRule = new CartRule();
+        $mMemoization = $this->getMockBuilder(Memoization::class)->getMock();
+        $mMemoization->method('has')->willReturn(false);
+        $this->cartRule->setMemoization($mMemoization);
     }
 
     public function testGetOperatorTypes()
     {
-        $CartRule = new CartRule();
-        $data = $CartRule->getOperatorTypes();
-
-        self::assertContains(InOperator::TYPE, $data);
-        self::assertContains(AllOperator::TYPE, $data);
+        $this->expected = [
+            Operator\InOperator::TYPE,
+            Operator\AllOperator::TYPE,
+        ];
+        $this->actual = $this->cartRule->getOperatorTypes();
+        $this->verify();
     }
 
     public function testGetConditionTypes()
     {
-        $CartRule = new CartRule();
-        $data = $CartRule->getConditionTypes();
-
-        self::assertContains(CartTotalCondition::TYPE, $data);
+        $this->expected = [
+            Condition\CartTotalCondition::TYPE,
+        ];
+        $this->actual = $this->cartRule->getConditionTypes();
+        $this->verify();
     }
 
     public function testGetPromotionTypes()
     {
-        $CartRule = new CartRule();
-        $data = $CartRule->getPromotionTypes();
-
-        self::assertContains(CartTotalPercentPromotion::TYPE, $data);
-        self::assertContains(CartTotalAmountPromotion::TYPE, $data);
+        $this->expected = [
+            Promotion\CartTotalPercentPromotion::TYPE,
+            Promotion\CartTotalAmountPromotion::TYPE,
+        ];
+        $this->actual = $this->cartRule->getPromotionTypes();
+        $this->verify();
     }
 
-    public function testGetFlashSale()
+    public function testMatch_Invalid()
     {
-        $FlashSale = new FlashSale();
-        $CartRule = new CartRule();
-        $CartRule->setFlashSale($FlashSale);
-
-        self::assertEquals($FlashSale, $CartRule->getFlashSale());
+        $this->expected = false;
+        $this->actual = $this->cartRule->match(new \stdClass());
+        $this->verify();
     }
 
-    public function testMatch_Invalid_Order()
+    public function testMatch_Valid()
     {
-        $CartRule = new CartRule();
-        self::assertFalse($CartRule->match(new \stdClass()));
+        $mOperator = $this->getMockBuilder(Operator\InOperator::class)->getMock();
+        $mOperator->expects($this->once())
+            ->method('match')
+            ->willReturn(true);
+
+        $mOperatorFactory = $this->getMockBuilder(OperatorFactory::class)->getMock();
+        $mOperatorFactory->expects($this->once())
+            ->method('create')
+            ->willReturn($mOperator);
+
+        $this->cartRule->setOperator(Operator\InOperator::TYPE);
+        $this->cartRule->setOperatorFactory($mOperatorFactory);
+
+        $this->expected = true;
+        $this->actual = $this->cartRule->match(new Order());
+        $this->verify();
     }
 
-    public function testGetDiscountItems_Not_instanceof()
+    public function testGetDiscountItemsFromOrder_Invalid()
     {
-        $CartRule = new CartRule();
-        self::assertEquals([], $CartRule->getDiscountItems(new \stdClass()));
+        $mOperator = $this->getMockBuilder(Operator\InOperator::class)->getMock();
+        $mOperator->expects($this->once())
+            ->method('match')
+            ->willReturn(false);
+
+        $mOperatorFactory = $this->getMockBuilder(OperatorFactory::class)->getMock();
+        $mOperatorFactory->expects($this->once())
+            ->method('create')
+            ->willReturn($mOperator);
+
+        $this->cartRule->setOperator(Operator\InOperator::TYPE);
+        $this->cartRule->setOperatorFactory($mOperatorFactory);
+
+        $this->expected = [];
+        $this->actual = $this->cartRule->getDiscountItemsFromOrder(new Order());
+        $this->verify();
+    }
+
+    public function testGetDiscountItemsFromOrder_Valid()
+    {
+        $mOperator = $this->getMockBuilder(Operator\InOperator::class)->getMock();
+        $mOperator->expects($this->once())
+            ->method('match')
+            ->willReturn(true);
+
+        $mOperatorFactory = $this->getMockBuilder(OperatorFactory::class)->getMock();
+        $mOperatorFactory->expects($this->once())
+            ->method('create')
+            ->willReturn($mOperator);
+
+        $this->cartRule->setOperator(Operator\InOperator::TYPE);
+        $this->cartRule->setOperatorFactory($mOperatorFactory);
+
+        $DiscountItems = [new OrderItem()];
+        $mPromotion = $this->getMockBuilder(CartTotalPercentPromotion::class)->getMock();
+        $mPromotion->expects($this->once())
+            ->method('getDiscountItems')
+            ->willReturn($DiscountItems);
+
+        $this->cartRule->setPromotion($mPromotion);
+
+        $this->expected = $DiscountItems;
+        $this->actual = $this->cartRule->getDiscountItemsFromOrder(new Order());
+        $this->verify();
+    }
+
+    public function testGetDiscountItems_Invalid()
+    {
+        $this->expected = [];
+        $this->actual = $this->cartRule->getDiscountItems(new \stdClass());
+        $this->verify();
+    }
+
+    public function testGetDiscountItems_ValidCart()
+    {
+        $mOperator = $this->getMockBuilder(Operator\InOperator::class)->getMock();
+        $mOperator->expects($this->once())
+            ->method('match')
+            ->willReturn(true);
+
+        $mOperatorFactory = $this->getMockBuilder(OperatorFactory::class)->getMock();
+        $mOperatorFactory->expects($this->once())
+            ->method('create')
+            ->willReturn($mOperator);
+
+        $this->cartRule->setOperator(Operator\InOperator::TYPE);
+        $this->cartRule->setOperatorFactory($mOperatorFactory);
+
+        $DiscountItems = [new OrderItem()];
+        $mPromotion = $this->getMockBuilder(CartTotalPercentPromotion::class)->getMock();
+        $mPromotion->expects($this->once())
+            ->method('getDiscountItems')
+            ->willReturn($DiscountItems);
+
+        $this->cartRule->setPromotion($mPromotion);
+
+        $this->expected = $DiscountItems;
+        $this->actual = $this->cartRule->getDiscountItems(new Cart());
+        $this->verify();
+    }
+
+    public function testGetDiscountItems_ValidOrder()
+    {
+        $mOperator = $this->getMockBuilder(Operator\InOperator::class)->getMock();
+        $mOperator->expects($this->once())
+            ->method('match')
+            ->willReturn(true);
+
+        $mOperatorFactory = $this->getMockBuilder(OperatorFactory::class)->getMock();
+        $mOperatorFactory->expects($this->once())
+            ->method('create')
+            ->willReturn($mOperator);
+
+        $this->cartRule->setOperator(Operator\InOperator::TYPE);
+        $this->cartRule->setOperatorFactory($mOperatorFactory);
+
+        $DiscountItems = [new OrderItem()];
+        $mPromotion = $this->getMockBuilder(CartTotalPercentPromotion::class)->getMock();
+        $mPromotion->expects($this->once())
+            ->method('getDiscountItems')
+            ->willReturn($DiscountItems);
+
+        $this->cartRule->setPromotion($mPromotion);
+
+        $this->expected = $DiscountItems;
+        $this->actual = $this->cartRule->getDiscountItems(new Order());
+        $this->verify();
     }
 }

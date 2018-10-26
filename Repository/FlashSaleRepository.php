@@ -14,8 +14,9 @@
 namespace Plugin\FlashSale\Repository;
 
 use Eccube\Repository\AbstractRepository;
-use Plugin\FlashSale\Entity\FlashSale;
 use Symfony\Bridge\Doctrine\RegistryInterface;
+use Plugin\FlashSale\Entity\FlashSale;
+
 
 /**
  * FlashSaleRepository

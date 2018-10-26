@@ -21,13 +21,12 @@ use Eccube\Entity\Master\TaxDisplayType;
 use Eccube\Entity\Master\TaxType;
 use Eccube\Entity\OrderItem;
 use Eccube\Entity\ProductClass;
-use Plugin\FlashSale\Service\Promotion\PromotionInterface;
 use Plugin\FlashSale\Entity\Promotion;
 
 /**
  * @ORM\Entity
  */
-class ProductClassPriceAmountPromotion extends Promotion implements PromotionInterface
+class ProductClassPriceAmountPromotion extends Promotion
 {
     const TYPE = 'promotion_product_class_price_amount';
 

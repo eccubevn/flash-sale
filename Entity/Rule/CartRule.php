@@ -4,10 +4,9 @@ namespace Plugin\FlashSale\Entity\Rule;
 use Doctrine\ORM\Mapping as ORM;
 use Eccube\Entity\Cart;
 use Eccube\Entity\Order;
-use Plugin\FlashSale\Service\Rule\RuleInterface;
 use Plugin\FlashSale\Entity\Rule;
-use Plugin\FlashSale\Service\Operator;
-use Plugin\FlashSale\Service\Metadata\DiscriminatorManager;
+use Plugin\FlashSale\Entity\Operator;
+use Plugin\FlashSale\Factory\OperatorFactory;
 use Plugin\FlashSale\Entity\Condition\CartTotalCondition;
 use Plugin\FlashSale\Entity\Promotion\CartTotalPercentPromotion;
 use Plugin\FlashSale\Entity\Promotion\CartTotalAmountPromotion;
@@ -15,50 +14,28 @@ use Plugin\FlashSale\Entity\Promotion\CartTotalAmountPromotion;
 /**
  * @ORM\Entity
  */
-class CartRule extends Rule implements RuleInterface
+class CartRule extends Rule
 {
+    use \Plugin\FlashSale\Utils\Memoization\MemoizationTrait;
+
     const TYPE = 'rule_cart';
 
     /**
-     * @var array
-     */
-    protected $cached;
-
-    /**
-     * @var Operator\OperatorFactory
+     * @var OperatorFactory
      */
     protected $operatorFactory;
 
     /**
-     * @var DiscriminatorManager
-     */
-    protected $discriminatorManager;
-
-    /**
      * Set $operatorFactory
      *
-     * @param Operator\OperatorFactory $operatorFactory
+     * @param OperatorFactory $operatorFactory
      *
      * @return $this
      * @required
      */
-    public function setOperatorFactory(Operator\OperatorFactory $operatorFactory)
+    public function setOperatorFactory(OperatorFactory $operatorFactory)
     {
         $this->operatorFactory = $operatorFactory;
-
-        return $this;
-    }
-
-    /**
-     * @param DiscriminatorManager $discriminatorManager
-     *
-     * @return $this
-     * @required
-     */
-    public function setDiscriminatorManager(DiscriminatorManager $discriminatorManager)
-    {
-        $this->discriminatorManager = $discriminatorManager;
-        $this->discriminator = $discriminatorManager->get(static::TYPE);
 
         return $this;
     }
@@ -114,14 +91,19 @@ class CartRule extends Rule implements RuleInterface
             return false;
         }
 
-        if (isset($this->cached[__METHOD__ . $Order->getId()])) {
-            return $this->cached[__METHOD__ . $Order->getId()];
+        // @codeCoverageIgnoreStart
+        if ($this->memoization->has($Order->getId())) {
+            return $this->memoization->get($Order->getId());
         }
+        // @codeCoverageIgnoreEnd
 
-        $this->cached[__METHOD__ . $Order->getId()] = $this->operatorFactory
-            ->createByType($this->getOperator())->match($this->getConditions(), $Order);
+        $result = $this->operatorFactory
+            ->create(['type' => $this->getOperator()])
+            ->match($this->getConditions(), $Order);
 
-        return $this->cached[__METHOD__ . $Order->getId()];
+        $this->memoization->set($result, $Order->getId());
+
+        return $result;
     }
 
     /**
@@ -150,16 +132,11 @@ class CartRule extends Rule implements RuleInterface
      */
     protected function getDiscountItemsFromCart(Cart $Cart): array
     {
-        if (isset($this->cached[__METHOD__ . $Cart->getId()])) {
-            return $this->cached[__METHOD__ . $Cart->getId()];
-        }
-
         $Order = new Order();
+        $Order->offsetSet('id', 'C' . $Cart->getId());
         $Order->setSubtotal($Cart->getTotal());
 
-        $this->cached[__METHOD__ . $Cart->getId()] = $this->getDiscountItemsFromOrder($Order);
-
-        return $this->cached[__METHOD__ . $Cart->getId()];
+        return $this->getDiscountItemsFromOrder($Order);
     }
 
     /**
@@ -174,12 +151,15 @@ class CartRule extends Rule implements RuleInterface
             return [];
         }
 
-        if (isset($this->cached[__METHOD__ . $Order->getId()])) {
-            return $this->cached[__METHOD__ . $Order->getId()];
+        // @codeCoverageIgnoreStart
+        if ($this->memoization->has($Order->getId())) {
+            return $this->memoization->get($Order->getId());
         }
+        // @codeCoverageIgnoreEnd
 
-        $this->cached[__METHOD__ . $Order->getId()] = $this->getPromotion()->getDiscountItems($Order);
+        $result = $this->getPromotion()->getDiscountItems($Order);
+        $this->memoization->set($result, $Order->getId());
 
-        return $this->cached[__METHOD__ . $Order->getId()];
+        return $result;
     }
 }

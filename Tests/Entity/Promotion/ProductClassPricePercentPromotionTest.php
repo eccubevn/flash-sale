@@ -16,7 +16,6 @@ namespace Plugin\FlashSale\Tests\Entity\Promotion;
 use Eccube\Entity\Master\OrderItemType;
 use Eccube\Entity\Master\TaxDisplayType;
 use Eccube\Entity\Master\TaxType;
-use Eccube\Entity\Product;
 use Eccube\Entity\ProductClass;
 use Eccube\Tests\EccubeTestCase;
 use Plugin\FlashSale\Entity\Promotion\ProductClassPricePercentPromotion;
@@ -28,49 +27,62 @@ use Plugin\FlashSale\Entity\Promotion\ProductClassPricePercentPromotion;
  */
 class ProductClassPricePercentPromotionTest extends EccubeTestCase
 {
-    /** @var Product */
-    protected $Product;
-
-    /** @var ProductClass */
-    protected $ProductClass1;
+    /**
+     * @var ProductClassPricePercentPromotion
+     */
+    protected $productClassPricePercentPromotion;
 
     public function setUp()
     {
         parent::setUp();
-
-        $this->Product = $this->createProduct('テスト商品', 3);
-        $this->ProductClass1 = $this->Product->getProductClasses()[0];
+        $this->productClassPricePercentPromotion = new ProductClassPricePercentPromotion();
     }
 
-    public function testGetDiscountItems_Invalid_ProductClass()
+    public function testGetDiscountItems_Invalid()
     {
-        $ProductClassPricePercentPromotion = new ProductClassPricePercentPromotion();
-        $ProductClassPricePercentPromotion->setEntityManager($this->entityManager);
-        $ProductClassPricePercentPromotion->setValue(5);
-
-        $OrderItem = $ProductClassPricePercentPromotion->getDiscountItems(new \stdClass());
-
-        self::assertEmpty($OrderItem);
+        $this->expected = [];
+        $this->actual = $this->productClassPricePercentPromotion->getDiscountItems(new \stdClass());
+        $this->verify();
     }
 
-    public function testGetDiscountItems()
+    /**
+     * @param $price
+     * @param $percent
+     * @param $expect
+     * @dataProvider getDiscountItemsDataProvider
+     */
+    public function testGetDiscountItems_Valid($price, $percent, $expect)
     {
+        $mProductClass = $this->getMockBuilder(ProductClass::class)->getMock();
+        $mProductClass->method('getPrice02IncTax')
+            ->willReturn($price);
+
         $DiscountType = $this->entityManager->find(OrderItemType::class, OrderItemType::DISCOUNT);
         $TaxInclude = $this->entityManager->find(TaxDisplayType::class, TaxDisplayType::INCLUDED);
         $Taxation = $this->entityManager->find(TaxType::class, TaxType::NON_TAXABLE);
 
-        $ProductClassPricePercentPromotion = new ProductClassPricePercentPromotion();
-        $ProductClassPricePercentPromotion->setEntityManager($this->entityManager);
-        $ProductClassPricePercentPromotion->setValue(5);
+        $this->productClassPricePercentPromotion->setValue($percent);
+        $this->productClassPricePercentPromotion->setEntityManager($this->entityManager);
 
-        $OrderItem = $ProductClassPricePercentPromotion->getDiscountItems($this->ProductClass1);
+        $DiscountItems = $this->productClassPricePercentPromotion->getDiscountItems($mProductClass);
 
-        $price = -1 * floor($this->ProductClass1->getPrice02IncTax() / 100 * $ProductClassPricePercentPromotion->getValue());
+        self::assertEquals(1, count($DiscountItems));
+        self::assertEquals($expect, $DiscountItems[0]->getPrice());
+        self::assertEquals(1, $DiscountItems[0]->getQuantity());
+        self::assertEquals($DiscountType, $DiscountItems[0]->getOrderItemType());
+        self::assertEquals($TaxInclude, $DiscountItems[0]->getTaxDisplayType());
+        self::assertEquals($Taxation, $DiscountItems[0]->getTaxType());
+        self::assertEquals(0, $DiscountItems[0]->getTax());
+        self::assertEquals(0, $DiscountItems[0]->getTaxRate());
+        self::assertEquals(null, $DiscountItems[0]->getTaxRuleId());
+        self::assertEquals(null, $DiscountItems[0]->getRoundingType());
+    }
 
-        self::assertEquals($price, $OrderItem[0]->getPrice());
-        self::assertEquals(1, $OrderItem[0]->getQuantity());
-        self::assertEquals($DiscountType, $OrderItem[0]->getOrderItemType());
-        self::assertEquals($TaxInclude, $OrderItem[0]->getTaxDisplayType());
-        self::assertEquals($Taxation, $OrderItem[0]->getTaxType());
+    public function getDiscountItemsDataProvider()
+    {
+        return [
+            [500, 5, -25],
+            [1025, 3, -30],
+        ];
     }
 }

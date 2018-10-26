@@ -14,12 +14,9 @@
 namespace Plugin\FlashSale\Tests\Entity\Promotion;
 
 use Eccube\Entity\Cart;
-use Eccube\Entity\CartItem;
 use Eccube\Entity\Master\OrderItemType;
 use Eccube\Entity\Master\TaxDisplayType;
 use Eccube\Entity\Master\TaxType;
-use Eccube\Entity\Product;
-use Eccube\Entity\ProductClass;
 use Eccube\Tests\EccubeTestCase;
 use Plugin\FlashSale\Entity\Promotion\CartTotalAmountPromotion;
 
@@ -30,55 +27,48 @@ use Plugin\FlashSale\Entity\Promotion\CartTotalAmountPromotion;
  */
 class CartTotalAmountPromotionTest extends EccubeTestCase
 {
-    /** @var Product */
-    protected $Product;
-
-    /** @var ProductClass */
-    protected $ProductClass1;
+    /**
+     * @var CartTotalAmountPromotion
+     */
+    protected $cartTotalAmountPromotion;
 
     public function setUp()
     {
         parent::setUp();
-
-        $this->Product = $this->createProduct('テスト商品', 3);
-        $this->ProductClass1 = $this->Product->getProductClasses()[0];
+        $this->cartTotalAmountPromotion = new CartTotalAmountPromotion();
     }
 
-    public function testGetDiscountItems_Invalid_Not_Cart_Order()
+    public function testGetDiscountItems_Invalid()
     {
-        $ProductClassPriceAmountPromotion = new CartTotalAmountPromotion();
-        $ProductClassPriceAmountPromotion->setEntityManager($this->entityManager);
-        $ProductClassPriceAmountPromotion->setValue(150);
-
-        $OrderItem = $ProductClassPriceAmountPromotion->getDiscountItems(new \stdClass());
-
-        self::assertEmpty($OrderItem);
+        $this->expected = [];
+        $this->actual = $this->cartTotalAmountPromotion->getDiscountItems(new \stdClass());
+        $this->verify();
     }
 
     public function testGetDiscountItems()
     {
+        $value = 1000;
+        $Cart = new Cart();
+
         $DiscountType = $this->entityManager->find(OrderItemType::class, OrderItemType::DISCOUNT);
         $TaxInclude = $this->entityManager->find(TaxDisplayType::class, TaxDisplayType::INCLUDED);
         $Taxation = $this->entityManager->find(TaxType::class, TaxType::NON_TAXABLE);
 
-        $CartTotalAmountPromotion = new CartTotalAmountPromotion();
-        $CartTotalAmountPromotion->setEntityManager($this->entityManager);
-        $CartTotalAmountPromotion->setValue(150);
+        $this->cartTotalAmountPromotion->setValue($value);
+        $this->cartTotalAmountPromotion->setEntityManager($this->entityManager);
+        $result = $this->cartTotalAmountPromotion->getDiscountItems($Cart);
 
-        $cart = new Cart();
-        $item = new CartItem();
-        $item->setProductClass($this->ProductClass1);
-        $cart->addItem($item);
-        $cart->setTotal(100000);
 
-        $OrderItem = $CartTotalAmountPromotion->getDiscountItems($cart);
-
-        $price = -1 * $CartTotalAmountPromotion->getValue();
-
-        self::assertEquals($price, $OrderItem[0]->getPrice());
-        self::assertEquals(1, $OrderItem[0]->getQuantity());
-        self::assertEquals($DiscountType, $OrderItem[0]->getOrderItemType());
-        self::assertEquals($TaxInclude, $OrderItem[0]->getTaxDisplayType());
-        self::assertEquals($Taxation, $OrderItem[0]->getTaxType());
+        self::assertEquals(0, $result[0]->getTax());
+        self::assertEquals(0, $result[0]->getTaxRate());
+        self::assertEquals(null, $result[0]->getTaxRuleId());
+        self::assertEquals(null, $result[0]->getRoundingType());
+        self::assertEquals(1, $result[0]->getQuantity());
+        self::assertEquals(-1 * $value, $result[0]->getPrice());
+        self::assertEquals(1, count($result));
+        self::assertEquals($DiscountType, $result[0]->getOrderItemType());
+        self::assertEquals($DiscountType->getName(), $result[0]->getProductName());
+        self::assertEquals($Taxation, $result[0]->getTaxType());
+        self::assertEquals($TaxInclude, $result[0]->getTaxDisplayType());
     }
 }

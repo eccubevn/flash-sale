@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\FlashSale\Service\Condition;
+namespace Plugin\FlashSale\Factory;
 
 use Plugin\FlashSale\Entity\Condition;
 use Plugin\FlashSale\Entity\Condition\CartTotalCondition;
@@ -21,17 +21,17 @@ class ConditionFactory
     /**
      * Create Condition from array
      *
-     * @param array $data
+     * @param array $options
      *
      * @return Condition
      */
-    public static function createFromArray(array $data)
+    public function create(array $options =[])
     {
-        if (!isset($data['type'])) {
+        if (!isset($options['type'])) {
             throw new \InvalidArgumentException('$data[type] must be required');
         }
 
-        switch ($data['type']) {
+        switch ($options['type']) {
             case Condition\ProductClassIdCondition::TYPE:
                 $Condition = new Condition\ProductClassIdCondition();
                 break;
@@ -42,14 +42,14 @@ class ConditionFactory
                 $Condition = new CartTotalCondition();
                 break;
             default:
-                throw new \InvalidArgumentException($data['type'].' unsupported');
+                throw new \InvalidArgumentException($options['type'].' unsupported');
         }
 
-        if (isset($data['value'])) {
-            $Condition->setValue($data['value']);
+        if (isset($options['value'])) {
+            $Condition->setValue($options['value']);
         }
-        if (isset($data['operator'])) {
-            $Condition->setOperator($data['operator']);
+        if (isset($options['operator'])) {
+            $Condition->setOperator($options['operator']);
         }
 
         return $Condition;

@@ -11,16 +11,17 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\FlashSale\Service\Operator;
+namespace Plugin\FlashSale\Entity\Operator;
 
-use Doctrine\Common\Collections\Collection as DoctrineCollection;
 use Doctrine\ORM\QueryBuilder;
 use Plugin\FlashSale\Entity\Condition;
-use Plugin\FlashSale\Service\Condition\ConditionInterface;
+use Plugin\FlashSale\Entity\OperatorInterface;
 
-class AllOperator implements OperatorInterface
+class EqualOperator implements OperatorInterface
 {
-    const TYPE = 'operator_all';
+    use \Plugin\FlashSale\Entity\Discriminator\DiscriminatorTrait;
+
+    const TYPE = 'operator_equal';
 
     /**
      * {@inheritdoc}
@@ -32,22 +33,7 @@ class AllOperator implements OperatorInterface
      */
     public function match($condition, $data)
     {
-        if (!is_array($condition) && !$condition instanceof DoctrineCollection) {
-            $condition = explode(',', $condition);
-        }
-        foreach ($condition as $cond) {
-            if ($cond instanceof ConditionInterface) {
-                $result = $cond->match($data);
-            } else {
-                $result = ($cond == $data);
-            }
-
-            if (!$result) {
-                return false;
-            }
-        }
-
-        return true;
+        return $condition == $data;
     }
 
     /**
@@ -62,22 +48,23 @@ class AllOperator implements OperatorInterface
         switch ($rule->getOperator()) {
             case AllOperator::TYPE:
                 if ($condition instanceof Condition\ProductClassIdCondition) {
-                    $qb->andWhere($qb->expr()->in('pc.id', $condition->getValue()));
+                    $qb->andWhere($qb->expr()->eq('pc.id', $condition->getValue()));
                 }
                 break;
 
             case EqualOperator::TYPE:
                 if ($condition instanceof Condition\ProductClassIdCondition) {
-                    $qb->andWhere($qb->expr()->in('pc.id', $condition->getValue()));
+                    $qb->andWhere($qb->expr()->eq('pc.id', $condition->getValue()));
                 }
                 break;
 
             case InOperator::TYPE:
                 if ($condition instanceof Condition\ProductClassIdCondition) {
-                    $qb->orWhere($qb->expr()->in('pc.id', $condition->getValue()));
+                    $qb->orWhere($qb->expr()->eq('pc.id', $condition->getValue()));
                 }
                 break;
 
+            // Todo: I'm not sure
             case NotEqualOperator::TYPE:
                 if ($condition instanceof Condition\ProductClassIdCondition) {
                     $qb->andWhere($qb->expr()->neq('pc.id', $condition->getValue()));
@@ -97,7 +84,7 @@ class AllOperator implements OperatorInterface
      */
     public function getName(): string
     {
-        return 'is all of';
+        return 'is equal to';
     }
 
     /**

@@ -16,28 +16,28 @@ namespace Plugin\FlashSale\Entity\Condition;
 use Doctrine\ORM\Mapping as ORM;
 use Eccube\Entity\ProductClass;
 use Plugin\FlashSale\Entity\Condition;
-use Plugin\FlashSale\Service\Condition\ConditionInterface;
-use Plugin\FlashSale\Service\Operator as Operator;
+use Plugin\FlashSale\Entity\Operator as Operator;
+use Plugin\FlashSale\Factory\OperatorFactory;
 
 /**
  * @ORM\Entity
  */
-class ProductClassIdCondition extends Condition implements ConditionInterface
+class ProductClassIdCondition extends Condition
 {
     const TYPE = 'condition_product_class_id';
 
     /**
-     * @var Operator\OperatorFactory
+     * @var OperatorFactory
      */
     protected $operatorFactory;
 
     /**
-     * @param Operator\OperatorFactory $operatorFactory
+     * @param OperatorFactory $operatorFactory
      *
      * @return $this
      * @required
      */
-    public function setOperatorFactory(Operator\OperatorFactory $operatorFactory)
+    public function setOperatorFactory(OperatorFactory $operatorFactory)
     {
         $this->operatorFactory = $operatorFactory;
 
@@ -58,7 +58,9 @@ class ProductClassIdCondition extends Condition implements ConditionInterface
             return false;
         }
 
-        return $this->operatorFactory->createByType($this->getOperator())->match($this->value, $ProductClass->getId());
+        return $this->operatorFactory->create([
+            'type' => $this->getOperator()
+        ])->match($this->value, $ProductClass->getId());
     }
 
     /**

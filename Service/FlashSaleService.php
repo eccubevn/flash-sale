@@ -15,10 +15,10 @@ namespace Plugin\FlashSale\Service;
 
 use Doctrine\ORM\Mapping\DiscriminatorMap;
 use Doctrine\Common\Annotations\AnnotationReader;
-use Plugin\FlashSale\Service\Metadata\DiscriminatorManager;
 use Plugin\FlashSale\Entity\Rule;
-use Plugin\FlashSale\Service\Rule\RuleInterface;
-use Plugin\FlashSale\Service\Condition\ConditionInterface;
+use Plugin\FlashSale\Entity\RuleInterface;
+use Plugin\FlashSale\Entity\ConditionInterface;
+use Plugin\FlashSale\Repository\DiscriminatorRepository;
 
 class FlashSaleService
 {
@@ -28,22 +28,22 @@ class FlashSaleService
     protected $annotationReader;
 
     /**
-     * @var DiscriminatorManager
+     * @var DiscriminatorRepository
      */
-    protected $discriminatorManager;
+    protected $discriminatorRepository;
 
     /**
      * FlashSaleService constructor.
      *
      * @param AnnotationReader $annotationReader
-     * @param DiscriminatorManager $discriminatorManager
+     * @param DiscriminatorRepository $discriminatorRepository
      */
     public function __construct(
         AnnotationReader $annotationReader,
-        DiscriminatorManager $discriminatorManager
+        DiscriminatorRepository $discriminatorRepository
     ) {
         $this->annotationReader = $annotationReader;
-        $this->discriminatorManager = $discriminatorManager;
+        $this->discriminatorRepository = $discriminatorRepository;
     }
 
     /**
@@ -59,7 +59,7 @@ class FlashSaleService
         $annotation = $this->annotationReader->getClassAnnotation($refClassRule, DiscriminatorMap::class);
         $result = [];
         foreach ($annotation->value as $ruleType => $ruleClass) {
-            $discriminator = $this->discriminatorManager->get($ruleType);
+            $discriminator = $this->discriminatorRepository->find($ruleType);
             $result['rule_types'][$ruleType] = [
                 'name' => $discriminator->getName(),
                 'description' => $discriminator->getDescription(),
@@ -71,7 +71,7 @@ class FlashSaleService
             $ruleClass = $discriminator->getClass();
             $ruleEntity = new $ruleClass();
             foreach ($ruleEntity->getOperatorTypes() as $operatorType) {
-                $discriminator = $this->discriminatorManager->get($operatorType);
+                $discriminator = $this->discriminatorRepository->find($operatorType);
                 $result['rule_types'][$ruleType]['operator_types'][$operatorType] = [
                     'name' => $discriminator->getName(),
                     'description' => $discriminator->getDescription(),
@@ -79,7 +79,7 @@ class FlashSaleService
             }
 
             foreach ($ruleEntity->getConditionTypes() as $conditionType) {
-                $discriminator = $this->discriminatorManager->get($conditionType);
+                $discriminator = $this->discriminatorRepository->find($conditionType);
                 $result['rule_types'][$ruleType]['condition_types'][$conditionType] = [
                     'name' => $discriminator->getName(),
                     'description' => $discriminator->getDescription(),
@@ -89,7 +89,7 @@ class FlashSaleService
                 $conditionClass = $discriminator->getClass();
                 $conditionEntity = new $conditionClass();
                 foreach ($conditionEntity->getOperatorTypes() as $operatorType) {
-                    $discriminator = $this->discriminatorManager->get($operatorType);
+                    $discriminator = $this->discriminatorRepository->find($operatorType);
                     $result['rule_types'][$ruleType]['condition_types'][$conditionType]['operator_types'][$operatorType] = [
                         'name' => $discriminator->getName(),
                         'description' => $discriminator->getDescription(),
@@ -98,7 +98,7 @@ class FlashSaleService
             }
 
             foreach ($ruleEntity->getPromotionTypes() as $promotionType) {
-                $discriminator = $this->discriminatorManager->get($promotionType);
+                $discriminator = $this->discriminatorRepository->find($promotionType);
                 $result['rule_types'][$ruleType]['promotion_types'][$promotionType] = [
                     'name' => $discriminator->getName(),
                     'description' => $discriminator->getDescription(),

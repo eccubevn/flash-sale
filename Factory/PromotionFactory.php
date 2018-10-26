@@ -11,29 +11,30 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\FlashSale\Service\Promotion;
+namespace Plugin\FlashSale\Factory;
 
 use Plugin\FlashSale\Entity\Promotion\ProductClassPricePercentPromotion;
 use Plugin\FlashSale\Entity\Promotion\ProductClassPriceAmountPromotion;
 use Plugin\FlashSale\Entity\Promotion\CartTotalPercentPromotion;
 use Plugin\FlashSale\Entity\Promotion\CartTotalAmountPromotion;
+use Plugin\FlashSale\Entity\PromotionInterface;
 
 class PromotionFactory
 {
     /**
      * Create Promotion from array
      *
-     * @param array $data
+     * @param array $options
      *
      * @return PromotionInterface
      */
-    public static function createFromArray(array $data)
+    public function create(array $options = [])
     {
-        if (!isset($data['type'])) {
+        if (!isset($options['type'])) {
             throw new \InvalidArgumentException('$data[type] must be required');
         }
 
-        switch ($data['type']) {
+        switch ($options['type']) {
             case ProductClassPricePercentPromotion::TYPE:
                 $Promotion = new ProductClassPricePercentPromotion();
                 break;
@@ -48,11 +49,11 @@ class PromotionFactory
                 break;
 
             default:
-                throw new \InvalidArgumentException($data['type'].' unsupported');
+                throw new \InvalidArgumentException($options['type'].' unsupported');
         }
 
-        if (isset($data['value'])) {
-            $Promotion->setValue($data['value']);
+        if (isset($options['value'])) {
+            $Promotion->setValue($options['value']);
         }
 
         return $Promotion;

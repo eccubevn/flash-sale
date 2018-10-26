@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\FlashSale\Service\Metadata;
+namespace Plugin\FlashSale\Entity;
 
 interface DiscriminatorInterface
 {

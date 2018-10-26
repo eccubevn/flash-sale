@@ -22,58 +22,34 @@ use Plugin\FlashSale\Entity\Condition\ProductClassIdCondition;
 use Plugin\FlashSale\Entity\Condition\ProductCategoryIdCondition;
 use Plugin\FlashSale\Entity\Promotion\ProductClassPricePercentPromotion;
 use Plugin\FlashSale\Entity\Promotion\ProductClassPriceAmountPromotion;
-use Plugin\FlashSale\Service\Rule\RuleInterface;
-use Plugin\FlashSale\Service\Operator as Operator;
-use Plugin\FlashSale\Service\Metadata\DiscriminatorManager;
-
+use Plugin\FlashSale\Entity\Operator as Operator;
+use Plugin\FlashSale\Factory\OperatorFactory;
 
 /**
  * @ORM\Entity
  */
-class ProductClassRule extends Rule implements RuleInterface
+class ProductClassRule extends Rule
 {
+    use \Plugin\FlashSale\Utils\Memoization\MemoizationTrait;
+
     const TYPE = 'rule_product_class';
 
     /**
-     * @var array
-     */
-    protected $cached;
-
-    /**
-     * @var Operator\OperatorFactory
+     * @var OperatorFactory
      */
     protected $operatorFactory;
 
     /**
-     * @var DiscriminatorManager
-     */
-    protected $discriminatorManager;
-
-    /**
      * Set $operatorFactory
      *
-     * @param Operator\OperatorFactory $operatorFactory
+     * @param OperatorFactory $operatorFactory
      *
      * @return $this
      * @required
      */
-    public function setOperatorFactory(Operator\OperatorFactory $operatorFactory)
+    public function setOperatorFactory(OperatorFactory $operatorFactory)
     {
         $this->operatorFactory = $operatorFactory;
-
-        return $this;
-    }
-
-    /**
-     * @param DiscriminatorManager $discriminatorManager
-     *
-     * @return $this
-     * @required
-     */
-    public function setDiscriminatorManager(DiscriminatorManager $discriminatorManager)
-    {
-        $this->discriminatorManager = $discriminatorManager;
-        $this->discriminator = $discriminatorManager->get(static::TYPE);
 
         return $this;
     }
@@ -130,14 +106,18 @@ class ProductClassRule extends Rule implements RuleInterface
             return false;
         }
 
-        if (isset($this->cached[__METHOD__ . $ProductClass->getId()])) {
-            return $this->cached[__METHOD__ . $ProductClass->getId()];
+        // @codeCoverageIgnoreStart
+        if ($this->memoization->has($ProductClass->getId())) {
+            return $this->memoization->get($ProductClass->getId());
         }
+        // @codeCoverageIgnoreEnd
 
-        $this->cached[__METHOD__ . $ProductClass->getId()] = $this->operatorFactory
-            ->createByType($this->getOperator())->match($this->getConditions(), $ProductClass);
+        $result = $this->operatorFactory
+            ->create(['type' => $this->getOperator()])
+            ->match($this->getConditions(), $ProductClass);
+        $this->memoization->set($result, $ProductClass->getId());
 
-        return $this->cached[__METHOD__ . $ProductClass->getId()];
+        return $result;
     }
 
     /**
@@ -172,13 +152,16 @@ class ProductClassRule extends Rule implements RuleInterface
             return [];
         }
 
-        if (isset($this->cached[__METHOD__ . $ProductClass->getId()])) {
-            return $this->cached[__METHOD__ . $ProductClass->getId()];
+        // @codeCoverageIgnoreStart
+        if ($this->memoization->has($ProductClass->getId())) {
+            return $this->memoization->get($ProductClass->getId());
         }
+        // @codeCoverageIgnoreEnd
 
-        $this->cached[__METHOD__ . $ProductClass->getId()] = $this->getPromotion()->getDiscountItems($ProductClass);
+        $result = $this->getPromotion()->getDiscountItems($ProductClass);
+        $this->memoization->set($result, $ProductClass->getId());
 
-        return $this->cached[__METHOD__ . $ProductClass->getId()];
+        return $result;
     }
 
     /**
@@ -193,18 +176,13 @@ class ProductClassRule extends Rule implements RuleInterface
             return [];
         }
 
-        if (isset($this->cached[__METHOD__ . $OrderItem->getId()])) {
-            return $this->cached[__METHOD__ . $OrderItem->getId()];
-        }
-
         $result = $this->getDiscountItemsFromProductClass($OrderItem->getProductClass());
         /** @var OrderItem $DiscountItem */
         foreach ($result as $DiscountItem) {
             $DiscountItem->setQuantity($OrderItem->getQuantity());
         }
-        $this->cached[__METHOD__ . $OrderItem->getId()] = $result;
 
-        return $this->cached[__METHOD__ . $OrderItem->getId()];
+        return $result;
     }
 
     /**
@@ -215,16 +193,11 @@ class ProductClassRule extends Rule implements RuleInterface
      */
     protected function getDiscountItemsFromOrder(Order $Order)
     {
-        if (isset($this->cached[__METHOD__ . $Order->getId()])) {
-            return $this->cached[__METHOD__ . $Order->getId()];
-        }
-
         $result = [];
         foreach ($Order->getItems() as $OrderItem) {
             $result = array_merge($result, $this->getDiscountItemsFromOrderItem($OrderItem));
         }
-        $this->cached[__METHOD__ . $Order->getId()] = $result;
 
-        return $this->cached[__METHOD__ . $Order->getId()];
+        return $result;
     }
 }

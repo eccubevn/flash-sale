@@ -15,46 +15,86 @@ namespace Plugin\FlashSale\Tests\Entity\Condition;
 
 use Eccube\Entity\Product;
 use Eccube\Entity\ProductClass;
-use Plugin\FlashSale\Entity\Condition\ProductCategoryIdCondition;
-use Plugin\FlashSale\Service\Operator\InOperator;
-use Plugin\FlashSale\Service\Operator\OperatorFactory;
-use Plugin\FlashSale\Tests\Entity\AbstractEntityTest;
+use Eccube\Entity\ProductCategory;
+use Eccube\Tests\EccubeTestCase;
+use Plugin\FlashSale\Entity\Operator as Operator;
+use Plugin\FlashSale\Factory\OperatorFactory;
+use Plugin\FlashSale\Factory\ConditionFactory;
+use Plugin\FlashSale\Entity\Condition as Condition;
 
 /**
  * Class ProductClassIdConditionTest
  * @package Plugin\FlashSale\Tests\Entity\Condition
  */
-class ProductCategoryIdConditionTest extends AbstractEntityTest
+class ProductCategoryIdConditionTest extends EccubeTestCase
 {
-    /** @var Product */
-    protected $Product;
+    /**
+     * @var Condition\ProductCategoryIdCondition
+     */
+    protected $productCategoryIdCondition;
 
-    /** @var ProductClass */
-    protected $ProductClass1;
-
+    /**
+     * {@inheritdoc}
+     */
     public function setUp()
     {
         parent::setUp();
-
-        $this->Product = $this->createProduct('テスト商品', 3);
-        $this->ProductClass1 = $this->Product->getProductClasses()[0];
+        $ConditionFactory = new ConditionFactory();
+        $this->productCategoryIdCondition = $ConditionFactory->create([
+            'type' => Condition\ProductCategoryIdCondition::TYPE,
+            'value' => 100,
+            'operator' => Operator\InOperator::TYPE
+        ]);
+        $this->productCategoryIdCondition->setId(1);
     }
 
-    public function testMatch_InOperator_Invalid()
+    public function testMatch_Invalid_NotProductClassType()
     {
-        $productCategoryIdRule = new ProductCategoryIdCondition();
-        $data = $productCategoryIdRule->match(new \stdClass());
-        self::assertFalse($data);
+        $this->expected = false;
+        $this->actual = $this->productCategoryIdCondition->match(new \stdClass());
+        $this->verify();
     }
 
-    public function testMatch_InOperator_Valid()
+    public function testGetOperatorTypes()
     {
-        $productCategoryIdRule = new ProductCategoryIdCondition();
-        $productCategoryIdRule->setOperator(InOperator::TYPE);
-        $productCategoryIdRule->setValue(7);
-        $productCategoryIdRule->setOperatorFactory(new OperatorFactory());
-        $data = $productCategoryIdRule->match($this->ProductClass1);
+        $this->expected = [
+            Operator\InOperator::TYPE,
+            Operator\NotEqualOperator::TYPE,
+        ];
+        $this->actual = $this->productCategoryIdCondition->getOperatorTypes();
+        $this->verify();
+    }
 
-        self::assertTrue($data);
+    public function testMatch_Valid()
+    {
+        $mProductCategory = $this->getMockBuilder(ProductCategory::class)->getMock();
+        $mProductCategory->expects($this->once())
+            ->method('getCategoryId')
+            ->willReturn(1);
+
+        $mProduct = $this->getMockBuilder(Product::class)->getMock();
+        $mProduct->expects($this->once())
+            ->method('getProductCategories')
+            ->willReturn([$mProductCategory]);
+
+        $mProductClass = $this->getMockBuilder(ProductClass::class)->getMock();
+        $mProductClass->expects($this->once())
+            ->method('getProduct')
+            ->willReturn($mProduct);
+
+        $mOperator = $this->getMockBuilder(Operator\InOperator::class)->getMock();
+        $mOperator->expects($this->once())
+            ->method('match')
+            ->willReturn(true);
+        $mOperatorFactory = $this->getMockBuilder(OperatorFactory::class)->getMock();
+        $mOperatorFactory->expects($this->once())
+            ->method('create')
+            ->willReturn($mOperator);
+        $this->productCategoryIdCondition->setOperator(Operator\InOperator::TYPE);
+        $this->productCategoryIdCondition->setOperatorFactory($mOperatorFactory);
+
+        $this->expected = true;
+        $this->actual = $this->productCategoryIdCondition->match($mProductClass);
+        $this->verify();
     }
 }
