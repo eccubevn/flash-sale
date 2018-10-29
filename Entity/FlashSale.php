@@ -28,8 +28,7 @@ use Plugin\FlashSale\Service\Condition\ConditionFactory;
  */
 class FlashSale
 {
-    const
-        STATUS_DRAFT = 0;
+    const STATUS_DRAFT = 0;
     const STATUS_ACTIVATED = 1;
     const STATUS_DELETED = 2;
 

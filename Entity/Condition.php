@@ -61,7 +61,7 @@ abstract class Condition extends AbstractEntity
     /**
      * @var Rule
      *
-     * @ORM\ManyToOne(targetEntity=Rule::class, inversedBy="Condition")
+     * @ORM\ManyToOne(targetEntity=Rule::class, inversedBy="Conditions")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="rule_id", referencedColumnName="id")
      * })

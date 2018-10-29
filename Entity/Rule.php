@@ -51,7 +51,7 @@ abstract class Rule extends AbstractEntity
     /**
      * @var FlashSale
      *
-     * @ORM\ManyToOne(targetEntity=FlashSale::class)
+     * @ORM\ManyToOne(targetEntity=FlashSale::class, inversedBy="Rules")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="flash_sale_id", referencedColumnName="id")
      * })
