@@ -13,8 +13,13 @@
 
 namespace Plugin\FlashSale;
 
+use Eccube\Event\TemplateEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
+/**
+ * Class FlashSaleEvent
+ * @package Plugin\FlashSale
+ */
 class FlashSaleEvent implements EventSubscriberInterface
 {
     /**
@@ -22,6 +27,38 @@ class FlashSaleEvent implements EventSubscriberInterface
      */
     public static function getSubscribedEvents()
     {
-        return [];
+        return [
+            'Mypage/history.twig' => 'mypageHistory',
+            'Mypage/index.twig' => 'mypageIndex'
+        ];
+    }
+
+    /**
+     * @param TemplateEvent $event
+     */
+    public function mypageHistory(TemplateEvent $event)
+    {
+        $source = $event->getSource();
+        $target = '{{ orderItem.price_inc_tax|price }}';
+        $change = "{% if orderItem.fs_price %}<del>{{orderItem.price_inc_tax|price}}</del><span class='ec-color-red'>{{orderItem.fs_price|price}}</span>{% else %}{$target}{% endif %}";
+        $source = str_replace($target, $change, $source);
+        $event->setSource($source);
+    }
+
+    /**
+     * @param TemplateEvent $event
+     */
+    public function mypageIndex(TemplateEvent $event)
+    {
+        $source = $event->getSource();
+        $target = "{{ OrderItem.price_inc_tax|price }}";
+        $change = "{% if OrderItem.fs_price %}<del>{{OrderItem.price_inc_tax|price}}</del><span class='ec-color-red'>{{OrderItem.fs_price|price}}</span>{% else %}{$target}{% endif %}";
+        $source = str_replace($target, $change, $source);
+
+        $target = "Order.MergedProductOrderItems";
+        $change = "Order.FsMergedProductOrderItems";
+        $source = str_replace($target, $change, $source);
+
+        $event->setSource($source);
     }
 }
