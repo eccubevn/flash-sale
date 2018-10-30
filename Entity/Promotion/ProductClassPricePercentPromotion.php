@@ -23,6 +23,8 @@ use Eccube\Entity\OrderItem;
 use Eccube\Entity\ProductClass;
 use Plugin\FlashSale\Service\Promotion\PromotionInterface;
 use Plugin\FlashSale\Entity\Promotion;
+use Plugin\FlashSale\Entity\DiscountInterface;
+use Plugin\FlashSale\Entity\Discount;
 
 /**
  * @ORM\Entity
@@ -54,34 +56,20 @@ class ProductClassPricePercentPromotion extends Promotion implements PromotionIn
     /**
      * {@inheritdoc}
      *
-     * @param $value
-     *
-     * @return ItemInterface[]
+     * @param $object
+     * @return DiscountInterface
      */
-    public function getDiscountItems($ProductClass)
+    public function getDiscount($object)
     {
-        if (!$ProductClass instanceof ProductClass) {
-            return [];
+        $discount = new Discount();
+        $discount->setPromotionId($this->getId());
+
+        if (!$object instanceof ProductClass) {
+            return $discount;
         }
 
-        $DiscountType = $this->entityManager->find(OrderItemType::class, OrderItemType::DISCOUNT);
-        $TaxInclude = $this->entityManager->find(TaxDisplayType::class, TaxDisplayType::INCLUDED);
-        $Taxation = $this->entityManager->find(TaxType::class, TaxType::NON_TAXABLE);
+        $discount->setValue(floor($object->getPrice02IncTax() / 100 * $this->getValue()));
 
-        $price = floor($ProductClass->getPrice02IncTax() / 100 * $this->getValue());
-
-        $OrderItem = new OrderItem();
-        $OrderItem->setProductName($DiscountType->getName())
-            ->setPrice(-1 * $price)
-            ->setQuantity(1)
-            ->setTax(0)
-            ->setTaxRate(0)
-            ->setTaxRuleId(null)
-            ->setRoundingType(null)
-            ->setOrderItemType($DiscountType)
-            ->setTaxDisplayType($TaxInclude)
-            ->setTaxType($Taxation);
-
-        return [$OrderItem];
+        return $discount;
     }
 }
