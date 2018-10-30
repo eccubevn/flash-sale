@@ -19,7 +19,9 @@ use Eccube\Repository\CategoryRepository;
 use Eccube\Repository\Master\PageMaxRepository;
 use Eccube\Util\CacheUtil;
 use Knp\Component\Pager\Paginator;
+use Plugin\FlashSale\Entity\Condition;
 use Plugin\FlashSale\Entity\FlashSale;
+use Plugin\FlashSale\Entity\Rule;
 use Plugin\FlashSale\Form\Type\Admin\FlashSaleType;
 use Plugin\FlashSale\Repository\FlashSaleRepository;
 use Plugin\FlashSale\Entity\Promotion;
@@ -105,12 +107,36 @@ class FlashSaleController extends AbstractController
      */
     public function edit(Request $request, $id = null, CacheUtil $cacheUtil)
     {
+        $conditionData = [];
         if ($id) {
+            /** @var FlashSale $FlashSale */
             $FlashSale = $this->flashSaleRepository->find($id);
             if (!$FlashSale) {
                 throw new NotFoundHttpException();
             }
             $FlashSale->setUpdatedAt(new \DateTime());
+
+            $productClassIds = [];
+            $categoryIds = [];
+            /** @var Rule $rule */
+            foreach ($FlashSale->getRules() as $rule) {
+                /** @var Condition $condition */
+                foreach ($rule->getConditions() as $condition) {
+                    if ($condition->getRule() instanceof Rule\ProductClassRule) {
+                        if ($condition instanceof Condition\ProductClassIdCondition) {
+                            $productClassIds = array_merge($productClassIds, explode(',', $condition->getValue()));
+                        }
+
+                        if ($condition instanceof Condition\ProductCategoryIdCondition) {
+                            $categoryIds = array_merge($categoryIds, explode(',', $condition->getValue()));
+                        }
+                    }
+                }
+            }
+
+            $conditionData['condition_product_class_id'] = $this->flashSaleService->getProductClassName($productClassIds);
+            $conditionData['condition_product_category_id'] = $CategoryName = $this->flashSaleService->getCategoryName($categoryIds);
+
         } else {
             $FlashSale = new FlashSale();
             $FlashSale->setCreatedAt(new \DateTime());
@@ -181,6 +207,7 @@ class FlashSaleController extends AbstractController
         return [
             'form' => $form->createView(),
             'FlashSale' => $FlashSale,
+            'conditionData' => json_encode($conditionData),
             'metadata' => $this->flashSaleService->getMetadata(),
             'searchProductModalForm' => $searchProductModalForm->createView(),
         ];

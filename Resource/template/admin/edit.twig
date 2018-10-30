@@ -21,6 +21,8 @@ file that was distributed with this source code.
 {% block stylesheet %}
     <style>
         .findConditionsIds{ cursor: pointer}
+        .mdAddCondition table thead th:nth-child(1){ min-width: 70px; }
+        .mdAddCondition table thead th:nth-child(3){ min-width: 250px; }
     </style>
 {% endblock stylesheet %}
 
@@ -114,6 +116,7 @@ file that was distributed with this source code.
                             </div>
                         </div>
                         <div class="ec-cardCollapse collapse show" id="ruleForm">
+                            <input type="hidden" id="conditionData" value="{{ conditionData }}">
                             <div class="card-body">
                                 <div class="row justify-content-start mb-2">
                                     <div class="col-auto">
@@ -190,14 +193,7 @@ file that was distributed with this source code.
                                                     </div>
                                                     <div class="row mt-2">
                                                         <div class="col-10">
-                                                            <ul class="nameList">
-                                                                <li data-id="1"><a href="#"><i class="fas fa-times"></i></a> 彩のジェラートCUBE (バニラ - 64cm × 64cm)</li>
-                                                                <li data-id="2"><a href="#"><i class="fas fa-times"></i></a> 彩のジェラートCUBE (バニラ - 32mm × 32mm)</li>
-                                                                <li data-id="3"><a href="#"><i class="fas fa-times"></i></a> 彩のジェラートCUBE (バニラ - 16mm × 16mm)</li>
-                                                                <li data-id="4"><a href="#"><i class="fas fa-times"></i></a> 彩のジェラートCUBE (抹茶 - 64cm × 64cm)</li>
-                                                                <li data-id="5"><a href="#"><i class="fas fa-times"></i></a> 彩のジェラートCUBE (9抹茶 - 32mm × 32mm)</li>
-                                                                <li data-id="6"><a href="#"><i class="fas fa-times"></i></a> 彩のジェラートCUBE01 (抹茶 - 16mm × 16mm)</li>
-                                                            </ul>
+                                                            <ul class="nameList"></ul>
                                                         </div>
                                                     </div>
                                                 </div>
