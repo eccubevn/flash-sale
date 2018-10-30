@@ -52,6 +52,9 @@ class ConditionRepository extends AbstractRepository
     public function getProductList()
     {
         $fs = $this->fsRepository->getAvailableFlashSale();
+        if (!$fs) {
+            return [];
+        }
         /** @var Rule[] $Rules */
         $Rules = $fs->getRules();
         $arrayProductTmp = [];
