@@ -8,7 +8,6 @@
 
 namespace Plugin\FlashSale\Service\PurchaseFlow\Processor;
 
-
 use Eccube\Entity\ItemHolderInterface;
 use Eccube\Entity\Order;
 use Eccube\Service\PurchaseFlow\Processor\AbstractPurchaseProcessor;
@@ -29,6 +28,7 @@ class FSOrderItemProcessor extends AbstractPurchaseProcessor
 
     /**
      * FSOrderItemProcessor constructor.
+     *
      * @param FlashSaleRepository $fSRepository
      */
     public function __construct(FlashSaleRepository $fSRepository)

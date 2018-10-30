@@ -46,7 +46,7 @@ class PluginManager extends AbstractPluginManager
      */
     private $mailTemplate = [
         'order.twig',
-        'order.html.twig'
+        'order.html.twig',
     ];
 
     /**
@@ -87,6 +87,7 @@ class PluginManager extends AbstractPluginManager
     /**
      * @param array|null $meta
      * @param ContainerInterface $container
+     *
      * @throws \Exception
      */
     public function disable(array $meta = null, ContainerInterface $container)
@@ -211,7 +212,7 @@ class PluginManager extends AbstractPluginManager
     private function copyMailTemplate(ContainerInterface $container)
     {
         $templateDir = $container->getParameter('eccube_theme_front_dir');
-        $mailFolder = __DIR__ . '/Resource/template/default/Mail/';
+        $mailFolder = __DIR__.'/Resource/template/default/Mail/';
 
         $file = new Filesystem();
         foreach ($this->mailTemplate as $item) {

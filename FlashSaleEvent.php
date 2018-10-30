@@ -23,7 +23,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * Class FlashSaleEvent
- * @package Plugin\FlashSale
  */
 class FlashSaleEvent implements EventSubscriberInterface
 {
@@ -34,6 +33,7 @@ class FlashSaleEvent implements EventSubscriberInterface
 
     /**
      * FlashSaleEvent constructor.
+     *
      * @param FlashSaleRepository $fSRepository
      */
     public function __construct(FlashSaleRepository $fSRepository)
@@ -71,12 +71,12 @@ class FlashSaleEvent implements EventSubscriberInterface
     public function mypageIndex(TemplateEvent $event)
     {
         $source = $event->getSource();
-        $target = "{{ OrderItem.price_inc_tax|price }}";
+        $target = '{{ OrderItem.price_inc_tax|price }}';
         $change = "{% if OrderItem.fs_price %}<del>{{OrderItem.price_inc_tax|price}}</del><span class='ec-color-red'>{{OrderItem.fs_price|price}}</span>{% else %}{$target}{% endif %}";
         $source = str_replace($target, $change, $source);
 
-        $target = "Order.MergedProductOrderItems";
-        $change = "Order.FsMergedProductOrderItems";
+        $target = 'Order.MergedProductOrderItems';
+        $change = 'Order.FsMergedProductOrderItems';
         $source = str_replace($target, $change, $source);
 
         $event->setSource($source);
@@ -120,7 +120,7 @@ class FlashSaleEvent implements EventSubscriberInterface
 </p>
 {%endif%}
 EOT;
-        $newSource = $firstSection . $middleSection . $insert . $endSection;
+        $newSource = $firstSection.$middleSection.$insert.$endSection;
         $event->setSource($newSource);
 
         // calculate percent

@@ -17,7 +17,6 @@ use Eccube\Entity\Product;
 use Eccube\Repository\AbstractRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Plugin\FlashSale\Entity\Condition;
-use Plugin\FlashSale\Entity\Condition\ProductClassIdCondition;
 use Plugin\FlashSale\Entity\Rule;
 use Plugin\FlashSale\Service\Operator\OperatorFactory;
 
@@ -29,14 +28,22 @@ class ConditionRepository extends AbstractRepository
     private $operatorFactory;
 
     /**
-     * PromotionRepository constructor.
+     * @var FlashSaleRepository
+     */
+    private $fsRepository;
+
+    /**
+     * ConditionRepository constructor.
      *
      * @param ManagerRegistry $registry
+     * @param OperatorFactory $operatorFactory
+     * @param FlashSaleRepository $flashSaleRepository
      */
-    public function __construct(ManagerRegistry $registry, OperatorFactory $operatorFactory)
+    public function __construct(ManagerRegistry $registry, OperatorFactory $operatorFactory, FlashSaleRepository $flashSaleRepository)
     {
         parent::__construct($registry, Condition::class);
         $this->operatorFactory = $operatorFactory;
+        $this->fsRepository = $flashSaleRepository;
     }
 
     /**
@@ -44,49 +51,39 @@ class ConditionRepository extends AbstractRepository
      */
     public function getProductList()
     {
+        $fs = $this->fsRepository->getAvailableFlashSale();
         /** @var Rule[] $Rules */
-        $Rules = $this->getEntityManager()->getRepository('Plugin\FlashSale\Entity\Rule')->getAllRule();
+        $Rules = $fs->getRules();
         $arrayProductTmp = [];
 
         $prodRepository = $this->getEntityManager()->getRepository('Eccube\Entity\Product');
-        foreach ($Rules as $rule) {
-            $qbItem = $prodRepository->createQueryBuilder('p');
-            $qbItem->join('p.ProductClasses', 'pc')
-                ->groupBy('p');
-            $conditions = $rule->getConditions();
-            foreach ($conditions as $condition) {
-                if ($condition instanceof ProductClassIdCondition) {
-                    $condOperator = $condition->getOperator();
-                    $Condition = $this->operatorFactory->createByType($condOperator);
-                    $qbItem = $Condition->parseCondition($qbItem, $condition);
-                }
-
-                if ($condition instanceof Condition\ProductCategoryIdCondition) {
-                    $condOperator = $condition->getOperator();
-                    $Condition = $this->operatorFactory->createByType($condOperator);
-                    $qbItem = $Condition->parseCondition($qbItem, $condition);
-                }
+        foreach ($Rules as $Rule) {
+            if (!$Rule instanceof Rule\ProductClassRule) {
+                continue;
             }
-
-            $arrayProductTmp[$rule->getId()]['product'] = $qbItem->getQuery()->getResult();
-            $arrayProductTmp[$rule->getId()]['promotion'] = $rule->getPromotion();
-        }
-
-        $product = [];
-        foreach ($arrayProductTmp as $key => $value) {
-            // Todo: still not check attribute + operate
-            $promotion = empty($value['promotion']) ? null : $value['promotion']->getValue();
+            $qbItem = $prodRepository->createQueryBuilder('p');
+            $ruleOperatorName = $Rule->getOperator();
+            $operatorRule = $this->operatorFactory->createByType($ruleOperatorName);
+            $qbItem = $Rule->createQueryBuilder($qbItem, $operatorRule);
 
             /** @var Product $Product */
-            foreach ($value['product'] as $Product) {
-                $product[$Product->getId()]['product'] = $Product;
-                if ($promotion) {
-                    $product[$Product->getId()]['promotion'][] = $promotion;
-                    sort($product[$Product->getId()]['promotion']);
+            foreach ($qbItem->getQuery()->getResult() as $Product) {
+                $tmp = [];
+                foreach ($Product->getProductClasses() as $ProductClass) {
+                    if ($Rule->match($ProductClass)) {
+                        // discount include tax???
+                        $discountItems = $Rule->getDiscountItems($ProductClass);
+                        $discountItem = current($discountItems);
+                        $discountPrice = $ProductClass->getPrice02IncTax() + $discountItem->getPrice();
+                        $discountPercent = 100 - floor($discountPrice * 100 / $ProductClass->getPrice02IncTax());
+                        $tmp[$ProductClass->getId()] = $discountPercent;
+                    }
                 }
+                $arrayProductTmp[$Product->getId()]['promotion'] = max($tmp);
+                $arrayProductTmp[$Product->getId()]['product'] = $Product;
             }
         }
 
-        return $product;
+        return $arrayProductTmp;
     }
 }

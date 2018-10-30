@@ -19,6 +19,7 @@ use Plugin\FlashSale\Repository\ConditionRepository;
 use Plugin\FlashSale\Entity\Condition\ProductClassIdCondition;
 use Plugin\FlashSale\Entity\Condition\ProductCategoryIdCondition;
 use Plugin\FlashSale\Entity\Condition\CartTotalCondition;
+use Plugin\FlashSale\Service\Condition\ConditionInterface;
 
 /**
  * @ORM\Table("plg_flash_sale_condition")
@@ -31,7 +32,7 @@ use Plugin\FlashSale\Entity\Condition\CartTotalCondition;
  *     CartTotalCondition::TYPE=CartTotalCondition::class,
  * })
  */
-abstract class Condition extends AbstractEntity
+abstract class Condition extends AbstractEntity implements ConditionInterface
 {
     const TYPE = 'condition';
 
