@@ -73,14 +73,12 @@ class ConditionRepository extends AbstractRepository
             foreach ($qbItem->getQuery()->getResult() as $Product) {
                 $tmp = [];
                 foreach ($Product->getProductClasses() as $ProductClass) {
-                    if ($Rule->match($ProductClass)) {
-                        // discount include tax???
-                        $discountItems = $Rule->getDiscountItems($ProductClass);
-                        $discountItem = current($discountItems);
-                        $discountPrice = $ProductClass->getPrice02IncTax() + $discountItem->getPrice();
-                        $discountPercent = 100 - floor($discountPrice * 100 / $ProductClass->getPrice02IncTax());
-                        $tmp[$ProductClass->getId()] = $discountPercent;
-                    }
+                    // discount include tax???
+                    $discountItems = $Rule->getDiscountItems($ProductClass);
+                    $discountItem = current($discountItems);
+                    $discountPrice = $ProductClass->getPrice02IncTax() + $discountItem->getPrice();
+                    $discountPercent = 100 - floor($discountPrice * 100 / $ProductClass->getPrice02IncTax());
+                    $tmp[$ProductClass->getId()] = $discountPercent;
                 }
                 $arrayProductTmp[$Product->getId()]['promotion'] = max($tmp);
                 $arrayProductTmp[$Product->getId()]['product'] = $Product;
