@@ -51,7 +51,7 @@ class ProductCategoryIdConditionTest extends AbstractEntityTest
     {
         $productCategoryIdRule = new ProductCategoryIdCondition();
         $productCategoryIdRule->setOperator(InOperator::TYPE);
-        $productCategoryIdRule->setValue(7);
+        $productCategoryIdRule->setValue(1);
         $productCategoryIdRule->setOperatorFactory(new OperatorFactory());
         $data = $productCategoryIdRule->match($this->ProductClass1);
 
