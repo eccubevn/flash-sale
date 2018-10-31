@@ -2,7 +2,7 @@
 {% set items = repository('Plugin\\FlashSale\\Entity\\Condition').getProductList %}
 
 {% if flashSale and items %}
-    <div class="ec-shelfRole">
+    <div class="ec-shelfRole" id="flash-sale">
         <div class="ec-secHeading">
             <span class="ec-secHeading__en">{{ flashSale.getName }}</span>
             <span class="ec-secHeading__line"></span>

@@ -3,7 +3,7 @@
 namespace Plugin\FlashSale\Test\Web;
 
 use Eccube\Entity\ProductClass;
-use Eccube\Tests\Web\Admin\AbstractAdminWebTestCase;
+use Eccube\Tests\Web\AbstractWebTestCase;
 use Plugin\FlashSale\Entity\Condition\ProductClassIdCondition;
 use Plugin\FlashSale\Entity\FlashSale;
 use Plugin\FlashSale\Entity\Promotion;
@@ -15,7 +15,7 @@ use Plugin\FlashSale\Service\Operator\InOperator;
  * Class FlashSaleBlockTest
  * @package Plugin\FlashSale\Test\Web
  */
-class FlashSaleBlockTest extends AbstractAdminWebTestCase
+class FlashSaleBlockTest extends AbstractWebTestCase
 {
     /** @var FlashSaleRepository */
     protected $flashSaleRepository;
@@ -25,13 +25,14 @@ class FlashSaleBlockTest extends AbstractAdminWebTestCase
      */
     public function setUp()
     {
-        $this->markTestIncomplete('Cannot mock entity');
         parent::setUp();
         $this->flashSaleRepository = $this->container->get(FlashSaleRepository::class);
 
         for ($i = 1; $i < 5; $i++) {
             $this->createFlashSaleAndRules($i);
         }
+
+        $this->entityManager->clear();
     }
 
     public function testList()
@@ -42,12 +43,12 @@ class FlashSaleBlockTest extends AbstractAdminWebTestCase
         );
 
         $this->assertTrue($this->client->getResponse()->isSuccessful());
-        $this->expected = 'product name 1';
-        $this->actual = $crawler->filter('.ec-shelfRole')->text();
+        $this->expected = 'product name1';
+        $this->actual = $crawler->filter('#flash-sale')->text();
         self::assertContains($this->expected, $this->actual);
     }
 
-    public function createFlashSaleAndRules($i)
+    protected function createFlashSaleAndRules($i)
     {
         $rules['rules'] = $this->rulesData($i);
 
@@ -90,7 +91,7 @@ class FlashSaleBlockTest extends AbstractAdminWebTestCase
         return $FlashSale;
     }
 
-    public function rulesData($i)
+    protected function rulesData($i)
     {
         $Product = $this->createProduct('product name'.$i);
         $productClassIds = [];

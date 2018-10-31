@@ -31,12 +31,13 @@ class ConditionRepositoryTest extends AbstractRepositoryTestCase
     public function setUp()
     {
         parent::setUp();
+
         $this->conditionRepository = $this->container->get(ConditionRepository::class);
     }
 
     public function testProductList()
     {
-        $this->markTestIncomplete('Cannot mock entity');
+        $this->entityManager->clear();
 
         $data = $this->conditionRepository->getProductList();
         $product = current($data);
