@@ -26,7 +26,12 @@
             $.each(container.find('.condition-entity'), function(key, conditionContainer) {
                 $(conditionContainer).find('[name="condition[type]"]').html('');
                 $(conditionContainer).find('[name="condition[operator]"]').html('');
-                $(conditionContainer).find('[name="condition[value]"]').val('');
+                if(value == 'rule_cart'){
+                    $(conditionContainer).find('[name="condition[value]"]').val('').attr('type', 'text');
+                }else{
+                    $(conditionContainer).find('[name="condition[value]"]').val('').attr('type', 'hidden');
+                }
+
                 $.each(settings.setup.rule_types[value].condition_types, function(key, condition) {
                     $(conditionContainer).find('[name="condition[type]"]').append('<option value="'+key+'">'+ condition.name +'</option>');
                     $.each(condition.operator_types, function(key, operator) {
@@ -34,6 +39,14 @@
                     });
                 });
             });
+
+            if (value == 'rule_cart') {
+                container.find('.nameList').addClass('d-none');
+                container.find('.findConditionsIds').addClass('d-none');
+            } else {
+                container.find('.nameList').removeClass('d-none');
+                container.find('.findConditionsIds').removeClass('d-none');
+            }
         };
 
         this.addRule = function(e) {
@@ -51,7 +64,8 @@
                 .removeClass('d-none')
                 .addClass('rule-entity')
                 .attr('data-template', '')
-                .attr('id', 'rule' + ruleId);
+                .attr('id', 'rule' + ruleId)
+                .attr('data-template-name', Math.random().toString(36).substring(2));
             $.each(settings.setup.rule_types, function(key) {
                 $(template).find('[name="rule[type]"]').append('<option value="'+key+'" ' + (data.type === key ? 'selected' : '') +'>'+ this.name +'</option>');
             });
@@ -67,6 +81,15 @@
                 $(template).find('[name="promotion[id]"]').val(data.promotion.id);
             });
 
+            if (data.type == 'rule_cart') {
+                template.find('.nameList').addClass('d-none');
+                template.find('.findConditionsIds').addClass('d-none');
+                template.find('[name="condition[value]"]').val('').attr('type', 'text');
+            } else {
+                template.find('.nameList').removeClass('d-none');
+                template.find('.findConditionsIds').removeClass('d-none');
+                template.find('[name="condition[value]"]').val('').attr('type', 'hidden');
+            }
             self.find('[data-container="rule"]').append(template);
         };
 
@@ -86,15 +109,39 @@
                 .attr('id', 'condition' + (data.id ? data.id : self.find('.condition').length));
 
             var ruleType = $(e.target).closest('.rule-entity').find('[name="rule[type]"]').val();
-            $.each(settings.setup.rule_types[ruleType]['condition_types'], function(key, condition) {
-                $(template).find('[name="condition[type]"]').append('<option value="'+key+'" '+ (data.type === key ? 'selected' : '') +'>'+ condition.name +'</option>');
+            var conditionData = JSON.parse($('#conditionData').val());
+
+            $.each(settings.setup.rule_types[ruleType]['condition_types'], function (key, condition) {
+                var nameHtml = '';
+                var dataValueArr = data.value.split(',');
+                $.each(dataValueArr, function (dKey, dValue) {
+                    $.each(conditionData[data.type], function (cKey, cData) {
+                        if (dValue == cData.id) {
+                            var className = (cData.class_name != undefined) ? ' (' + cData.class_name + ')' : '';
+                            nameHtml += '<li data-id="' + cData.id + '"><a href="#"><i class="fas fa-times"></i></a> ' + cData.name + className + '</li>';
+                        }
+                    });
+                });
+
+                $(template).find('[name="condition[type]"]').append('<option value="' + key + '" ' + (data.type === key ? 'selected' : '') + '>' + condition.name + '</option>');
                 $(template).find('[name="condition[value]"]').val(data.value);
+                $(template).find('.nameList').html(nameHtml);
                 $(template).find('[name="condition[id]"]').val(data.id);
             });
             var conditionType = $(template).find('[name="condition[type]"]').val();
-            $.each(settings.setup.rule_types[ruleType]['condition_types'][conditionType].operator_types, function(key, operator) {
-                $(template).find('[name="condition[operator]"]').append('<option value="'+key+'" '+ (data.operator === key ? 'selected' : '') +'>'+ operator.name +'</option>');
+            $.each(settings.setup.rule_types[ruleType]['condition_types'][conditionType].operator_types, function (key, operator) {
+                $(template).find('[name="condition[operator]"]').append('<option value="' + key + '" ' + (data.operator === key ? 'selected' : '') + '>' + operator.name + '</option>');
             });
+
+            if (ruleType == 'rule_cart') {
+                $(template).find('.nameList').addClass('d-none');
+                $(template).find('.findConditionsIds').addClass('d-none');
+                $(template).find('[name="condition[value]"]').val('').attr('type', 'text');
+            } else {
+                $(template).find('.nameList').removeClass('d-none');
+                $(template).find('.findConditionsIds').removeClass('d-none');
+                $(template).find('[name="condition[value]"]').val('').attr('type', 'hidden');
+            }
             container.append(template);
         };
 
@@ -153,56 +200,9 @@
             });
         }
 
-        var dataCat = [];
-        var getProducts = function (conditionType, dataIds) {
-            var mdAddCondition = $('.mdAddCondition');
-            var inputConditionId = mdAddCondition.find('.inputConditionId');
-            if (inputConditionId.length == 0) {
-                mdAddCondition.find('.searchDataModalList').before('<input class="inputConditionId form-control mb-2" value="' + dataIds + '">');
-            } else {
-                inputConditionId.val(dataIds);
-            }
-
-            if (conditionType == 'condition_product_class_id') {
-                $('#addProduct').modal('show');
-            } else {
-                var addProductCategory = $('#addProductCategory');
-                addProductCategory.find('.inputConditionId').attr('readonly', true);
-                if (dataCat['cat'] == undefined) {
-                    $.ajax({
-                        url: addProductCategory.data('url'),
-                        type: 'GET',
-                        dataType: 'html'
-                    }).done(function (data) {
-                        dataCat['cat'] = data;
-                        addProductCategory.find('.searchDataModalList').html(dataCat['cat']);
-                        addProductCategory.modal('show');
-                    }).fail(function () {
-                        alert('Search category failed.');
-                    });
-                } else {
-                    addProductCategory.find('.searchDataModalList').html(dataCat['cat']);
-                    addProductCategory.modal('show');
-                }
-            }
-        };
-
-        function addDataConditionId() {
-            fn.on('click', 'div.findProductIds', function (e) {
-                $(this).closest('td').find('.onFocus').removeClass('onFocus');
-                $(this).closest('.condition-entity').addClass('onFocus');
-                var conditionType = $(this).closest('.onFocus').find('[name="condition[type]"]').val();
-                var dataIds = $(this).closest('.onFocus').find('[name="condition[value]"]').val();
-                if (conditionType == 'condition_product_class_id' || conditionType == 'condition_product_category_id') {
-                    getProducts(conditionType, dataIds);
-                }
-            });
-        }
-
         function initialize() {
             render();
             bind();
-            addDataConditionId();
         }
         initialize();
         return this;

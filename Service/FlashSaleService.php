@@ -13,8 +13,15 @@
 
 namespace Plugin\FlashSale\Service;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\DiscriminatorMap;
 use Doctrine\Common\Annotations\AnnotationReader;
+use Eccube\Entity\Category;
+use Eccube\Entity\ClassCategory;
+use Eccube\Entity\Product;
+use Eccube\Entity\ProductClass;
+use Eccube\Repository\CategoryRepository;
+use Eccube\Repository\ProductClassRepository;
 use Plugin\FlashSale\Service\Metadata\DiscriminatorManager;
 use Plugin\FlashSale\Entity\Rule;
 use Plugin\FlashSale\Service\Rule\RuleInterface;
@@ -32,19 +39,26 @@ class FlashSaleService
      */
     protected $discriminatorManager;
 
+    /** @var EntityManagerInterface */
+    protected $entityManager;
+
     /**
      * FlashSaleService constructor.
      *
      * @param AnnotationReader $annotationReader
      * @param DiscriminatorManager $discriminatorManager
+     * @param EntityManagerInterface $entityManager
      */
     public function __construct(
         AnnotationReader $annotationReader,
-        DiscriminatorManager $discriminatorManager
+        DiscriminatorManager $discriminatorManager,
+        EntityManagerInterface $entityManager
     ) {
         $this->annotationReader = $annotationReader;
         $this->discriminatorManager = $discriminatorManager;
+        $this->entityManager = $entityManager;
     }
+
 
     /**
      * Get metadata
@@ -107,5 +121,35 @@ class FlashSaleService
         }
 
         return $result;
+    }
+
+    /**
+     * @param $categoryIds
+     * @return mixed
+     */
+    public function getCategoryName($categoryIds){
+        $qb = $this->entityManager->createQueryBuilder();
+        $qb->select('c.id, c.name')
+            ->from(Category::class, 'c')
+            ->where($qb->expr()->in('c.id', ':ids'))
+            ->setParameter('ids', $categoryIds);
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @param $productClassIds
+     * @return mixed
+     */
+    public function getProductClassName($productClassIds){
+        /** @var ProductClassRepository $ProductClass */
+        $ProductClass = $this->entityManager->getRepository(ProductClass::class);
+        $qb = $ProductClass->createQueryBuilder('pc');
+        $qb->select("pc.id as id, p.name as name, CONCAT(pc1.name, ' - ',pc2.name) AS class_name")
+            ->innerJoin('pc.Product', 'p')
+            ->innerJoin('pc.ClassCategory1', 'pc1')
+            ->innerJoin('pc.ClassCategory2', 'pc2')
+            ->where($qb->expr()->in('pc.id', ':ids'))
+            ->setParameter('ids', $productClassIds);
+        return $qb->getQuery()->getResult();
     }
 }
