@@ -117,6 +117,22 @@ class FlashSaleController extends AbstractController
                 throw new NotFoundHttpException();
             }
             $FlashSale->setUpdatedAt(new \DateTime());
+
+            /** @var Rule $rule */
+            foreach ($FlashSale->getRules() as $rule) {
+                /** @var Condition $condition */
+                foreach ($rule->getConditions() as $condition) {
+                    if ($condition->getRule() instanceof Rule\ProductClassRule) {
+                        if ($condition instanceof Condition\ProductClassIdCondition) {
+                            $productClassIds = array_merge($productClassIds, explode(',', $condition->getValue()));
+                        }
+                        if ($condition instanceof Condition\ProductCategoryIdCondition) {
+                            $categoryIds = array_merge($categoryIds, explode(',', $condition->getValue()));
+                        }
+                    }
+                }
+            }
+
         } else {
             $FlashSale = new FlashSale();
             $FlashSale->setCreatedAt(new \DateTime());

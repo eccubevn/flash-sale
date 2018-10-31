@@ -3,6 +3,7 @@ var Condition = function () {
     var productsClassData;
     var dataCategory = null;
     var categoryNameAndId = {};
+    var conditionAddedValue = {};
 
     var _minus = '<i class="fas fa-minus fa-lg font-weight-bold text-secondary"></i>';
     var _plus = '<i class="fa fa-plus fa-lg font-weight-bold text-secondary"></i>';
@@ -60,7 +61,7 @@ var Condition = function () {
             });
 
             // Button plus/minus item on product search popup
-            mdAddCondition.on('click', 'table > tbody > tr > td > button.btn-ec-actionIcon', function (e) {
+            $(addProduct).on('click', 'table > tbody > tr > td > button.btn-ec-actionIcon', function (e) {
                 var $sele1 = $(this).closest('tr').find('select[name=classcategory_id1]');
                 var $sele2 = $(this).closest('tr').find('select[name=classcategory_id2]');
                 if ($sele1.length && $sele1.val() == '__unselected') {
@@ -84,7 +85,7 @@ var Condition = function () {
             });
 
             // Detect (product search or category) popup to show
-            $('#ruleForm').on('click', '.findConditionsIds', function (e) {
+            ruleForm.on('click', '.findConditionsIds', function (e) {
                 e.preventDefault();
 
                 $(this).closest('td').find('.onFocus').removeClass('onFocus');
@@ -111,13 +112,13 @@ var Condition = function () {
             });
 
             // Click to remove item (product/category) name in condition
-            $('#ruleForm').on('click', '.condition-entity .nameList li a', function (e) {
+            ruleForm.on('click', '.condition-entity .nameList li a', function (e) {
                 e.preventDefault();
                 Condition.removeIdFromInputCondition($(this).closest('li'));
             });
 
             // Product category popup event - show
-            $("#addProductCategory").on('shown.bs.modal', function () {
+            addProductCategory.on('shown.bs.modal', function () {
                 var valueIdInput = $('.mdAddCondition.show').find('input.inputConditionId').val();
                 var tempArr = valueIdInput.split(',');
                 $.each(tempArr, function (k, v) {
@@ -129,6 +130,29 @@ var Condition = function () {
             addProductCategory.on('click', 'input[type="checkbox"]', function (e) {
                 var catId = $(this).val();
                 Condition.handleInputCategoryPopup(catId);
+            });
+
+            // TODO: keep old value when change condition of select options
+            /*ruleForm.on('click', '[name="condition[type]"]', function () {
+                var _selCondition = $(this);
+                var _selConditionType = $("option:selected", $(this)).val();
+                var conditionEntity = _selCondition.closest('.condition-entity');
+                var conditionEntityId = conditionEntity.attr('data-id-temp');
+                if(conditionEntityId == undefined){
+                    conditionEntityId = Math.random().toString(36).substring(2);
+                    conditionEntity.attr('data-id-temp', conditionEntityId);
+                }
+                var valueAdded = {
+                    'cKey' : _selConditionType,
+                    'cValue': conditionEntity.find('[name="condition[value]"]').val(),
+                    'cListName' : conditionEntity.find('.nameList').html()
+                };
+                conditionAddedValue[conditionEntityId] =  valueAdded;
+                console.log(conditionAddedValue);
+            });*/
+            ruleForm.on('change', '[name="condition[type]"]', function () {
+                $(this).closest('.condition-entity').find('.nameList').html('');
+                $(this).closest('.condition-entity').find('[name="condition[value]"]').val('');
             });
 
             // Event change select category 1
