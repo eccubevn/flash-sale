@@ -2,10 +2,7 @@ var Condition = function () {
     var params;
     var productsClassData;
     var dataCategory = null;
-    // var inputCurrentIds;
     var categoryNameAndId = {};
-    var categoryList = [];
-    var productList = [];
 
     var _minus = '<i class="fas fa-minus fa-lg font-weight-bold text-secondary"></i>';
     var _plus = '<i class="fa fa-plus fa-lg font-weight-bold text-secondary"></i>';
@@ -18,11 +15,10 @@ var Condition = function () {
     return {
         init: function (_params) {
             params = _params;
-            console.log(params);
-
             this.events();
         },
         events: function () {
+            // Product search popup event - show
             $(addProduct).on('shown.bs.modal', function () {
                 var rows = $(addProduct).find('table tbody tr');
                 if (rows.length > 0) {
@@ -30,16 +26,10 @@ var Condition = function () {
                         Condition.handlePlusButton($(this));
                     });
                 }
+                Condition.searchComplete();
             });
 
-            $("#addProductCategory").on('shown.bs.modal', function () {
-                var valueIdInput = $('.mdAddCondition.show').find('input.inputConditionId').val();
-                var tempArr = valueIdInput.split(',');
-                $.each(tempArr, function (k, v) {
-                    $("#addProductCategory").find('input[value="' + v + '"]').prop('checked', true);
-                });
-            });
-
+            // Button search product in popup
             $(addProduct).on('click', '#searchProductModalButton', function () {
                 var list = $('.searchDataModalList', $(this).closest('.modal-body'));
                 $.ajax({
@@ -53,7 +43,6 @@ var Condition = function () {
                 }).done(function (data) {
                     list.html(data);
                     productsClassData = productsClassCategories;
-                    console.log(productsClassData);
 
                     var _button = list.find('table tbody tr td button');
                     $.each(_button, function () {
@@ -71,42 +60,31 @@ var Condition = function () {
                 });
             });
 
-            addProductCategory.on('click', 'input[type="checkbox"]', function (e) {
-                var catId = $(this).val();
-                Condition.handleInputDataPopup(catId);
-            });
-
-            var sel1 = mdAddCondition.find('select[name="classcategory_id1"]');
-            $.each(sel1, function () {
-                $(this).on('change', function () {
-                    var rowTr = $(this).closest('tr');
-                    Condition.handlePlusButton(rowTr);
-                });
-            });
-
+            // Button plus/minus item on product search popup
             mdAddCondition.on('click', 'table > tbody > tr > td > button.btn-ec-actionIcon', function (e) {
                 var $sele1 = $(this).closest('tr').find('select[name=classcategory_id1]');
                 var $sele2 = $(this).closest('tr').find('select[name=classcategory_id2]');
-
                 if ($sele1.length && $sele1.val() == '__unselected') {
                     alert(params.msg_unselected_class);
                     return;
                 }
+
                 if ($sele2.length && !$sele2.val()) {
                     alert(params.msg_unselected_class);
                     return;
                 }
 
-                var ProductClass = Condition.fnAddConditionsProductClass($(this).closest('tr'), $(this).data('id'));
-                if (ProductClass == undefined) {
+                var ProductClassId = Condition.fnAddConditionsProductClass($(this).closest('tr'), $(this).data('id'));
+                if (ProductClassId == undefined) {
                     return;
                 }
 
-                Condition.handleInputDataPopup(ProductClass['product_class_id']);
+                Condition.handleInputProductSearchPopup(ProductClassId);
                 Condition.handlePlusButton($(this).closest('tr'));
-                Condition.handleProductClassName($(this).closest('tr'), ProductClass);
+                Condition.handleProductClassName($(this).closest('tr'), $sele1, $sele2, ProductClassId, $(this).data('action'));
             });
 
+            // Detect (product search or category) popup to show
             $('#ruleForm').on('click', '.findConditionsIds', function (e) {
                 e.preventDefault();
 
@@ -119,7 +97,7 @@ var Condition = function () {
                 var inputConditionId = mdAddCondition.find('.inputConditionId');
 
                 if (inputConditionId.length == 0) {
-                    mdAddCondition.find('.searchDataModalList').before('<input class="inputConditionId form-control mb-2" value="' + dataIds + '">');
+                    mdAddCondition.find('.searchDataModalList').before('<input type="hidden" class="inputConditionId form-control mb-2" value="' + dataIds + '">');
                 } else {
                     inputConditionId.val(dataIds);
                 }
@@ -133,21 +111,74 @@ var Condition = function () {
                 }
             });
 
-            $('#ruleForm').on('click', '.condition-entity .nameList li', function (e) {
+            // Click to remove item (product/category) name in condition
+            $('#ruleForm').on('click', '.condition-entity .nameList li a', function (e) {
                 e.preventDefault();
-                console.log($(this).data('id'));
-                Condition.removeIdFromInputCondition($(this));
+                Condition.removeIdFromInputCondition($(this).closest('li'));
+            });
+
+            // Product category popup event - show
+            $("#addProductCategory").on('shown.bs.modal', function () {
+                var valueIdInput = $('.mdAddCondition.show').find('input.inputConditionId').val();
+                var tempArr = valueIdInput.split(',');
+                $.each(tempArr, function (k, v) {
+                    $("#addProductCategory").find('input[value="' + v + '"]').prop('checked', true);
+                });
+            });
+
+            // Click check/uncheck checkbox on category popup
+            addProductCategory.on('click', 'input[type="checkbox"]', function (e) {
+                var catId = $(this).val();
+                Condition.handleInputCategoryPopup(catId);
+            });
+
+            // Event change select category 1
+            var sel1 = mdAddCondition.find('select[name="classcategory_id1"]');
+            $.each(sel1, function () {
+                $(this).on('change', function () {
+                    var rowTr = $(this).closest('tr');
+                    Condition.handlePlusButton(rowTr);
+                });
             });
         },
-        handleProductClassName: function (_item, ProductClass) {
-            console.log('__ProductClass', ProductClass);
+        handleProductClassName: function (_item, $sele1, $sele2, ProductClassId, action) {
+            var productName = _item.find('td:nth-child(2) > p.m-0').text();
+            var name_cat1 = '',
+                name_cat2 = '';
+
+            if ($sele1 != undefined && $("option:selected", $sele1).text()) {
+                name_cat1 = $("option:selected", $sele1).text();
+            }
+            if ($sele2 != undefined && $("option:selected", $sele2).text()) {
+                name_cat2 = ' - ' + $("option:selected", $sele2).text();
+            }
+            if (name_cat1 || name_cat2) {
+                productName += ' (' + name_cat1 + name_cat2 + ')';
+            }
+
+            var nameList = ruleForm.find('.condition-entity.onFocus .nameList');
+            var inputValue = ruleForm.find('div.onFocus input[name="condition[value]"]').val().split(',');
+            if ($.inArray(ProductClassId, inputValue) !== -1) {
+                ruleForm.find('.condition-entity.onFocus .nameList').append('<li data-id="' + ProductClassId + '"><a href="#"><i class="fas fa-times"></i></a> ' + productName + '</li>');
+            } else {
+                nameList.find('li[data-id="' + ProductClassId + '"]').slideUp("normal", function () {
+                    $(this).remove();
+                });
+            }
         },
         removeIdFromInputCondition: function (_item) {
             var id = _item.data('id');
-            var valueIdInput = _item.closest('.condition-entity').find('input[name="condition[value]"]');
-            var newInputValue = Condition.calculatorInput(valueIdInput, id);
-            valueIdInput.val(newInputValue);
-            _item.slideUp("normal", function() { $(this).remove(); } );
+            var newInputValue = [];
+            var contentUl = _item.closest('ul').find('li');
+            $.each(contentUl, function () {
+                if($(this).data('id') != id){
+                    newInputValue.push($(this).data('id'));
+                }
+            });
+            _item.closest('.condition-entity').find('input[name="condition[value]"]').val(newInputValue.toString());
+            _item.slideUp("normal", function () {
+                $(this).remove();
+            });
         },
         addCategoriesToObject: function () {
             if ($.isEmptyObject(categoryNameAndId)) {
@@ -178,20 +209,18 @@ var Condition = function () {
             } else {
                 addProductCategory.find('.searchDataModalList').html(dataCategory);
                 addProductCategory.modal('show');
-                Condition.addCategoriesToObject();
             }
         },
-        renderListNameData: function (newInputValue) {
+        renderCategoryNameData: function (newInputValue) {
             var nameList = ruleForm.find('.condition-entity.onFocus .nameList');
             nameList.html('');
             $.each(newInputValue, function (k, id) {
                 if (id && categoryNameAndId[id]) {
-                    console.log('k id', k, id);
                     nameList.append('<li data-id="' + id + '"><a href="#"><i class="fas fa-times"></i></a> ' + categoryNameAndId[id] + '</li>');
                 }
             });
         },
-        handleInputDataPopup: function (dataId) {
+        handleInputProductSearchPopup: function (dataId) {
             if (dataId == undefined) {
                 return;
             }
@@ -199,13 +228,21 @@ var Condition = function () {
             var valueIdInput = $('.mdAddCondition.show').find('input.inputConditionId');
             var newInputValue = Condition.calculatorInput(valueIdInput, dataId);
             Condition.setInputData(newInputValue);
-            Condition.renderListNameData(newInputValue.split(','));
+        },
+        handleInputCategoryPopup: function (dataId) {
+            if (dataId == undefined) {
+                return;
+            }
+
+            var valueIdInput = $('.mdAddCondition.show').find('input.inputConditionId');
+            var newInputValue = Condition.calculatorInput(valueIdInput, dataId);
+            Condition.setInputData(newInputValue);
+            Condition.renderCategoryNameData(newInputValue.split(','));
         },
         calculatorInput: function (valueIdInput, id) {
-            var inputValue = valueIdInput.val() + ',';
-            if (inputValue.indexOf(id + ',') != -1) {
-                var tempArr = inputValue.split(',');
-                var result = tempArr.filter(function (elem) {
+            var inputValue = valueIdInput.val().split(',');
+            if ($.inArray(id, inputValue) !== -1) {
+                var result = inputValue.filter(function (elem) {
                     return (elem != id && elem != '');
                 });
                 return result.toString();
@@ -236,14 +273,14 @@ var Condition = function () {
         },
         handlePlusButton: function ($row) {
             var btnPlus = $row.find('.btn-ec-actionIcon');
-            var ProductClass = Condition.fnAddConditionsProductClass($row, btnPlus.data('id'));
-            if (ProductClass != undefined){
-                var productClassId = ProductClass['product_class_id'];
-                var inputConditionId = $(addProduct).find('input.inputConditionId');
-                var currentValue = inputConditionId.val() + ',';
-
-                if (currentValue.indexOf(productClassId + ',') != -1) {
+            var ProductClassId = Condition.fnAddConditionsProductClass($row, btnPlus.data('id'));
+            if (ProductClassId != undefined) {
+                var inputConditionId = ruleForm.find('.condition-entity.onFocus input[name="condition[value]"]');
+                var currentValue = inputConditionId.val().split(',');
+                console.log('ProductClassId', ProductClassId, currentValue);
+                if ($.inArray(ProductClassId, currentValue) !== -1) {
                     btnPlus.attr('data-action', 'minus').html(_minus);
+                    console.log(21212121);
                     return;
                 }
             }
@@ -257,11 +294,11 @@ var Condition = function () {
                 class_cateogry_id2;
             var $sele1 = $row.find('select[name=classcategory_id1]');
             var $sele2 = $row.find('select[name=classcategory_id2]');
+            console.log('$sele1-2', $sele1.val(), $sele2.val());
             var product_class_id = null;
-
             if (!$sele1.length && !$sele2.length) {
                 product = productsClassData[product_id]['__unselected2']['#'];
-                // product_class_id = product['product_class_id'];
+                product_class_id = product['product_class_id'];
             } else if ($sele1.length) {
                 if ($sele2.length) {
                     class_category_id1 = $sele1.val();
@@ -270,18 +307,18 @@ var Condition = function () {
                         return;
                     }
                     product = productsClassData[product_id][class_category_id1]['#' + class_cateogry_id2];
-                    // product_class_id = product['product_class_id'];
+                    product_class_id = product['product_class_id'];
                 } else {
                     class_category_id1 = $sele1.val();
                     if (class_category_id1 == '__unselected') {
                         return;
                     }
                     product = productsClassData[product_id][class_category_id1]['#'];
-                    // product_class_id = product['product_class_id'];
+                    product_class_id = product['product_class_id'];
                 }
             }
-            alert('// TODO: get product name, cat1 name, cat2 name,...')
-            return product;
+
+            return product_class_id;
         }
     }
 }();
