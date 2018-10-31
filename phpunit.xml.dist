@@ -23,11 +23,10 @@
         </testsuite>
     </testsuites>
 
-    <!-- 出力するログファイル
-    <logging>
-        <log type="coverage-clover" target="./reports/coverage.clover"/>
-    </logging>
-    -->
+    <!-- 出力するログファイル -->
+    <!--<logging>-->
+        <!--<log type="coverage-html" target="./reports/coverage.html"/>-->
+    <!--</logging>-->
 
     <!-- カバーレージのターゲット -->
     <filter>
@@ -39,6 +38,7 @@
                 <file>./FlashSaleEvent.php</file>
                 <file>./FlashSaleNav.php</file>
                 <file>./PluginManager.php</file>
+                <file>./TwigBlock.php</file>
             </exclude>
         </whitelist>
     </filter>
