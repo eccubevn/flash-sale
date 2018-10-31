@@ -31,27 +31,9 @@ class ProductCategoryIdCondition extends Condition
     const TYPE = 'condition_product_category_id';
 
     /**
-     * @var Operator\OperatorFactory
-     */
-    protected $operatorFactory;
-
-    /**
      * @var EntityManager
      */
     protected $entityManager;
-
-    /**
-     * @param Operator\OperatorFactory $operatorFactory
-     *
-     * @return $this
-     * @required
-     */
-    public function setOperatorFactory(Operator\OperatorFactory $operatorFactory)
-    {
-        $this->operatorFactory = $operatorFactory;
-
-        return $this;
-    }
 
     /**
      * @param EntityManagerInterface $entityManager
@@ -64,6 +46,14 @@ class ProductCategoryIdCondition extends Condition
         $this->entityManager = $entityManager;
 
         return $this;
+    }
+
+    /**
+     * @return EntityManager
+     */
+    public function getEntityManager()
+    {
+        return $this->entityManager;
     }
 
     /**
@@ -85,7 +75,7 @@ class ProductCategoryIdCondition extends Condition
             $cateIds[] = $category->getCategoryId();
         }
 
-        return $this->operatorFactory->createByType($this->getOperator())->match($this->value, $cateIds);
+        return $this->getOperatorFactory()->createByType($this->getOperator())->match($this->value, $cateIds);
     }
 
     /**
@@ -144,7 +134,7 @@ class ProductCategoryIdCondition extends Condition
 
             case Operator\NotEqualOperator::TYPE:
                 // get product in category
-                $productRepo = $this->entityManager->getRepository(Product::class);
+                $productRepo = $this->getEntityManager()->getRepository(Product::class);
                 $qb2 = $productRepo->createQueryBuilder('p2');
                 $qb2->where($qb2->expr()->in('pct', $this->getValue()));
 
@@ -167,7 +157,7 @@ class ProductCategoryIdCondition extends Condition
 
             case Operator\NotEqualOperator::TYPE:
                 // get product in category
-                $productRepo = $this->entityManager->getRepository(Product::class);
+                $productRepo = $this->getEntityManager()->getRepository(Product::class);
                 $qb2 = $productRepo->createQueryBuilder('p2');
                 $qb2->where($qb2->expr()->in('pct', $this->getValue()));
 

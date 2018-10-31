@@ -40,29 +40,9 @@ class ProductClassRule extends Rule
     protected $cached;
 
     /**
-     * @var Operator\OperatorFactory
-     */
-    protected $operatorFactory;
-
-    /**
      * @var DiscriminatorManager
      */
     protected $discriminatorManager;
-
-    /**
-     * Set $operatorFactory
-     *
-     * @param Operator\OperatorFactory $operatorFactory
-     *
-     * @return $this
-     * @required
-     */
-    public function setOperatorFactory(Operator\OperatorFactory $operatorFactory)
-    {
-        $this->operatorFactory = $operatorFactory;
-
-        return $this;
-    }
 
     /**
      * @param DiscriminatorManager $discriminatorManager
@@ -106,7 +86,7 @@ class ProductClassRule extends Rule
         // build with each condition
         foreach ($this->getConditions() as $condition) {
             $operatorName = $condition->getOperator();
-            $operatorCondition = $this->operatorFactory->createByType($operatorName);
+            $operatorCondition = $this->getOperatorFactory()->createByType($operatorName);
             $qb = $condition->createQueryBuilder($qb, $operatorRule, $operatorCondition);
         }
 
@@ -156,7 +136,7 @@ class ProductClassRule extends Rule
             return $this->cached[__METHOD__.$ProductClass->getId()];
         }
 
-        $this->cached[__METHOD__.$ProductClass->getId()] = $this->operatorFactory
+        $this->cached[__METHOD__.$ProductClass->getId()] = $this->getOperatorFactory()
             ->createByType($this->getOperator())->match($this->getConditions(), $ProductClass);
 
         return $this->cached[__METHOD__.$ProductClass->getId()];

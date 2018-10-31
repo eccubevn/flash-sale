@@ -24,30 +24,11 @@ class CartRule extends Rule
      */
     protected $cached;
 
-    /**
-     * @var Operator\OperatorFactory
-     */
-    protected $operatorFactory;
 
     /**
      * @var DiscriminatorManager
      */
     protected $discriminatorManager;
-
-    /**
-     * Set $operatorFactory
-     *
-     * @param Operator\OperatorFactory $operatorFactory
-     *
-     * @return $this
-     * @required
-     */
-    public function setOperatorFactory(Operator\OperatorFactory $operatorFactory)
-    {
-        $this->operatorFactory = $operatorFactory;
-
-        return $this;
-    }
 
     /**
      * @param DiscriminatorManager $discriminatorManager
@@ -132,7 +113,7 @@ class CartRule extends Rule
             return $this->cached[__METHOD__.$Order->getId()];
         }
 
-        $this->cached[__METHOD__.$Order->getId()] = $this->operatorFactory
+        $this->cached[__METHOD__.$Order->getId()] = $this->getOperatorFactory()
             ->createByType($this->getOperator())->match($this->getConditions(), $Order);
 
         return $this->cached[__METHOD__.$Order->getId()];

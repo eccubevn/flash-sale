@@ -18,6 +18,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Eccube\Entity\AbstractEntity;
 use Plugin\FlashSale\Entity\Rule\ProductClassRule;
 use Plugin\FlashSale\Service\Metadata\DiscriminatorInterface;
+use Plugin\FlashSale\Service\Operator;
 use Plugin\FlashSale\Service\Promotion\PromotionInterface;
 use Plugin\FlashSale\Entity\Rule\CartRule;
 use Plugin\FlashSale\Service\Rule\RuleInterface;
@@ -28,6 +29,7 @@ use Plugin\FlashSale\Service\Rule\RuleInterface;
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="discriminator_type", type="string", length=255)
  * @ORM\DiscriminatorMap({ProductClassRule::TYPE=ProductClassRule::class, CartRule::TYPE=CartRule::class})
+ * @ORM\HasLifecycleCallbacks()
  */
 abstract class Rule extends AbstractEntity implements RuleInterface
 {
@@ -75,6 +77,11 @@ abstract class Rule extends AbstractEntity implements RuleInterface
      * @var DiscriminatorInterface
      */
     protected $discriminator;
+
+    /**
+     * @var Operator\OperatorFactory
+     */
+    protected $operatorFactory;
 
     /**
      * Rule constructor.
@@ -212,5 +219,28 @@ abstract class Rule extends AbstractEntity implements RuleInterface
         }
 
         return $result;
+    }
+
+    /**
+     * Set $operatorFactory
+     *
+     * @param Operator\OperatorFactory $operatorFactory
+     *
+     * @return CartRule
+     * @required
+     */
+    public function setOperatorFactory(Operator\OperatorFactory $operatorFactory)
+    {
+        $this->operatorFactory = $operatorFactory;
+
+        return $this;
+    }
+
+    /**
+     * @return Operator\OperatorFactory
+     */
+    public function getOperatorFactory()
+    {
+        return $this->operatorFactory;
     }
 }

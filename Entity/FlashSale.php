@@ -25,6 +25,7 @@ use Plugin\FlashSale\Service\Condition\ConditionFactory;
  *
  * @ORM\Table(name="plg_flash_sale_flash_sale")
  * @ORM\Entity(repositoryClass="Plugin\FlashSale\Repository\FlashSaleRepository")
+ * @ORM\HasLifecycleCallbacks()
  */
 class FlashSale
 {

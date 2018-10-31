@@ -28,24 +28,6 @@ class ProductClassIdCondition extends Condition
     const TYPE = 'condition_product_class_id';
 
     /**
-     * @var Operator\OperatorFactory
-     */
-    protected $operatorFactory;
-
-    /**
-     * @param Operator\OperatorFactory $operatorFactory
-     *
-     * @return $this
-     * @required
-     */
-    public function setOperatorFactory(Operator\OperatorFactory $operatorFactory)
-    {
-        $this->operatorFactory = $operatorFactory;
-
-        return $this;
-    }
-
-    /**
      * {@inheritdoc}
      *
      * @param $data
@@ -59,7 +41,7 @@ class ProductClassIdCondition extends Condition
             return false;
         }
 
-        return $this->operatorFactory->createByType($this->getOperator())->match($this->value, $ProductClass->getId());
+        return $this->getOperatorFactory()->createByType($this->getOperator())->match($this->value, $ProductClass->getId());
     }
 
     /**

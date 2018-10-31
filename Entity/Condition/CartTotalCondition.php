@@ -17,24 +17,6 @@ class CartTotalCondition extends Condition implements ConditionInterface
     const TYPE = 'condition_cart_total';
 
     /**
-     * @var Operator\OperatorFactory
-     */
-    protected $operatorFactory;
-
-    /**
-     * @param Operator\OperatorFactory $operatorFactory
-     *
-     * @return $this
-     * @required
-     */
-    public function setOperatorFactory(Operator\OperatorFactory $operatorFactory)
-    {
-        $this->operatorFactory = $operatorFactory;
-
-        return $this;
-    }
-
-    /**
      * {@inheritdoc}
      *
      * @param $data
@@ -44,7 +26,7 @@ class CartTotalCondition extends Condition implements ConditionInterface
     public function match($data)
     {
         if ($data instanceof Order) {
-            return $this->operatorFactory->createByType($this->getOperator())->match($this->value, $data->getSubtotal());
+            return $this->getOperatorFactory()->createByType($this->getOperator())->match($this->value, $data->getSubtotal());
         }
 
         return false;

@@ -20,11 +20,13 @@ use Plugin\FlashSale\Entity\Condition\ProductClassIdCondition;
 use Plugin\FlashSale\Entity\Condition\ProductCategoryIdCondition;
 use Plugin\FlashSale\Entity\Condition\CartTotalCondition;
 use Plugin\FlashSale\Service\Condition\ConditionInterface;
+use Plugin\FlashSale\Service\Operator;
 
 /**
  * @ORM\Table("plg_flash_sale_condition")
  * @ORM\Entity(repositoryClass=ConditionRepository::class)
  * @ORM\InheritanceType("SINGLE_TABLE")
+ * @ORM\HasLifecycleCallbacks()
  * @ORM\DiscriminatorColumn(name="discriminator_type", type="string", length=255)
  * @ORM\DiscriminatorMap({
  *     ProductClassIdCondition::TYPE=ProductClassIdCondition::class,
@@ -68,6 +70,11 @@ abstract class Condition extends AbstractEntity implements ConditionInterface
      * })
      */
     protected $Rule;
+
+    /**
+     * @var Operator\OperatorFactory
+     */
+    protected $operatorFactory;
 
     /**
      * @return int
@@ -153,5 +160,26 @@ abstract class Condition extends AbstractEntity implements ConditionInterface
         }
 
         return $result;
+    }
+
+    /**
+     * @param Operator\OperatorFactory $operatorFactory
+     *
+     * @return $this
+     * @required
+     */
+    public function setOperatorFactory(Operator\OperatorFactory $operatorFactory)
+    {
+        $this->operatorFactory = $operatorFactory;
+
+        return $this;
+    }
+
+    /**
+     * @return Operator\OperatorFactory
+     */
+    public function getOperatorFactory(): Operator\OperatorFactory
+    {
+        return $this->operatorFactory;
     }
 }

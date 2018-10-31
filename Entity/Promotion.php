@@ -13,6 +13,7 @@
 
 namespace Plugin\FlashSale\Entity;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Eccube\Entity\AbstractEntity;
 use Plugin\FlashSale\Repository\PromotionRepository;
@@ -26,6 +27,7 @@ use Plugin\FlashSale\Service\Promotion\PromotionInterface;
  * @ORM\Table("plg_flash_sale_promotion")
  * @ORM\Entity(repositoryClass=PromotionRepository::class)
  * @ORM\InheritanceType("SINGLE_TABLE")
+ * @ORM\HasLifecycleCallbacks()
  * @ORM\DiscriminatorColumn(name="discriminator_type", type="string", length=255)
  * @ORM\DiscriminatorMap({
  *     ProductClassPricePercentPromotion::TYPE=ProductClassPricePercentPromotion::class,
@@ -63,6 +65,10 @@ abstract class Promotion extends AbstractEntity implements PromotionInterface
      * })
      */
     protected $Rule;
+    /**
+     * @var EntityManagerInterface
+     */
+    protected $entityManager;
 
     /**
      * @return int
@@ -131,5 +137,28 @@ abstract class Promotion extends AbstractEntity implements PromotionInterface
         }
 
         return $result;
+    }
+
+    /**
+     * Set $entityManager
+     *
+     * @param EntityManagerInterface $entityManager
+     *
+     * @return $this
+     * @required
+     */
+    public function setEntityManager(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+
+        return $this;
+    }
+
+    /**
+     * @return EntityManagerInterface
+     */
+    public function getEntityManager(): EntityManagerInterface
+    {
+        return $this->entityManager;
     }
 }
