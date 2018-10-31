@@ -31,7 +31,6 @@ class ConditionRepositoryTest extends AbstractRepositoryTestCase
     public function setUp()
     {
         parent::setUp();
-
         $this->conditionRepository = $this->container->get(ConditionRepository::class);
     }
 
@@ -44,6 +43,17 @@ class ConditionRepositoryTest extends AbstractRepositoryTestCase
 
         $this->expected = true;
         $this->actual = isset($product['product']);
+        $this->verify();
+    }
+
+    public function testProductListEmpty()
+    {
+        $this->deleteAllRows($this->tables);
+        $this->entityManager->clear();
+
+        $data = $this->conditionRepository->getProductList();
+        $this->expected = [];
+        $this->actual = $data;
         $this->verify();
     }
 }
