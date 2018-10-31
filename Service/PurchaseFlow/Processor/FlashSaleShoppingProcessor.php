@@ -7,13 +7,10 @@ use Eccube\Service\PurchaseFlow\DiscountProcessor;
 use Eccube\Service\PurchaseFlow\PurchaseContext;
 use Eccube\Annotation;
 use Eccube\Entity\OrderItem;
-use Eccube\Service\PurchaseFlow\ProcessResult;
 use Eccube\Entity\Master\OrderItemType;
 use Eccube\Entity\Master\TaxDisplayType;
 use Eccube\Entity\Master\TaxType;
 use Plugin\FlashSale\Repository\FlashSaleRepository;
-use Plugin\FlashSale\Entity\FlashSale;
-use Plugin\FlashSale\Service\Rule\RuleInterface;
 
 /**
  * @Annotation\ShoppingFlow()

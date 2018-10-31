@@ -11,14 +11,15 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\FlashSale\Service\Operator;
+namespace Plugin\FlashSale\Entity\Operator;
 
 use Doctrine\ORM\QueryBuilder;
 use Plugin\FlashSale\Entity\Condition;
+use Plugin\FlashSale\Entity\OperatorInterface;
 
-class GreaterThanOperator implements OperatorInterface
+class LessThanOperator implements OperatorInterface
 {
-    const TYPE = 'operator_greater_than';
+    const TYPE = 'operator_less_than';
 
     /**
      * {@inheritdoc}
@@ -30,7 +31,7 @@ class GreaterThanOperator implements OperatorInterface
      */
     public function match($condition, $data)
     {
-        return $condition < $data;
+        return $condition > $data;
     }
 
     /**
@@ -52,7 +53,7 @@ class GreaterThanOperator implements OperatorInterface
      */
     public function getName(): string
     {
-        return 'is greater than to';
+        return 'is less than to';
     }
 
     /**

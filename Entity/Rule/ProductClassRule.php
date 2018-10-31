@@ -15,24 +15,21 @@ namespace Plugin\FlashSale\Entity\Rule;
 
 use Doctrine\ORM\Mapping as ORM;
 use Eccube\Entity\ProductClass;
-use Eccube\Entity\OrderItem;
-use Eccube\Entity\CartItem;
-use Eccube\Entity\Order;
 use Plugin\FlashSale\Entity\Rule;
 use Plugin\FlashSale\Entity\Condition\ProductClassIdCondition;
 use Plugin\FlashSale\Entity\Condition\ProductCategoryIdCondition;
 use Plugin\FlashSale\Entity\Promotion\ProductClassPricePercentPromotion;
 use Plugin\FlashSale\Entity\Promotion\ProductClassPriceAmountPromotion;
-use Plugin\FlashSale\Service\Rule\RuleInterface;
-use Plugin\FlashSale\Service\Operator as Operator;
+use Plugin\FlashSale\Entity\Operator as Operator;
 use Plugin\FlashSale\Service\Metadata\DiscriminatorManager;
 use Plugin\FlashSale\Entity\DiscountInterface;
 use Plugin\FlashSale\Entity\Discount;
+use Plugin\FlashSale\Factory\OperatorFactory;
 
 /**
  * @ORM\Entity
  */
-class ProductClassRule extends Rule implements RuleInterface
+class ProductClassRule extends Rule
 {
     const TYPE = 'rule_product_class';
 
@@ -40,45 +37,6 @@ class ProductClassRule extends Rule implements RuleInterface
      * @var array
      */
     protected $cached;
-
-    /**
-     * @var Operator\OperatorFactory
-     */
-    protected $operatorFactory;
-
-    /**
-     * @var DiscriminatorManager
-     */
-    protected $discriminatorManager;
-
-    /**
-     * Set $operatorFactory
-     *
-     * @param Operator\OperatorFactory $operatorFactory
-     *
-     * @return $this
-     * @required
-     */
-    public function setOperatorFactory(Operator\OperatorFactory $operatorFactory)
-    {
-        $this->operatorFactory = $operatorFactory;
-
-        return $this;
-    }
-
-    /**
-     * @param DiscriminatorManager $discriminatorManager
-     *
-     * @return $this
-     * @required
-     */
-    public function setDiscriminatorManager(DiscriminatorManager $discriminatorManager)
-    {
-        $this->discriminatorManager = $discriminatorManager;
-        $this->discriminator = $discriminatorManager->get(static::TYPE);
-
-        return $this;
-    }
 
     /**
      * {@inheritdoc}
@@ -137,7 +95,8 @@ class ProductClassRule extends Rule implements RuleInterface
         }
 
         $this->cached[__METHOD__ . $ProductClass->getId()] = $this->operatorFactory
-            ->createByType($this->getOperator())->match($this->getConditions(), $ProductClass);
+            ->create(['type' => $this->getOperator()])
+            ->match($this->getConditions(), $ProductClass);
 
         return $this->cached[__METHOD__ . $ProductClass->getId()];
     }
@@ -156,7 +115,7 @@ class ProductClassRule extends Rule implements RuleInterface
             return $discount;
         }
 
-        return $this->getDiscountFromProductClass($object);;
+        return $this->getDiscountFromProductClass($object);
     }
 
     /**

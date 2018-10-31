@@ -11,14 +11,15 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\FlashSale\Service\Operator;
+namespace Plugin\FlashSale\Tests\Entity\Operator;
 
 use Plugin\FlashSale\Tests\Service\AbstractServiceTestCase;
+use Plugin\FlashSale\Entity\Operator as Operator;
 
-class LessThanOperatorTest extends AbstractServiceTestCase
+class GreaterThanOperatorTest extends AbstractServiceTestCase
 {
     /**
-     * @var LessThanOperator
+     * @var Operator\GreaterThanOperator
      */
     protected $operator;
 
@@ -29,26 +30,26 @@ class LessThanOperatorTest extends AbstractServiceTestCase
     {
         parent::setUp();
 
-        $this->operator = new LessThanOperator();
+        $this->operator = new Operator\GreaterThanOperator();
     }
 
     public function testGetName()
     {
-        self::assertEquals('is less than to', $this->operator->getName());
+        self::assertEquals('is greater than to', $this->operator->getName());
     }
 
     public function testGetType()
     {
-        self::assertEquals(LessThanOperator::TYPE, $this->operator->getType());
+        self::assertEquals('operator_greater_than', $this->operator->getType());
     }
 
     public function testMatchScalarTypeTrue()
     {
-        self::assertTrue($this->operator->match(6, 5));
+        self::assertTrue($this->operator->match(4, 5));
     }
 
     public function testMatchScalarTypeFalse()
     {
-        self::assertFalse($this->operator->match(4, 5));
+        self::assertFalse($this->operator->match(6, 5));
     }
 }

@@ -17,7 +17,7 @@ use Plugin\FlashSale\Entity\Condition\ProductCategoryIdCondition;
 use Plugin\FlashSale\Entity\Rule\ProductClassRule;
 use Plugin\FlashSale\Entity\Condition\ProductClassIdCondition;
 use Plugin\FlashSale\Entity\Promotion\ProductClassPricePercentPromotion;
-use Plugin\FlashSale\Service\Operator as Operator;
+use Plugin\FlashSale\Entity\Operator as Operator;
 use Plugin\FlashSale\Entity\Promotion\ProductClassPriceAmountPromotion;
 use Plugin\FlashSale\Entity\Rule\CartRule;
 use Plugin\FlashSale\Entity\Condition\CartTotalCondition;

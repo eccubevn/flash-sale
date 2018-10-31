@@ -20,7 +20,6 @@ use Plugin\FlashSale\Entity\Promotion\ProductClassPricePercentPromotion;
 use Plugin\FlashSale\Entity\Promotion\ProductClassPriceAmountPromotion;
 use Plugin\FlashSale\Entity\Promotion\CartTotalAmountPromotion;
 use Plugin\FlashSale\Entity\Promotion\CartTotalPercentPromotion;
-use Plugin\FlashSale\Service\Promotion\PromotionInterface;
 
 /**
  * @ORM\Table("plg_flash_sale_promotion")

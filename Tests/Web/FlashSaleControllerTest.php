@@ -20,7 +20,7 @@ use Plugin\FlashSale\Entity\FlashSale;
 use Plugin\FlashSale\Entity\Promotion;
 use Plugin\FlashSale\Entity\Rule\ProductClassRule;
 use Plugin\FlashSale\Repository\FlashSaleRepository;
-use Plugin\FlashSale\Service\Operator\InOperator;
+use Plugin\FlashSale\Entity\Operator\InOperator;
 use Symfony\Component\HttpFoundation\Response;
 
 /**

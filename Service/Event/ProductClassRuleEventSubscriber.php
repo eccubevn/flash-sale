@@ -25,7 +25,7 @@ use Eccube\Common\EccubeConfig;
 use Eccube\Twig\Extension\CartServiceExtension;
 use Plugin\FlashSale\Repository\FlashSaleRepository;
 use Plugin\FlashSale\Entity\FlashSale;
-use Plugin\FlashSale\Service\Rule\RuleInterface;
+use Plugin\FlashSale\Entity\RuleInterface;
 
 class ProductClassRuleEventSubscriber implements EventSubscriberInterface
 {

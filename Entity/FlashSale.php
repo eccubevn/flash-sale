@@ -21,10 +21,9 @@ use Eccube\Entity\Cart;
 use Eccube\Entity\Order;
 use Plugin\FlashSale\Entity\Rule\ProductClassRule;
 use Plugin\FlashSale\Entity\Rule\CartRule;
-use Plugin\FlashSale\Service\Rule\RuleFactory;
-use Plugin\FlashSale\Service\Promotion\PromotionFactory;
-use Plugin\FlashSale\Service\Condition\ConditionFactory;
-use Plugin\FlashSale\Service\Rule\RuleInterface;
+use Plugin\FlashSale\Factory\RuleFactory;
+use Plugin\FlashSale\Factory\PromotionFactory;
+use Plugin\FlashSale\Factory\ConditionFactory;
 use Plugin\FlashSale\Entity\DiscountInterface;
 use Plugin\FlashSale\Entity\Discount;
 
@@ -121,6 +120,21 @@ class FlashSale
      * @ORM\OneToMany(targetEntity=Rule::class, mappedBy="FlashSale", indexBy="id", cascade={"persist","remove"})
      */
     private $Rules;
+
+    /**
+     * @var RuleFactory
+     */
+    protected $ruleFactory;
+
+    /**
+     * @var ConditionFactory
+     */
+    protected $conditionFactory;
+
+    /**
+     * @var PromotionFactory
+     */
+    protected $promotionFactory;
 
     /**
      * FlashSale constructor.
@@ -311,6 +325,45 @@ class FlashSale
     }
 
     /**
+     * Set $ruleFactory
+     *
+     * @param RuleFactory $ruleFactory
+     * @return $this
+     * @required
+     */
+    public function setRuleFactory(RuleFactory $ruleFactory)
+    {
+        $this->ruleFactory = $ruleFactory;
+        return $this;
+    }
+
+    /**
+     * Set $conditionFactory
+     *
+     * @param ConditionFactory $conditionFactory
+     * @return $this
+     * @required
+     */
+    public function setConditionFactory(ConditionFactory $conditionFactory)
+    {
+        $this->conditionFactory = $conditionFactory;
+        return $this;
+    }
+
+    /**
+     * Set $promotionFactory
+     *
+     * @param PromotionFactory $promotionFactory
+     * @return $this
+     * @required
+     */
+    public function setPromotionFactory(PromotionFactory $promotionFactory)
+    {
+        $this->promotionFactory = $promotionFactory;
+        return $this;
+    }
+
+    /**
      * Get data as array
      *
      * @param $data
@@ -353,11 +406,11 @@ class FlashSale
                     foreach ($Rule->getConditions() as $Condition) {
                         $this->removed[] = $Condition;
                     }
-                    $Rule = RuleFactory::createFromArray($rule);
+                    $Rule = $this->ruleFactory->create($rule);
                     $this->getRules()->add($Rule);
                 }
             } else {
-                $Rule = RuleFactory::createFromArray($rule);
+                $Rule = $this->ruleFactory->create($rule);
                 $this->getRules()->add($Rule);
             }
             $Rule->modified = true;
@@ -367,10 +420,10 @@ class FlashSale
             if (!empty($rule['promotion'])) {
                 $Promotion = $Rule->getPromotion();
                 if (!$Promotion) {
-                    $Promotion = PromotionFactory::createFromArray($rule['promotion']);
+                    $Promotion = $this->promotionFactory->create($rule['promotion']);
                 } elseif ($Promotion::TYPE != $rule['promotion']['type']) {
                     $this->removed[] = $Promotion;
-                    $Promotion = PromotionFactory::createFromArray($rule['promotion']);
+                    $Promotion = $this->promotionFactory->create($rule['promotion']);
                 }
                 $Promotion->modified = true;
                 $Promotion->setValue($rule['promotion']['value']);
@@ -387,11 +440,11 @@ class FlashSale
                         if ($Condition::TYPE != $condition['type']) {
                             $Rule->getConditions()->remove($Condition->getId());
                             $this->removed[] = $Condition;
-                            $Condition = ConditionFactory::createFromArray($condition);
+                            $Condition = $this->conditionFactory->create($condition);
                             $Rule->getConditions()->add($Condition);
                         }
                     } else {
-                        $Condition = ConditionFactory::createFromArray($condition);
+                        $Condition = $this->conditionFactory->create($condition);
                         $Rule->getConditions()->add($Condition);
                     }
                     $Condition->modified = true;

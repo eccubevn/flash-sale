@@ -17,8 +17,8 @@ use Doctrine\ORM\Mapping\DiscriminatorMap;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Plugin\FlashSale\Service\Metadata\DiscriminatorManager;
 use Plugin\FlashSale\Entity\Rule;
-use Plugin\FlashSale\Service\Rule\RuleInterface;
-use Plugin\FlashSale\Service\Condition\ConditionInterface;
+use Plugin\FlashSale\Entity\RuleInterface;
+use Plugin\FlashSale\Entity\ConditionInterface;
 
 class FlashSaleService
 {

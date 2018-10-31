@@ -15,7 +15,7 @@ namespace Plugin\FlashSale\Tests\Service\Metadata;
 
 use Plugin\FlashSale\Service\Metadata\Discriminator;
 use Plugin\FlashSale\Service\Metadata\DiscriminatorManager;
-use Plugin\FlashSale\Service\Operator\EqualOperator;
+use Plugin\FlashSale\Entity\Operator\EqualOperator;
 use Plugin\FlashSale\Tests\Service\AbstractServiceTestCase;
 
 class DiscriminatorManagerTest extends AbstractServiceTestCase

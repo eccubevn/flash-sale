@@ -18,8 +18,9 @@ use Doctrine\ORM\Mapping as ORM;
 use Eccube\Entity\AbstractEntity;
 use Plugin\FlashSale\Entity\Rule\ProductClassRule;
 use Plugin\FlashSale\Service\Metadata\DiscriminatorInterface;
-use Plugin\FlashSale\Service\Promotion\PromotionInterface;
 use Plugin\FlashSale\Entity\Rule\CartRule;
+use Plugin\FlashSale\Factory\OperatorFactory;
+use Plugin\FlashSale\Service\Metadata\DiscriminatorManager;
 
 /**
  * @ORM\Table("plg_flash_sale_rule")
@@ -28,7 +29,7 @@ use Plugin\FlashSale\Entity\Rule\CartRule;
  * @ORM\DiscriminatorColumn(name="discriminator_type", type="string", length=255)
  * @ORM\DiscriminatorMap({ProductClassRule::TYPE=ProductClassRule::class, CartRule::TYPE=CartRule::class})
  */
-abstract class Rule extends AbstractEntity
+abstract class Rule extends AbstractEntity implements RuleInterface
 {
     const TYPE = 'rule';
 
@@ -74,6 +75,16 @@ abstract class Rule extends AbstractEntity
      * @var DiscriminatorInterface
      */
     protected $discriminator;
+
+    /**
+     * @var OperatorFactory
+     */
+    protected $operatorFactory;
+
+    /**
+     * @var DiscriminatorManager
+     */
+    protected $discriminatorManager;
 
     /**
      * Rule constructor.
@@ -184,6 +195,33 @@ abstract class Rule extends AbstractEntity
     public function getDiscriminator(): DiscriminatorInterface
     {
         return $this->discriminator;
+    }
+
+    /**
+     * @param DiscriminatorManager $discriminatorManager
+     *
+     * @return $this
+     * @required
+     */
+    public function setDiscriminatorManager(DiscriminatorManager $discriminatorManager)
+    {
+        $this->discriminatorManager = $discriminatorManager;
+        $this->discriminator = $discriminatorManager->get(static::TYPE);
+
+        return $this;
+    }
+
+    /**
+     * Set $operatorFactory
+     *
+     * @param OperatorFactory $operatorFactory
+     * @return Rule
+     * @required
+     */
+    public function setOperatorFactory(OperatorFactory $operatorFactory): Rule
+    {
+        $this->operatorFactory = $operatorFactory;
+        return $this;
     }
 
     /**

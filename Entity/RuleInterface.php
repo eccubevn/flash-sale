@@ -11,10 +11,9 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\FlashSale\Service\Rule;
+namespace Plugin\FlashSale\Entity;
 
 use Plugin\FlashSale\Service\Metadata\DiscriminatorInterface;
-use Plugin\FlashSale\Entity\DiscountInterface;
 
 interface RuleInterface
 {

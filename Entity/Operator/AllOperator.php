@@ -11,12 +11,13 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\FlashSale\Service\Operator;
+namespace Plugin\FlashSale\Entity\Operator;
 
 use Doctrine\Common\Collections\Collection as DoctrineCollection;
 use Doctrine\ORM\QueryBuilder;
 use Plugin\FlashSale\Entity\Condition;
-use Plugin\FlashSale\Service\Condition\ConditionInterface;
+use Plugin\FlashSale\Entity\ConditionInterface;
+use Plugin\FlashSale\Entity\OperatorInterface;
 
 class AllOperator implements OperatorInterface
 {

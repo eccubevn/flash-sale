@@ -1,30 +1,18 @@
 <?php
+namespace Plugin\FlashSale\Factory;
 
-/*
- * This file is part of EC-CUBE
- *
- * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
- *
- * http://www.lockon.co.jp/
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
-namespace Plugin\FlashSale\Service\Rule;
-
-use Plugin\FlashSale\Entity\Rule;
+use Plugin\FlashSale\Entity\Rule as Rule;
+use Plugin\FlashSale\Entity\RuleInterface;
 
 class RuleFactory
 {
     /**
-     * Create Rule from array
+     * Create rule
      *
      * @param array $data
-     *
-     * @return Rule
+     * @return RuleInterface
      */
-    public static function createFromArray(array $data)
+    public function create(array $data = [])
     {
         if (!isset($data['type'])) {
             throw new \InvalidArgumentException('$data[type] must be required');

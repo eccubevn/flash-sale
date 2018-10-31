@@ -11,12 +11,10 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\FlashSale\Service\Promotion;
+namespace Plugin\FlashSale\Factory;
 
-use Plugin\FlashSale\Entity\Promotion\ProductClassPricePercentPromotion;
-use Plugin\FlashSale\Entity\Promotion\ProductClassPriceAmountPromotion;
-use Plugin\FlashSale\Entity\Promotion\CartTotalPercentPromotion;
-use Plugin\FlashSale\Entity\Promotion\CartTotalAmountPromotion;
+use Plugin\FlashSale\Entity\Promotion as Promotion;
+use Plugin\FlashSale\Entity\PromotionInterface;
 
 class PromotionFactory
 {
@@ -27,24 +25,24 @@ class PromotionFactory
      *
      * @return PromotionInterface
      */
-    public static function createFromArray(array $data)
+    public function create(array $data = [])
     {
         if (!isset($data['type'])) {
             throw new \InvalidArgumentException('$data[type] must be required');
         }
 
         switch ($data['type']) {
-            case ProductClassPricePercentPromotion::TYPE:
-                $Promotion = new ProductClassPricePercentPromotion();
+            case Promotion\ProductClassPricePercentPromotion::TYPE:
+                $Promotion = new Promotion\ProductClassPricePercentPromotion();
                 break;
-            case ProductClassPriceAmountPromotion::TYPE:
-                $Promotion = new ProductClassPriceAmountPromotion();
+            case Promotion\ProductClassPriceAmountPromotion::TYPE:
+                $Promotion = new Promotion\ProductClassPriceAmountPromotion();
                 break;
-            case CartTotalPercentPromotion::TYPE:
-                $Promotion = new CartTotalPercentPromotion();
+            case Promotion\CartTotalPercentPromotion::TYPE:
+                $Promotion = new Promotion\CartTotalPercentPromotion();
                 break;
-            case CartTotalAmountPromotion::TYPE:
-                $Promotion = new CartTotalAmountPromotion();
+            case Promotion\CartTotalAmountPromotion::TYPE:
+                $Promotion = new Promotion\CartTotalAmountPromotion();
                 break;
 
             default:

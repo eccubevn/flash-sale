@@ -11,17 +11,18 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\FlashSale\Service\Operator;
+namespace Plugin\FlashSale\Tests\Entity\Operator;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Plugin\FlashSale\Entity\Condition\ProductClassIdCondition;
 use Plugin\FlashSale\Entity\Rule;
 use Plugin\FlashSale\Tests\Service\AbstractServiceTestCase;
+use Plugin\FlashSale\Entity\Operator as Operator;
 
 class InOperatorTest extends AbstractServiceTestCase
 {
     /**
-     * @var InOperator
+     * @var Operator\InOperator
      */
     protected $operator;
 
@@ -32,7 +33,7 @@ class InOperatorTest extends AbstractServiceTestCase
     {
         parent::setUp();
 
-        $this->operator = new InOperator();
+        $this->operator = new Operator\InOperator();
     }
 
     public function testGetName()
@@ -42,7 +43,7 @@ class InOperatorTest extends AbstractServiceTestCase
 
     public function testGetType()
     {
-        self::assertEquals(InOperator::TYPE, $this->operator->getType());
+        self::assertEquals('operator_in', $this->operator->getType());
     }
 
     public function testMatchScalarTypeTrue()
@@ -89,7 +90,7 @@ class InOperatorTest extends AbstractServiceTestCase
     public function testParseConditionAllOperator()
     {
         $Rule = $this->getMockBuilder(Rule\ProductClassRule::class)->getMock();
-        $Rule->method('getOperator')->willReturn(AllOperator::TYPE);
+        $Rule->method('getOperator')->willReturn(Operator\AllOperator::TYPE);
         $Condition = $this->getMockBuilder(ProductClassIdCondition::class)->getMock();
         $Condition->method('getValue')->willReturn(1);
         $Condition->method('getRule')->willReturn($Rule);
@@ -102,7 +103,7 @@ class InOperatorTest extends AbstractServiceTestCase
     public function testParseConditionEqualOperator()
     {
         $Rule = $this->getMockBuilder(Rule\ProductClassRule::class)->getMock();
-        $Rule->method('getOperator')->willReturn(EqualOperator::TYPE);
+        $Rule->method('getOperator')->willReturn(Operator\EqualOperator::TYPE);
         $Condition = $this->getMockBuilder(ProductClassIdCondition::class)->getMock();
         $Condition->method('getValue')->willReturn(1);
         $Condition->method('getRule')->willReturn($Rule);
@@ -115,7 +116,7 @@ class InOperatorTest extends AbstractServiceTestCase
     public function testParseConditionInOperator()
     {
         $Rule = $this->getMockBuilder(Rule\ProductClassRule::class)->getMock();
-        $Rule->method('getOperator')->willReturn(InOperator::TYPE);
+        $Rule->method('getOperator')->willReturn(Operator\InOperator::TYPE);
         $Condition = $this->getMockBuilder(ProductClassIdCondition::class)->getMock();
         $Condition->method('getValue')->willReturn(1);
         $Condition->method('getRule')->willReturn($Rule);
@@ -128,7 +129,7 @@ class InOperatorTest extends AbstractServiceTestCase
     public function testParseConditionNotEqualOperator()
     {
         $Rule = $this->getMockBuilder(Rule\ProductClassRule::class)->getMock();
-        $Rule->method('getOperator')->willReturn(NotEqualOperator::TYPE);
+        $Rule->method('getOperator')->willReturn(Operator\NotEqualOperator::TYPE);
         $Condition = $this->getMockBuilder(ProductClassIdCondition::class)->getMock();
         $Condition->method('getValue')->willReturn(1);
         $Condition->method('getRule')->willReturn($Rule);

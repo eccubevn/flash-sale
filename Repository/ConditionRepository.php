@@ -19,7 +19,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Plugin\FlashSale\Entity\Condition;
 use Plugin\FlashSale\Entity\Condition\ProductClassIdCondition;
 use Plugin\FlashSale\Entity\Rule;
-use Plugin\FlashSale\Service\Operator\OperatorFactory;
+use Plugin\FlashSale\Factory\OperatorFactory;
 
 class ConditionRepository extends AbstractRepository
 {
@@ -57,13 +57,13 @@ class ConditionRepository extends AbstractRepository
             foreach ($conditions as $condition) {
                 if ($condition instanceof ProductClassIdCondition) {
                     $condOperator = $condition->getOperator();
-                    $Condition = $this->operatorFactory->createByType($condOperator);
+                    $Condition = $this->operatorFactory->create(['type' => $condOperator]);
                     $qbItem = $Condition->parseCondition($qbItem, $condition);
                 }
 
                 if ($condition instanceof Condition\ProductCategoryIdCondition) {
                     $condOperator = $condition->getOperator();
-                    $Condition = $this->operatorFactory->createByType($condOperator);
+                    $Condition = $this->operatorFactory->create(['type' => $condOperator]);
                     $qbItem = $Condition->parseCondition($qbItem, $condition);
                 }
             }

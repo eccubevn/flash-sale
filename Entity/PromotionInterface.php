@@ -11,23 +11,16 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\FlashSale\Service\Condition;
+namespace Plugin\FlashSale\Entity;
 
-interface ConditionInterface
+interface PromotionInterface
 {
     /**
-     * Validate condition
+     * Calculate discount item
      *
-     * @param $data
+     * @param $object
      *
-     * @return bool
+     * @return DiscountInterface
      */
-    public function match($data);
-
-    /**
-     * Get allowed operator
-     *
-     * @return array
-     */
-    public function getOperatorTypes(): array;
+    public function getDiscount($object);
 }

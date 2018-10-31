@@ -11,10 +11,9 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\FlashSale\Service\Operator;
+namespace Plugin\FlashSale\Entity;
 
 use Doctrine\ORM\QueryBuilder;
-use Plugin\FlashSale\Entity\Condition;
 
 interface OperatorInterface
 {
