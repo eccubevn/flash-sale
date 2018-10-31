@@ -108,6 +108,8 @@ class FlashSaleController extends AbstractController
     public function edit(Request $request, $id = null, CacheUtil $cacheUtil)
     {
         $conditionData = [];
+        $productClassIds = [];
+        $categoryIds = [];
         if ($id) {
             /** @var FlashSale $FlashSale */
             $FlashSale = $this->flashSaleRepository->find($id);
@@ -115,28 +117,6 @@ class FlashSaleController extends AbstractController
                 throw new NotFoundHttpException();
             }
             $FlashSale->setUpdatedAt(new \DateTime());
-
-            $productClassIds = [];
-            $categoryIds = [];
-            /** @var Rule $rule */
-            foreach ($FlashSale->getRules() as $rule) {
-                /** @var Condition $condition */
-                foreach ($rule->getConditions() as $condition) {
-                    if ($condition->getRule() instanceof Rule\ProductClassRule) {
-                        if ($condition instanceof Condition\ProductClassIdCondition) {
-                            $productClassIds = array_merge($productClassIds, explode(',', $condition->getValue()));
-                        }
-
-                        if ($condition instanceof Condition\ProductCategoryIdCondition) {
-                            $categoryIds = array_merge($categoryIds, explode(',', $condition->getValue()));
-                        }
-                    }
-                }
-            }
-
-            $conditionData['condition_product_class_id'] = $this->flashSaleService->getProductClassName($productClassIds);
-            $conditionData['condition_product_category_id'] = $CategoryName = $this->flashSaleService->getCategoryName($categoryIds);
-
         } else {
             $FlashSale = new FlashSale();
             $FlashSale->setCreatedAt(new \DateTime());
@@ -148,6 +128,22 @@ class FlashSaleController extends AbstractController
 
         $form = $builder->getForm();
         $form->handleRequest($request);
+
+
+        $newConditionForm = json_decode($form->get('rules')->getData(), true);
+
+        foreach ($newConditionForm as $rule) {
+            if ($rule['type'] == Rule\ProductClassRule::TYPE) {
+                foreach ($rule['conditions'] as $condition) {
+                    if ($condition['type'] == Condition\ProductClassIdCondition::TYPE) {
+                        $productClassIds = array_merge($productClassIds, explode(',', $condition['value']));
+                    }
+                    if ($condition['type'] == Condition\ProductCategoryIdCondition::TYPE) {
+                        $categoryIds = array_merge($categoryIds, explode(',', $condition['value']));
+                    }
+                }
+            }
+        }
 
         if ($form->isSubmitted() && $form->isValid()) {
             try {
@@ -203,6 +199,9 @@ class FlashSaleController extends AbstractController
         $builder = $this->formFactory
             ->createBuilder(SearchProductType::class);
         $searchProductModalForm = $builder->getForm();
+
+        $conditionData['condition_product_class_id'] = $this->flashSaleService->getProductClassName($productClassIds);
+        $conditionData['condition_product_category_id'] = $CategoryName = $this->flashSaleService->getCategoryName($categoryIds);
 
         return [
             'form' => $form->createView(),

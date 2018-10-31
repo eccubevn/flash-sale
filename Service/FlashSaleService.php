@@ -47,6 +47,7 @@ class FlashSaleService
      *
      * @param AnnotationReader $annotationReader
      * @param DiscriminatorManager $discriminatorManager
+     * @param EntityManagerInterface $entityManager
      */
     public function __construct(
         AnnotationReader $annotationReader,
@@ -57,6 +58,7 @@ class FlashSaleService
         $this->discriminatorManager = $discriminatorManager;
         $this->entityManager = $entityManager;
     }
+
 
     /**
      * Get metadata
@@ -142,8 +144,6 @@ class FlashSaleService
         /** @var ProductClassRepository $cateRepo */
         $cateRepo = $this->entityManager->getRepository(ProductClass::class);
         $qb = $cateRepo->createQueryBuilder('pc');
-
-//        $qb->select('pc.id as id, p.name as name, pc1.name as pc1_name, pc2.name as pc2_name')
         $qb->select("pc.id as id, p.name as name, CONCAT(pc1.name, ' - ',pc2.name) AS class_name")
             ->innerJoin('pc.Product', 'p')
             ->innerJoin('pc.ClassCategory1', 'pc1')
