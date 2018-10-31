@@ -129,9 +129,7 @@ class FlashSaleController extends AbstractController
         $form = $builder->getForm();
         $form->handleRequest($request);
 
-
         $newConditionForm = json_decode($form->get('rules')->getData(), true);
-
         foreach ($newConditionForm as $rule) {
             if ($rule['type'] == Rule\ProductClassRule::TYPE) {
                 foreach ($rule['conditions'] as $condition) {

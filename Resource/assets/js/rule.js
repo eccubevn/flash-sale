@@ -44,7 +44,7 @@
                 container.find('.nameList').addClass('d-none');
                 container.find('.findConditionsIds').addClass('d-none');
             } else {
-                container.find('.nameList').removeClass('d-none');
+                container.find('.nameList').removeClass('d-none').html('');
                 container.find('.findConditionsIds').removeClass('d-none');
             }
         };
@@ -59,7 +59,7 @@
                     value: ''
                 }
             }, e);
-            var ruleId = (data.id ? data.id : self.find('.rule').length);
+            var ruleId = (data.id ? data.id : self.find('.rule-entity').length);
             var template = self.find('[data-template="rule"]').clone()
                 .removeClass('d-none')
                 .addClass('rule-entity')
@@ -84,11 +84,11 @@
             if (data.type == 'rule_cart') {
                 template.find('.nameList').addClass('d-none');
                 template.find('.findConditionsIds').addClass('d-none');
-                template.find('[name="condition[value]"]').val('').attr('type', 'text');
+                template.find('[name="condition[value]"]').attr('type', 'text');
             } else {
                 template.find('.nameList').removeClass('d-none');
                 template.find('.findConditionsIds').removeClass('d-none');
-                template.find('[name="condition[value]"]').val('').attr('type', 'hidden');
+                template.find('[name="condition[value]"]').attr('type', 'hidden');
             }
             self.find('[data-container="rule"]').append(template);
         };
@@ -136,11 +136,11 @@
             if (ruleType == 'rule_cart') {
                 $(template).find('.nameList').addClass('d-none');
                 $(template).find('.findConditionsIds').addClass('d-none');
-                $(template).find('[name="condition[value]"]').val('').attr('type', 'text');
+                $(template).find('[name="condition[value]"]').attr('type', 'text');
             } else {
                 $(template).find('.nameList').removeClass('d-none');
                 $(template).find('.findConditionsIds').removeClass('d-none');
-                $(template).find('[name="condition[value]"]').val('').attr('type', 'hidden');
+                $(template).find('[name="condition[value]"]').attr('type', 'hidden');
             }
             container.append(template);
         };
@@ -194,7 +194,8 @@
                 fn.addRule(rules[k]);
                 $.each(rules[k]['conditions'], function (i) {
                     var condition = rules[k]['conditions'][i];
-                    condition.target = $('#rule'+rules[k]['id']+ ' [data-bind="addCondition"]')[0];
+                    var id = self.find('[data-container="rule"] .rule-entity:last').attr('id');
+                    condition.target = $('#' + id + ' [data-bind="addCondition"]')[0];
                     fn.addCondition(condition);
                 });
             });

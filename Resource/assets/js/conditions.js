@@ -26,7 +26,6 @@ var Condition = function () {
                         Condition.handlePlusButton($(this));
                     });
                 }
-                Condition.searchComplete();
             });
 
             // Button search product in popup
@@ -81,7 +80,7 @@ var Condition = function () {
 
                 Condition.handleInputProductSearchPopup(ProductClassId);
                 Condition.handlePlusButton($(this).closest('tr'));
-                Condition.handleProductClassName($(this).closest('tr'), $sele1, $sele2, ProductClassId, $(this).data('action'));
+                Condition.handleProductClassName($(this).closest('tr'), $sele1, $sele2, ProductClassId);
             });
 
             // Detect (product search or category) popup to show
@@ -141,7 +140,7 @@ var Condition = function () {
                 });
             });
         },
-        handleProductClassName: function (_item, $sele1, $sele2, ProductClassId, action) {
+        handleProductClassName: function (_item, $sele1, $sele2, ProductClassId) {
             var productName = _item.find('td:nth-child(2) > p.m-0').text();
             var name_cat1 = '',
                 name_cat2 = '';
@@ -270,6 +269,13 @@ var Condition = function () {
                     Condition.handlePlusButton(rowTr);
                 });
             });
+
+            var rows = $(addProduct).find('table tbody tr');
+            if (rows.length > 0) {
+                $.each(rows, function () {
+                    Condition.handlePlusButton($(this));
+                });
+            }
         },
         handlePlusButton: function ($row) {
             var btnPlus = $row.find('.btn-ec-actionIcon');
@@ -277,10 +283,8 @@ var Condition = function () {
             if (ProductClassId != undefined) {
                 var inputConditionId = ruleForm.find('.condition-entity.onFocus input[name="condition[value]"]');
                 var currentValue = inputConditionId.val().split(',');
-                console.log('ProductClassId', ProductClassId, currentValue);
                 if ($.inArray(ProductClassId, currentValue) !== -1) {
                     btnPlus.attr('data-action', 'minus').html(_minus);
-                    console.log(21212121);
                     return;
                 }
             }
@@ -294,7 +298,6 @@ var Condition = function () {
                 class_cateogry_id2;
             var $sele1 = $row.find('select[name=classcategory_id1]');
             var $sele2 = $row.find('select[name=classcategory_id2]');
-            console.log('$sele1-2', $sele1.val(), $sele2.val());
             var product_class_id = null;
             if (!$sele1.length && !$sele2.length) {
                 product = productsClassData[product_id]['__unselected2']['#'];
