@@ -14,8 +14,6 @@
 namespace Plugin\FlashSale\Service\Operator;
 
 use Doctrine\Common\Collections\Collection as DoctrineCollection;
-use Doctrine\ORM\QueryBuilder;
-use Plugin\FlashSale\Entity\Condition;
 use Plugin\FlashSale\Service\Condition\ConditionInterface;
 
 class AllOperator implements OperatorInterface
@@ -48,46 +46,6 @@ class AllOperator implements OperatorInterface
         }
 
         return true;
-    }
-
-    /**
-     * @param QueryBuilder $qb
-     * @param Condition $condition
-     *
-     * @return QueryBuilder
-     */
-    public function parseCondition(QueryBuilder $qb, Condition $condition)
-    {
-        $rule = $condition->getRule();
-        switch ($rule->getOperator()) {
-            case AllOperator::TYPE:
-                if ($condition instanceof Condition\ProductClassIdCondition) {
-                    $qb->andWhere($qb->expr()->in('pc.id', $condition->getValue()));
-                }
-                break;
-
-            case EqualOperator::TYPE:
-                if ($condition instanceof Condition\ProductClassIdCondition) {
-                    $qb->andWhere($qb->expr()->in('pc.id', $condition->getValue()));
-                }
-                break;
-
-            case InOperator::TYPE:
-                if ($condition instanceof Condition\ProductClassIdCondition) {
-                    $qb->orWhere($qb->expr()->in('pc.id', $condition->getValue()));
-                }
-                break;
-
-            case NotEqualOperator::TYPE:
-                if ($condition instanceof Condition\ProductClassIdCondition) {
-                    $qb->andWhere($qb->expr()->neq('pc.id', $condition->getValue()));
-                }
-                break;
-            default:
-                break;
-        }
-
-        return $qb;
     }
 
     /**

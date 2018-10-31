@@ -42,6 +42,14 @@ class PluginManager extends AbstractPluginManager
     private $blockFileName = 'flash_sale';
 
     /**
+     * @var array
+     */
+    private $mailTemplate = [
+        'order.twig',
+        'order.html.twig',
+    ];
+
+    /**
      * PluginManager constructor.
      */
     public function __construct()
@@ -68,6 +76,7 @@ class PluginManager extends AbstractPluginManager
      */
     public function enable(array $meta = null, ContainerInterface $container)
     {
+        $this->copyMailTemplate($container);
         $this->copyBlock($container);
         $Block = $container->get(BlockRepository::class)->findOneBy(['file_name' => $this->blockFileName]);
         if (is_null($Block)) {
@@ -78,9 +87,12 @@ class PluginManager extends AbstractPluginManager
     /**
      * @param array|null $meta
      * @param ContainerInterface $container
+     *
+     * @throws \Exception
      */
     public function disable(array $meta = null, ContainerInterface $container)
     {
+        $this->removeMailTemplate($container);
         $this->removeDataBlock($container);
         $this->removeBlock($container);
     }
@@ -91,6 +103,7 @@ class PluginManager extends AbstractPluginManager
      */
     public function update(array $meta = null, ContainerInterface $container)
     {
+        $this->copyMailTemplate($container);
         $this->copyBlock($container);
     }
 
@@ -191,5 +204,31 @@ class PluginManager extends AbstractPluginManager
         $templateDir = $container->getParameter('eccube_theme_front_dir');
         $file = new Filesystem();
         $file->remove($templateDir.'/Block/'.$this->blockFileName.'.twig');
+    }
+
+    /**
+     * @param ContainerInterface $container
+     */
+    private function copyMailTemplate(ContainerInterface $container)
+    {
+        $templateDir = $container->getParameter('eccube_theme_front_dir');
+        $mailFolder = __DIR__.'/Resource/template/default/Mail/';
+
+        $file = new Filesystem();
+        foreach ($this->mailTemplate as $item) {
+            $file->copy($mailFolder.$item, $templateDir.'/Mail/'.$item, true);
+        }
+    }
+
+    /**
+     * @param ContainerInterface $container
+     */
+    private function removeMailTemplate(ContainerInterface $container)
+    {
+        $templateDir = $container->getParameter('eccube_theme_front_dir');
+        $file = new Filesystem();
+        foreach ($this->mailTemplate as $item) {
+            $file->remove($templateDir.'/Mail/'.$item);
+        }
     }
 }

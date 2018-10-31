@@ -1,69 +1,61 @@
 <?php
 
-/*
- * This file is part of EC-CUBE
- *
- * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
- *
- * http://www.lockon.co.jp/
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
-namespace Plugin\FlashSale\Tests\Repository;
+namespace Plugin\FlashSale\Test\Web;
 
 use Eccube\Entity\ProductClass;
-use Eccube\Tests\EccubeTestCase;
+use Eccube\Tests\Web\AbstractWebTestCase;
 use Plugin\FlashSale\Entity\Condition\ProductClassIdCondition;
 use Plugin\FlashSale\Entity\FlashSale;
 use Plugin\FlashSale\Entity\Promotion;
-use Plugin\FlashSale\Entity\Promotion\ProductClassPricePercentPromotion;
 use Plugin\FlashSale\Entity\Rule\ProductClassRule;
 use Plugin\FlashSale\Repository\FlashSaleRepository;
 use Plugin\FlashSale\Service\Operator\InOperator;
 
 /**
- * Class AbstractRepositoryTestCase
+ * Class FlashSaleBlockTest
+ * @package Plugin\FlashSale\Test\Web
  */
-abstract class AbstractRepositoryTestCase extends EccubeTestCase
+class FlashSaleBlockTest extends AbstractWebTestCase
 {
-    /**
-     * @var FlashSaleRepository
-     */
+    /** @var FlashSaleRepository */
     protected $flashSaleRepository;
 
-    protected $eventName = 'Event name - test only';
-
-    protected $tables = [
-        'plg_flash_sale_promotion',
-        'plg_flash_sale_condition',
-        'plg_flash_sale_rule',
-        'plg_flash_sale_flash_sale',
-    ];
-
     /**
-     * {@inheritdoc}
+     * test up
      */
     public function setUp()
     {
         parent::setUp();
-
         $this->flashSaleRepository = $this->container->get(FlashSaleRepository::class);
 
-        $this->deleteAllRows($this->tables);
-        $this->createFlashSaleAndRules($this->eventName);
+        for ($i = 1; $i < 5; $i++) {
+            $this->createFlashSaleAndRules($i);
+        }
+
+        $this->entityManager->clear();
     }
 
-    public function createFlashSaleAndRules($evenName)
+    public function testList()
     {
-        $Product = $this->createProduct();
-        $rules['rules'] = $this->rulesData($Product);
+        $crawler = $this->client->request(
+            'GET',
+            $this->generateUrl('homepage')
+        );
+
+        $this->assertTrue($this->client->getResponse()->isSuccessful());
+        $this->expected = 'product name1';
+        $this->actual = $crawler->filter('#flash-sale')->text();
+        self::assertContains($this->expected, $this->actual);
+    }
+
+    protected function createFlashSaleAndRules($i)
+    {
+        $rules['rules'] = $this->rulesData($i);
 
         $FlashSale = new FlashSale();
-        $FlashSale->setName($evenName);
-        $FlashSale->setFromTime((new \DateTime())->modify('-1 day'));
-        $FlashSale->setToTime((new \DateTime())->modify('+1 day'));
+        $FlashSale->setName('SQL-scrip-001');
+        $FlashSale->setFromTime((new \DateTime())->modify("-{$i} days"));
+        $FlashSale->setToTime((new \DateTime())->modify("+{$i} days"));
         $FlashSale->setStatus(FlashSale::STATUS_ACTIVATED);
         $FlashSale->setCreatedAt(new \DateTime());
         $FlashSale->setUpdatedAt(new \DateTime());
@@ -94,14 +86,14 @@ abstract class AbstractRepositoryTestCase extends EccubeTestCase
                 $this->entityManager->remove($Rule);
             }
         }
-
         $this->entityManager->flush();
 
         return $FlashSale;
     }
 
-    public function rulesData($Product)
+    protected function rulesData($i)
     {
+        $Product = $this->createProduct('product name'.$i);
         $productClassIds = [];
         /** @var ProductClass $productClass */
         foreach ($Product->getProductClasses() as $productClass) {
@@ -114,7 +106,7 @@ abstract class AbstractRepositoryTestCase extends EccubeTestCase
             'operator' => InOperator::TYPE,
             'promotion' => [
                 'id' => '',
-                'type' => ProductClassPricePercentPromotion::TYPE,
+                'type' => Promotion\ProductClassPricePercentPromotion::TYPE,
                 'value' => 30,
             ],
             'conditions' => [

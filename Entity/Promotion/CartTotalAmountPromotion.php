@@ -15,7 +15,6 @@ namespace Plugin\FlashSale\Entity\Promotion;
 
 use Doctrine\ORM\Mapping as ORM;
 use Eccube\Entity\ItemInterface;
-use Doctrine\ORM\EntityManagerInterface;
 use Eccube\Entity\Master\OrderItemType;
 use Eccube\Entity\Master\TaxDisplayType;
 use Eccube\Entity\Master\TaxType;
@@ -33,26 +32,6 @@ class CartTotalAmountPromotion extends Promotion implements PromotionInterface
     const TYPE = 'promotion_cart_total_amount';
 
     /**
-     * @var EntityManagerInterface
-     */
-    protected $entityManager;
-
-    /**
-     * Set $entityManager
-     *
-     * @param EntityManagerInterface $entityManager
-     *
-     * @return $this
-     * @required
-     */
-    public function setEntityManager(EntityManagerInterface $entityManager)
-    {
-        $this->entityManager = $entityManager;
-
-        return $this;
-    }
-
-    /**
      * {@inheritdoc}
      *
      * @param $value
@@ -65,9 +44,9 @@ class CartTotalAmountPromotion extends Promotion implements PromotionInterface
             return [];
         }
 
-        $DiscountType = $this->entityManager->find(OrderItemType::class, OrderItemType::DISCOUNT);
-        $TaxInclude = $this->entityManager->find(TaxDisplayType::class, TaxDisplayType::INCLUDED);
-        $Taxation = $this->entityManager->find(TaxType::class, TaxType::NON_TAXABLE);
+        $DiscountType = $this->getEntityManager()->find(OrderItemType::class, OrderItemType::DISCOUNT);
+        $TaxInclude = $this->getEntityManager()->find(TaxDisplayType::class, TaxDisplayType::INCLUDED);
+        $Taxation = $this->getEntityManager()->find(TaxType::class, TaxType::NON_TAXABLE);
 
         $OrderItem = new OrderItem();
         $OrderItem->setProductName($DiscountType->getName())

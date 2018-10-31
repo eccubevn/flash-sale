@@ -29,10 +29,7 @@ interface OperatorInterface
     public function match($condition, $data);
 
     /**
-     * @param QueryBuilder $qb
-     * @param Condition $condition
-     *
-     * @return QueryBuilder
+     * @return string
      */
-    public function parseCondition(QueryBuilder $qb, Condition $condition);
+    public function getType();
 }

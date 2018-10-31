@@ -13,9 +13,6 @@
 
 namespace Plugin\FlashSale\Service\Operator;
 
-use Doctrine\ORM\QueryBuilder;
-use Plugin\FlashSale\Entity\Condition;
-
 class NotEqualOperator implements OperatorInterface
 {
     const TYPE = 'operator_not_equal';
@@ -31,56 +28,10 @@ class NotEqualOperator implements OperatorInterface
     public function match($condition, $data)
     {
         if (is_array($data)) {
-            return (bool)!in_array($condition, $data);
+            return (bool) !in_array($condition, $data);
         }
 
         return $condition != $data;
-    }
-
-    /**
-     * @param QueryBuilder $qb
-     * @param Condition $condition
-     *
-     * @return QueryBuilder
-     */
-    public function parseCondition(QueryBuilder $qb, Condition $condition)
-    {
-        $rule = $condition->getRule();
-        switch ($rule->getOperator()) {
-            case AllOperator::TYPE:
-                if ($condition instanceof Condition\ProductClassIdCondition) {
-                    $qb->andWhere($qb->expr()->neq('pc.id', $condition->getValue()));
-                }
-                break;
-
-            case EqualOperator::TYPE:
-                if ($condition instanceof Condition\ProductClassIdCondition) {
-                    $qb->andWhere($qb->expr()->neq('pc.id', $condition->getValue()));
-                }
-                break;
-
-            case InOperator::TYPE:
-                if ($condition instanceof Condition\ProductClassIdCondition) {
-                    $qb->orWhere($qb->expr()->neq('pc.id', $condition->getValue()));
-                }
-
-                if ($condition instanceof Condition\ProductCategoryIdCondition) {
-                    $qb->join('p.ProductCategories', 'pct');
-                    $qb->orWhere($qb->expr()->notIn('pct.category_id', $condition->getValue()));
-                }
-                break;
-
-                // Todo: confuse
-            case NotEqualOperator::TYPE:
-                if ($condition instanceof Condition\ProductClassIdCondition) {
-                    $qb->andWhere($qb->expr()->neq('pc.id', $condition->getValue()));
-                }
-                break;
-            default:
-                break;
-        }
-
-        return $qb;
     }
 
     /**

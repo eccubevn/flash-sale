@@ -17,3 +17,9 @@ services:
         autowire: true
         tags:
           - {name: eccube.discount.processor}
+    Plugin\FlashSale\Service\PurchaseFlow\Processor\FSOrderItemProcessor:
+        lazy: true
+        public: true
+        autowire: true
+        tags:
+          - {name: eccube.purchase.processor}
