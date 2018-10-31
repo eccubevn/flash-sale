@@ -19,11 +19,14 @@ use Plugin\FlashSale\Repository\ConditionRepository;
 use Plugin\FlashSale\Entity\Condition\ProductClassIdCondition;
 use Plugin\FlashSale\Entity\Condition\ProductCategoryIdCondition;
 use Plugin\FlashSale\Entity\Condition\CartTotalCondition;
+use Plugin\FlashSale\Service\Condition\ConditionInterface;
+use Plugin\FlashSale\Service\Operator;
 
 /**
  * @ORM\Table("plg_flash_sale_condition")
  * @ORM\Entity(repositoryClass=ConditionRepository::class)
  * @ORM\InheritanceType("SINGLE_TABLE")
+ * @ORM\HasLifecycleCallbacks()
  * @ORM\DiscriminatorColumn(name="discriminator_type", type="string", length=255)
  * @ORM\DiscriminatorMap({
  *     ProductClassIdCondition::TYPE=ProductClassIdCondition::class,
@@ -31,7 +34,7 @@ use Plugin\FlashSale\Entity\Condition\CartTotalCondition;
  *     CartTotalCondition::TYPE=CartTotalCondition::class,
  * })
  */
-abstract class Condition extends AbstractEntity
+abstract class Condition extends AbstractEntity implements ConditionInterface
 {
     const TYPE = 'condition';
 
@@ -61,12 +64,17 @@ abstract class Condition extends AbstractEntity
     /**
      * @var Rule
      *
-     * @ORM\ManyToOne(targetEntity=Rule::class, inversedBy="Condition")
+     * @ORM\ManyToOne(targetEntity=Rule::class, inversedBy="Conditions")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="rule_id", referencedColumnName="id")
      * })
      */
     protected $Rule;
+
+    /**
+     * @var Operator\OperatorFactory
+     */
+    protected $operatorFactory;
 
     /**
      * @return int
@@ -152,5 +160,26 @@ abstract class Condition extends AbstractEntity
         }
 
         return $result;
+    }
+
+    /**
+     * @param Operator\OperatorFactory $operatorFactory
+     *
+     * @return $this
+     * @required
+     */
+    public function setOperatorFactory(Operator\OperatorFactory $operatorFactory)
+    {
+        $this->operatorFactory = $operatorFactory;
+
+        return $this;
+    }
+
+    /**
+     * @return Operator\OperatorFactory
+     */
+    public function getOperatorFactory(): Operator\OperatorFactory
+    {
+        return $this->operatorFactory;
     }
 }

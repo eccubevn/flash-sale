@@ -18,8 +18,10 @@ use Doctrine\ORM\Mapping as ORM;
 use Eccube\Entity\AbstractEntity;
 use Plugin\FlashSale\Entity\Rule\ProductClassRule;
 use Plugin\FlashSale\Service\Metadata\DiscriminatorInterface;
+use Plugin\FlashSale\Service\Operator;
 use Plugin\FlashSale\Service\Promotion\PromotionInterface;
 use Plugin\FlashSale\Entity\Rule\CartRule;
+use Plugin\FlashSale\Service\Rule\RuleInterface;
 
 /**
  * @ORM\Table("plg_flash_sale_rule")
@@ -27,8 +29,9 @@ use Plugin\FlashSale\Entity\Rule\CartRule;
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="discriminator_type", type="string", length=255)
  * @ORM\DiscriminatorMap({ProductClassRule::TYPE=ProductClassRule::class, CartRule::TYPE=CartRule::class})
+ * @ORM\HasLifecycleCallbacks()
  */
-abstract class Rule extends AbstractEntity
+abstract class Rule extends AbstractEntity implements RuleInterface
 {
     const TYPE = 'rule';
 
@@ -51,7 +54,7 @@ abstract class Rule extends AbstractEntity
     /**
      * @var FlashSale
      *
-     * @ORM\ManyToOne(targetEntity=FlashSale::class)
+     * @ORM\ManyToOne(targetEntity=FlashSale::class, inversedBy="Rules")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="flash_sale_id", referencedColumnName="id")
      * })
@@ -76,6 +79,11 @@ abstract class Rule extends AbstractEntity
     protected $discriminator;
 
     /**
+     * @var Operator\OperatorFactory
+     */
+    protected $operatorFactory;
+
+    /**
      * Rule constructor.
      */
     public function __construct()
@@ -84,7 +92,7 @@ abstract class Rule extends AbstractEntity
     }
 
     /**
-     * @return ArrayCollection
+     * @return Condition[]
      */
     public function getConditions()
     {
@@ -211,5 +219,28 @@ abstract class Rule extends AbstractEntity
         }
 
         return $result;
+    }
+
+    /**
+     * Set $operatorFactory
+     *
+     * @param Operator\OperatorFactory $operatorFactory
+     *
+     * @return CartRule
+     * @required
+     */
+    public function setOperatorFactory(Operator\OperatorFactory $operatorFactory)
+    {
+        $this->operatorFactory = $operatorFactory;
+
+        return $this;
+    }
+
+    /**
+     * @return Operator\OperatorFactory
+     */
+    public function getOperatorFactory()
+    {
+        return $this->operatorFactory;
     }
 }

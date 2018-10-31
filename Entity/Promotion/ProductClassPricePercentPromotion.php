@@ -32,26 +32,6 @@ class ProductClassPricePercentPromotion extends Promotion implements PromotionIn
     const TYPE = 'promotion_product_class_price_percent';
 
     /**
-     * @var EntityManagerInterface
-     */
-    protected $entityManager;
-
-    /**
-     * Set $entityManager
-     *
-     * @param EntityManagerInterface $entityManager
-     *
-     * @return $this
-     * @required
-     */
-    public function setEntityManager(EntityManagerInterface $entityManager)
-    {
-        $this->entityManager = $entityManager;
-
-        return $this;
-    }
-
-    /**
      * {@inheritdoc}
      *
      * @param $value
@@ -64,9 +44,9 @@ class ProductClassPricePercentPromotion extends Promotion implements PromotionIn
             return [];
         }
 
-        $DiscountType = $this->entityManager->find(OrderItemType::class, OrderItemType::DISCOUNT);
-        $TaxInclude = $this->entityManager->find(TaxDisplayType::class, TaxDisplayType::INCLUDED);
-        $Taxation = $this->entityManager->find(TaxType::class, TaxType::NON_TAXABLE);
+        $DiscountType = $this->getEntityManager()->find(OrderItemType::class, OrderItemType::DISCOUNT);
+        $TaxInclude = $this->getEntityManager()->find(TaxDisplayType::class, TaxDisplayType::INCLUDED);
+        $Taxation = $this->getEntityManager()->find(TaxType::class, TaxType::NON_TAXABLE);
 
         $price = floor($ProductClass->getPrice02IncTax() / 100 * $this->getValue());
 

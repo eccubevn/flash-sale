@@ -13,6 +13,9 @@
 
 namespace Plugin\FlashSale\Service\Condition;
 
+use Doctrine\ORM\QueryBuilder;
+use Plugin\FlashSale\Service\Operator\OperatorInterface;
+
 interface ConditionInterface
 {
     /**
@@ -30,4 +33,15 @@ interface ConditionInterface
      * @return array
      */
     public function getOperatorTypes(): array;
+
+    /**
+     * This function for create query builder to get list
+     *
+     * @param QueryBuilder $queryBuilder
+     * @param OperatorInterface $operatorRule this is operator of rule
+     * @param OperatorInterface $operatorCondition this is operator of condition
+     *
+     * @return QueryBuilder
+     */
+    public function createQueryBuilder(QueryBuilder $queryBuilder, OperatorInterface $operatorRule, OperatorInterface $operatorCondition): QueryBuilder;
 }

@@ -34,47 +34,6 @@ class EqualOperator implements OperatorInterface
     }
 
     /**
-     * @param QueryBuilder $qb
-     * @param Condition $condition
-     *
-     * @return QueryBuilder
-     */
-    public function parseCondition(QueryBuilder $qb, Condition $condition)
-    {
-        $rule = $condition->getRule();
-        switch ($rule->getOperator()) {
-            case AllOperator::TYPE:
-                if ($condition instanceof Condition\ProductClassIdCondition) {
-                    $qb->andWhere($qb->expr()->eq('pc.id', $condition->getValue()));
-                }
-                break;
-
-            case EqualOperator::TYPE:
-                if ($condition instanceof Condition\ProductClassIdCondition) {
-                    $qb->andWhere($qb->expr()->eq('pc.id', $condition->getValue()));
-                }
-                break;
-
-            case InOperator::TYPE:
-                if ($condition instanceof Condition\ProductClassIdCondition) {
-                    $qb->orWhere($qb->expr()->eq('pc.id', $condition->getValue()));
-                }
-                break;
-
-            // Todo: I'm not sure
-            case NotEqualOperator::TYPE:
-                if ($condition instanceof Condition\ProductClassIdCondition) {
-                    $qb->andWhere($qb->expr()->neq('pc.id', $condition->getValue()));
-                }
-                break;
-            default:
-                break;
-        }
-
-        return $qb;
-    }
-
-    /**
      * {@inheritdoc}
      *
      * @return string

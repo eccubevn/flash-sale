@@ -13,9 +13,6 @@
 
 namespace Plugin\FlashSale\Service\Operator;
 
-use Doctrine\ORM\QueryBuilder;
-use Plugin\FlashSale\Entity\Condition;
-
 class LessThanOperator implements OperatorInterface
 {
     const TYPE = 'operator_less_than';
@@ -31,18 +28,6 @@ class LessThanOperator implements OperatorInterface
     public function match($condition, $data)
     {
         return $condition > $data;
-    }
-
-    /**
-     * @param QueryBuilder $qb
-     * @param Condition $condition
-     *
-     * @return QueryBuilder
-     */
-    public function parseCondition(QueryBuilder $qb, Condition $condition)
-    {
-        // TODO: need implement
-        return $qb;
     }
 
     /**

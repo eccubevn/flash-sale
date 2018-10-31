@@ -13,6 +13,7 @@
 
 namespace Plugin\FlashSale\Repository;
 
+use Doctrine\ORM\NonUniqueResultException;
 use Eccube\Repository\AbstractRepository;
 use Plugin\FlashSale\Entity\FlashSale;
 use Symfony\Bridge\Doctrine\RegistryInterface;
@@ -61,14 +62,15 @@ class FlashSaleRepository extends AbstractRepository
 
         $qb = $this->createQueryBuilder('fl');
         $result = false;
-        try {
-            $FlashSale = $qb
-                ->where(':time_now >= fl.from_time AND :time_now < fl.to_time')
-                ->setParameter('time_now', new \DateTime())
-                ->andWhere('fl.status = :status')->setParameter('status', FlashSale::STATUS_ACTIVATED)
-                ->getQuery();
+        $qb
+            ->where(':time_now >= fl.from_time AND :time_now < fl.to_time')
+            ->setParameter('time_now', new \DateTime())
+            ->andWhere('fl.status = :status')->setParameter('status', FlashSale::STATUS_ACTIVATED);
 
-            $result = $FlashSale->getSingleResult();
+        try {
+            $result = $qb->getQuery()->getSingleResult();
+        } catch (NonUniqueResultException $exception) {
+            $result = current($qb->getQuery()->getResult());
         } catch (\Exception $exception) {
             // silence
         }

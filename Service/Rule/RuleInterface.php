@@ -13,7 +13,9 @@
 
 namespace Plugin\FlashSale\Service\Rule;
 
+use Doctrine\ORM\QueryBuilder;
 use Plugin\FlashSale\Service\Metadata\DiscriminatorInterface;
+use Plugin\FlashSale\Service\Operator\OperatorInterface;
 
 interface RuleInterface
 {
@@ -62,4 +64,14 @@ interface RuleInterface
      * @return \Eccube\Entity\ItemInterface[]
      */
     public function getDiscountItems($object): array;
+
+    /**
+     * create list
+     *
+     * @param QueryBuilder $qb
+     * @param OperatorInterface $operatorRule this is operator of rule
+     *
+     * @return QueryBuilder
+     */
+    public function createQueryBuilder(QueryBuilder $qb, OperatorInterface $operatorRule): QueryBuilder;
 }
