@@ -40,7 +40,6 @@
                 });
             });
 
-            console.log(value);
             if (value == 'rule_cart') {
                 container.find('.nameList').addClass('d-none');
                 container.find('.findConditionsIds').addClass('d-none');
@@ -134,8 +133,6 @@
                 $(template).find('[name="condition[operator]"]').append('<option value="' + key + '" ' + (data.operator === key ? 'selected' : '') + '>' + operator.name + '</option>');
             });
 
-            console.log(ruleType);
-            console.log(data.type);
             if (ruleType == 'rule_cart') {
                 $(template).find('.nameList').addClass('d-none');
                 $(template).find('.findConditionsIds').addClass('d-none');
@@ -198,7 +195,6 @@
                 $.each(rules[k]['conditions'], function (i) {
                     var condition = rules[k]['conditions'][i];
                     condition.target = $('#rule'+rules[k]['id']+ ' [data-bind="addCondition"]')[0];
-                    console.log(condition);
                     fn.addCondition(condition);
                 });
             });

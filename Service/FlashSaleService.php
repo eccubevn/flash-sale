@@ -141,9 +141,9 @@ class FlashSaleService
      * @return mixed
      */
     public function getProductClassName($productClassIds){
-        /** @var ProductClassRepository $cateRepo */
-        $cateRepo = $this->entityManager->getRepository(ProductClass::class);
-        $qb = $cateRepo->createQueryBuilder('pc');
+        /** @var ProductClassRepository $ProductClass */
+        $ProductClass = $this->entityManager->getRepository(ProductClass::class);
+        $qb = $ProductClass->createQueryBuilder('pc');
         $qb->select("pc.id as id, p.name as name, CONCAT(pc1.name, ' - ',pc2.name) AS class_name")
             ->innerJoin('pc.Product', 'p')
             ->innerJoin('pc.ClassCategory1', 'pc1')
