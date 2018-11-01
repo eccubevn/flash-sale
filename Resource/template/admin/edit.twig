@@ -139,7 +139,7 @@ file that was distributed with this source code.
                                     <tr class="d-none pb-5" data-template="rule" data-template-name="{{ random(111111, 999999) }}">
                                         <td class="pt-2">
                                             <div class="row mb-2">
-                                                <div class="col-2 pt-1">{{ 'flash_sale.admin.form.rule.type'|trans }}</div>
+                                                <div class="col-3 col-lg-2 pt-1">{{ 'flash_sale.admin.form.rule.type'|trans }}</div>
                                                 <div class="col-auto">
                                                     <input type="hidden" name="rule[id]">
                                                     <select class="form-control" name="rule[type]"
@@ -148,17 +148,21 @@ file that was distributed with this source code.
                                             </div>
 
                                             <div class="row mb-2 promotion">
-                                                <div class="col-2 pr-0 pt-1">{{ 'flash_sale.admin.form.rule.promotion'|trans }}</div>
-                                                <div class="col-auto">
-                                                    <input type="hidden" name="promotion[id]">
-                                                    <select class="form-control" name="promotion[type]"></select>
-                                                </div>
-                                                <div class="col-auto px-0">
-                                                    <input class="form-control" name="promotion[value]">
+                                                <div class="col-3 col-lg-2 pr-0 pt-1">{{ 'flash_sale.admin.form.rule.promotion'|trans }}</div>
+                                                <div class="col-9 col-lg-10">
+                                                    <div class="row">
+                                                        <div class="col-auto mb-2 pr-0">
+                                                            <input type="hidden" name="promotion[id]">
+                                                            <select class="form-control" name="promotion[type]"></select>
+                                                        </div>
+                                                        <div class="col-auto">
+                                                            <input class="form-control" name="promotion[value]">
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="row mb-2">
-                                                <div class="col-2 pr-0 pt-1">{{ 'flash_sale.admin.form.rule.operator'|trans }}</div>
+                                                <div class="col-3 col-lg-2 pr-0 pt-1">{{ 'flash_sale.admin.form.rule.operator'|trans }}</div>
                                                 <div class="col-auto">
                                                     <select class="form-control" name="rule[operator]"></select>
                                                 </div>
@@ -168,17 +172,17 @@ file that was distributed with this source code.
                                             <a class="btn btn-ec-regular mr-2 add" data-bind="addCondition">{{ 'flash_sale.admin.form.rule.condition.add'|trans }}</a>
                                             <div data-container="condition">
                                                 <div class="d-none" data-template="condition">
-                                                    <div class="row mt-2">
-                                                        <div class="col-auto pr-0">
+                                                    <div class="row">
+                                                        <div class="col-auto pr-0 mt-2">
                                                             <input type="hidden" name="condition[id]">
                                                             <select class="form-control"
                                                                     name="condition[type]"></select>
                                                         </div>
-                                                        <div class="col-auto">
+                                                        <div class="col-auto mt-2 pr-0">
                                                             <select class="form-control"
                                                                     name="condition[operator]"></select>
                                                         </div>
-                                                        <div class="col-auto px-0">
+                                                        <div class="col-auto pr-0 mt-2">
                                                             <div class="input-group">
                                                                 <input type="hidden" class="form-control" name="condition[value]">
                                                                 <div class="input-group-append findConditionsIds">
@@ -186,7 +190,7 @@ file that was distributed with this source code.
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-2">
+                                                        <div class="col-2 mt-2">
                                                             <a class="btn btn-ec-regular mr-2 add"
                                                                data-bind="removeCondition">{{ 'flash_sale.admin.form.remove'|trans }}</a>
                                                         </div>
