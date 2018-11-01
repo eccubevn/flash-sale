@@ -83,7 +83,6 @@ class ConditionRepository extends AbstractRepository
                 $arrayProductTmp[$Product->getId()]['product'] = $Product;
             }
         }
-        dump($arrayProductTmp);
 
         return $arrayProductTmp;
     }
