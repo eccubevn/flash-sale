@@ -41,11 +41,6 @@ class ProductClassRule extends Rule
     protected $cached;
 
     /**
-     * @var EntityManagerInterface
-     */
-    protected $entityManager;
-
-    /**
      * @var DiscriminatorManager
      */
     protected $discriminatorManager;
