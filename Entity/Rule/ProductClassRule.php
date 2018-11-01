@@ -15,10 +15,8 @@ namespace Plugin\FlashSale\Entity\Rule;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\QueryBuilder;
+use Eccube\Entity\Master\ProductStatus;
 use Eccube\Entity\ProductClass;
-use Eccube\Entity\OrderItem;
-use Eccube\Entity\CartItem;
-use Eccube\Entity\Order;
 use Plugin\FlashSale\Entity\Rule;
 use Plugin\FlashSale\Entity\Condition\ProductClassIdCondition;
 use Plugin\FlashSale\Entity\Condition\ProductCategoryIdCondition;
@@ -41,6 +39,11 @@ class ProductClassRule extends Rule
      * @var array
      */
     protected $cached;
+
+    /**
+     * @var EntityManagerInterface
+     */
+    protected $entityManager;
 
     /**
      * @var DiscriminatorManager
@@ -84,7 +87,10 @@ class ProductClassRule extends Rule
         }
 
         $qb->join('p.ProductClasses', 'pc')
-            ->groupBy('p');
+            ->groupBy('p')
+            ->where('p.Status = :status')
+            ->setParameter('status', ProductStatus::DISPLAY_SHOW)
+            ->andWhere('pc.visible = true');
 
         // build with each condition
         foreach ($this->getConditions() as $condition) {
