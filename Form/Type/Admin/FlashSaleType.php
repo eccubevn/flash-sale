@@ -117,24 +117,24 @@ class FlashSaleType extends AbstractType
             $form = $event->getForm();
             $rules = json_decode($form->get('rules')->getData(), true);
             if (empty($rules)) {
-                $form->get('rules')->addError(new FormError('Rule must be required'));
+                $form->get('rules')->addError(new FormError(trans('flash_sale.form.rule.require')));
 
                 return;
             }
             foreach ($rules as $rule) {
                 if (!isset($rule['promotion']['value']) || $rule['promotion']['value'] == '') {
-                    $form->get('rules')->addError(new FormError('Promotion must be required'));
+                    $form->get('rules')->addError(new FormError(trans('flash_sale.form.promotion.require')));
 
                     return;
                 }
                 if (!isset($rule['conditions'])) {
-                    $form->get('rules')->addError(new FormError('Condition must be required'));
+                    $form->get('rules')->addError(new FormError(trans('flash_sale.form.condition.require')));
 
                     return;
                 }
                 foreach ($rule['conditions'] as $condition) {
                     if (!isset($condition['value']) || $condition['value'] == '') {
-                        $form->get('rules')->addError(new FormError('Condition must be required'));
+                        $form->get('rules')->addError(new FormError(trans('flash_sale.form.condition.require')));
 
                         return;
                     }
@@ -147,7 +147,7 @@ class FlashSaleType extends AbstractType
             $FlashSale = $event->getData();
             if ($FlashSale->getFromTime() >= $FlashSale->getToTime()) {
                 $form = $event->getForm();
-                $form['from_time']->addError(new FormError('Start time should be earlier than end time'));
+                $form['from_time']->addError(new FormError(trans('flash_sale.form.time.from_to')));
             }
         });
 
@@ -177,7 +177,7 @@ class FlashSaleType extends AbstractType
 
             if ($count > 0) {
                 $form = $event->getForm();
-                $form['from_time']->addError(new FormError('There was one event at this time'));
+                $form['from_time']->addError(new FormError(trans('flash_sale.form.multi')));
             }
         });
     }

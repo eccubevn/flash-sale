@@ -13,6 +13,8 @@ flash_sale.admin.list.status: Status
 flash_sale.admin.list.status.draft: Draft
 flash_sale.admin.list.status.activated: Activated
 
+flash_sale.admin.edit.setting.rule: Rule
+
 flash_sale.admin.form.title: Flash Sale
 flash_sale.admin.form.title.sub: Flash Sale Edit
 

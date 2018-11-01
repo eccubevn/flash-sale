@@ -1,0 +1,5 @@
+flash_sale.form.rule.require: 'ルールが必要です。'
+flash_sale.form.promotion.require: 'プロモーションが必要です。'
+flash_sale.form.condition.require: '条件が必要です。'
+flash_sale.form.time.from_to: '開始時刻は終了時刻より前でなければなりません。'
+flash_sale.form.multi: '現時点ではイベントがあります。'
