@@ -36,13 +36,24 @@ class ConditionRepositoryTest extends AbstractRepositoryTestCase
 
     public function testProductList()
     {
-        $this->createFlashSaleAndRules('Test rule');
+        $this->entityManager->clear();
 
         $data = $this->conditionRepository->getProductList();
         $product = current($data);
 
         $this->expected = true;
         $this->actual = isset($product['product']);
+        $this->verify();
+    }
+
+    public function testProductListEmpty()
+    {
+        $this->deleteAllRows($this->tables);
+        $this->entityManager->clear();
+
+        $data = $this->conditionRepository->getProductList();
+        $this->expected = [];
+        $this->actual = $data;
         $this->verify();
     }
 }

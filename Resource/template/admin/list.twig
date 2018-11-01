@@ -1,6 +1,6 @@
 {% extends '@admin/default_frame.twig' %}
 
-{% set menus = ['setting', 'flash_sales_admin'] %}
+{% set menus = ['product', 'flash_sales_admin'] %}
 
 {% block title %}{{ 'flash_sale.admin.list.title'|trans }}{% endblock %}
 {% block sub_title %}{{ 'flash_sale.admin.list.title.sub'|trans }}{% endblock %}
@@ -125,9 +125,8 @@
                 {% else %}
                     <div class="card rounded border-0">
                         <div class="card-body p-4">
-                            <div class="text-center text-muted mb-4 h5">{{ 'admin.common.search_no_result'|trans }}</div>
-                            <div class="text-center text-muted">{{ 'admin.common.search_try_change_condition'|trans }}</div>
-                            <div class="text-center text-muted">{{ 'admin.common.search_try_advanced_search'|trans }}</div>
+                            <div class="text-center text-muted">No data yet, please create a sales event <a
+                                                                                                                     href="{{ url('flash_sale_admin_new') }}">[{{ 'admin.common.create__new'|trans }}]</a></div>
                         </div>
                     </div>
                 {% endif %}

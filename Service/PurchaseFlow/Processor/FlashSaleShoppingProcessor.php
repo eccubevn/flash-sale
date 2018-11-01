@@ -66,6 +66,8 @@ class FlashSaleShoppingProcessor implements DiscountProcessor
      *
      * @param ItemHolderInterface $itemHolder
      * @param PurchaseContext $context
+     *
+     * @return ProcessResult|null
      */
     public function addDiscountItem(ItemHolderInterface $itemHolder, PurchaseContext $context)
     {

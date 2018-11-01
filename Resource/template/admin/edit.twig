@@ -10,7 +10,7 @@ file that was distributed with this source code.
 #}
 {% extends '@admin/default_frame.twig' %}
 
-{% set menus = ['setting', 'flash_sales_admin'] %}
+{% set menus = ['product', 'flash_sales_admin'] %}
 
 
 {% block title %}{{ 'flash_sale.admin.form.title'|trans }}{% endblock %}
@@ -20,171 +20,24 @@ file that was distributed with this source code.
 
 {% block stylesheet %}
     <style>
-        .findProductIds{ cursor: pointer}
-        .table.table-striped.table-sm th:first-child{ width: 65px}
-        .table.table-striped.table-sm th:nth-child(3){ width: 300px}
+        .findConditionsIds{ cursor: pointer}
+        .mdAddCondition table thead th:nth-child(1){ min-width: 70px; }
+        .mdAddCondition table thead th:nth-child(3){ min-width: 250px; }
     </style>
 {% endblock stylesheet %}
 
 {% block javascript %}
     <script src="{{ asset('FlashSale/assets/js/rule.js', 'plugin') }}"></script>
+    <script src="{{ asset('FlashSale/assets/js/conditions.js', 'plugin') }}"></script>
     <script>
         $(function () {
             $('#ruleForm').initRulePanel({
                 setup: JSON.parse('{{ metadata|json_encode|raw }}')
             });
 
-            var productsClassData;
-            var addProduct          = $('#addProduct');
-            var addProductCategory  = $('#addProductCategory');
-            var mdAddCondition      = $('.mdAddCondition');
-            var _minus              = '<i class="fas fa-minus fa-lg font-weight-bold text-secondary"></i>';
-            var _plus               = '<i class="fa fa-plus fa-lg font-weight-bold text-secondary"></i>';
-
-            addProductCategory.on('click', 'input[type="checkbox"]', function (e) {
-                var catId = $(this).val();
-                handleInputData(catId);
-            });
-
-            mdAddCondition.on('click', 'table > tbody > tr > td > button.btn-ec-actionIcon', function (e) {
-                var $sele1 = $(this).closest('tr').find('select[name=classcategory_id1]');
-                var $sele2 = $(this).closest('tr').find('select[name=classcategory_id2]');
-                var dataId = fnAddConditionsProductClass($(this).closest('tr'), $(this).data('id'));
-                if($sele1.length && $sele1.val() == '__unselected'){
-                    alert('{{ 'admin.product.unselected_class'|trans }}');
-                    return;
-                }
-                if($sele2.length && !$sele2.val()){
-                    alert('{{ 'admin.product.unselected_class'|trans }}');
-                    return;
-                }
-                handleInputData(dataId);
-                handlePlusButton($(this).closest('tr'));
-            });
-
-            function handleInputData(dataId) {
-                if (dataId == undefined) {
-                    return;
-                }
-
-                var valueIdInput = $('.mdAddCondition.show').find('input.inputConditionId');
-                var inputValue = valueIdInput.val() + ',';
-
-                if (inputValue.indexOf(dataId + ',') != -1) {
-                    var tempArr = inputValue.split(',');
-                    var result = tempArr.filter(function (elem) {
-                        return (elem != dataId && elem != '');
-                    });
-                    setInputData(result.toString());
-                } else {
-                    setInputData(valueIdInput.val() ? (valueIdInput.val() + ',' + dataId) : dataId);
-                }
-            }
-
-            function setInputData(newValue) {
-                $('.mdAddCondition.show').find('input.inputConditionId').val(newValue);
-                $('#ruleForm').find('div.onFocus input[name="condition[value]"]').val(newValue);
-            }
-
-            function handlePlusButton(rowTr) {
-                var btnPlus = rowTr.find('.btn-ec-actionIcon');
-                var productClassId = fnAddConditionsProductClass(rowTr, btnPlus.data('id'));
-                var inputConditionId = addProduct.find('input.inputConditionId');
-                var currentValue = inputConditionId.val() + ',';
-
-                if (currentValue.indexOf(productClassId + ',') != -1) {
-                    btnPlus.attr('data-action', 'minus').html(_minus);
-                } else {
-                    btnPlus.attr('data-action', 'plus').html(_plus);
-                }
-            }
-
-            function searchComplete() {
-                var sel2 = mdAddCondition.find('select[name="classcategory_id2"]');
-                $.each(sel2, function () {
-                    $(this).on('change', function () {
-                        var rowTr = $(this).closest('tr');
-                        handlePlusButton(rowTr);
-                    });
-                });
-            }
-
-            function fnAddConditionsProductClass($row, product_id) {
-                var product,
-                    class_category_id1,
-                    class_cateogry_id2;
-                var $sele1 = $row.find('select[name=classcategory_id1]');
-                var $sele2 = $row.find('select[name=classcategory_id2]');
-                var product_class_id = null;
-
-                if (!$sele1.length && !$sele2.length) {
-                    product = productsClassData[product_id]['__unselected2']['#'];
-                    product_class_id = product['product_class_id'];
-                } else if ($sele1.length) {
-                    if ($sele2.length) {
-                        class_category_id1 = $sele1.val();
-                        class_cateogry_id2 = $sele2.val();
-                        if (class_category_id1 == '__unselected' || !class_cateogry_id2) {
-                            return;
-                        }
-                        product = productsClassData[product_id][class_category_id1]['#' + class_cateogry_id2];
-                        product_class_id = product['product_class_id'];
-                    } else {
-                        class_category_id1 = $sele1.val();
-                        if (class_category_id1 == '__unselected') {
-                            return;
-                        }
-                        product = productsClassData[product_id][class_category_id1]['#'];
-                        product_class_id = product['product_class_id'];
-                    }
-                }
-
-                return product_class_id;
-            }
-
-            $("#addProduct").on('shown.bs.modal', function () {
-                var rows = $("#addProduct").find('table tbody tr');
-                if (rows.length > 0) {
-                    handlePlusButton(rows);
-                }
-            });
-
-            $("#addProductCategory").on('shown.bs.modal', function () {
-                var valueIdInput = $('.mdAddCondition.show').find('input.inputConditionId').val();
-                var tempArr = valueIdInput.split(',');
-                $.each(tempArr, function (k, v) {
-                    $("#addProductCategory").find('input[value="' + v + '"]').prop('checked', true);
-                });
-            });
-
-            $('#searchProductModalButton').on('click', function () {
-                var list = $('.searchDataModalList', $(this).closest('.modal-body'));
-
-                $.ajax({
-                    url: '{{ url('admin_order_search_product') }}',
-                    type: 'POST',
-                    dataType: 'html',
-                    data: {
-                        'id': $('#admin_search_product_id').val(),
-                        'category_id': $('#admin_search_product_category_id').val()
-                    }
-                }).done(function (data) {
-                    list.html(data);
-                    productsClassData = productsClassCategories;
-                    var _button = list.find('table tbody tr td button');
-                    $.each(_button, function () {
-                        var dataAttr = $(this).attr('onclick');
-                        var dataIds = dataAttr.split(',');
-                        $(this).attr('data-id', $.trim(dataIds[1]));
-                        $(this).attr('data-type', $.trim(dataIds[2]));
-                        $(this).attr('data-action', 'plus');
-                        $(this).removeAttr('onclick');
-                    });
-
-                    searchComplete();
-                }).fail(function () {
-                    alert('Search product failed.');
-                });
+            Condition.init({
+                admin_order_search_product: '{{ url('admin_order_search_product') }}',
+                msg_unselected_class: '{{ 'admin.product.unselected_class'|trans }}'
             });
         });
     </script>
@@ -263,6 +116,7 @@ file that was distributed with this source code.
                             </div>
                         </div>
                         <div class="ec-cardCollapse collapse show" id="ruleForm">
+                            <input type="hidden" id="conditionData" value="{{ conditionData }}">
                             <div class="card-body">
                                 <div class="row justify-content-start mb-2">
                                     <div class="col-auto">
@@ -276,57 +130,70 @@ file that was distributed with this source code.
                                 <table class="table table-striped table-sm mb-0">
                                     <thead class="table-active">
                                     <tr>
-                                        <th width="10%">{{ 'flash_sale.admin.form.rule.type'|trans }}</th>
-                                        <th width="25%">{{ 'flash_sale.admin.form.rule.promotion'|trans }}</th>
-                                        <th width="10%">{{ 'flash_sale.admin.form.rule.operator'|trans }}</th>
+                                        <th width="50%">Rule</th>
                                         <th width="45%">{{ 'flash_sale.admin.form.rule.condition'|trans }}</th>
                                         <th width="5%"></th>
                                     </tr>
                                     </thead>
                                     <tbody data-container="rule">
-                                    <tr class="d-none pb-5" data-template="rule">
-                                        <td>
-                                            <input type="hidden" name="rule[id]">
-                                            <select class="form-control" name="rule[type]"
-                                                    data-bind="changeRule"></select>
-                                        </td>
-                                        <td class="promotion">
-                                            <div class="row">
-                                                <div class="col-8">
+                                    <tr class="d-none pb-5" data-template="rule" data-template-name="{{ random(111111, 999999) }}">
+                                        <td class="pt-2">
+                                            <div class="row mb-2">
+                                                <div class="col-2 pt-1">{{ 'flash_sale.admin.form.rule.type'|trans }}</div>
+                                                <div class="col-auto">
+                                                    <input type="hidden" name="rule[id]">
+                                                    <select class="form-control" name="rule[type]"
+                                                            data-bind="changeRule"></select>
+                                                </div>
+                                            </div>
+
+                                            <div class="row mb-2 promotion">
+                                                <div class="col-2 pr-0 pt-1">{{ 'flash_sale.admin.form.rule.promotion'|trans }}</div>
+                                                <div class="col-auto">
                                                     <input type="hidden" name="promotion[id]">
                                                     <select class="form-control" name="promotion[type]"></select>
                                                 </div>
-                                                <div class="col-3 px-0">
+                                                <div class="col-auto px-0">
                                                     <input class="form-control" name="promotion[value]">
                                                 </div>
                                             </div>
+                                            <div class="row mb-2">
+                                                <div class="col-2 pr-0 pt-1">{{ 'flash_sale.admin.form.rule.operator'|trans }}</div>
+                                                <div class="col-auto">
+                                                    <select class="form-control" name="rule[operator]"></select>
+                                                </div>
+                                            </div>
                                         </td>
-                                        <td><select class="form-control" name="rule[operator]"></select></td>
-                                        <td class="condition">
+                                        <td class="condition pt-2">
                                             <a class="btn btn-ec-regular mr-2 add" data-bind="addCondition">{{ 'flash_sale.admin.form.rule.condition.add'|trans }}</a>
                                             <div data-container="condition">
                                                 <div class="d-none" data-template="condition">
                                                     <div class="row mt-2">
-                                                        <div class="col-3 pr-0">
+                                                        <div class="col-auto pr-0">
                                                             <input type="hidden" name="condition[id]">
                                                             <select class="form-control"
                                                                     name="condition[type]"></select>
                                                         </div>
-                                                        <div class="col-2">
+                                                        <div class="col-auto">
                                                             <select class="form-control"
                                                                     name="condition[operator]"></select>
                                                         </div>
-                                                        <div class="col-4 px-0">
+                                                        <div class="col-auto px-0">
                                                             <div class="input-group">
-                                                                <input class="form-control" name="condition[value]">
-                                                                <div class="input-group-append findProductIds">
-                                                                    <span class="input-group-text">+</span>
+                                                                <input type="hidden" class="form-control" name="condition[value]">
+                                                                <div class="input-group-append findConditionsIds">
+                                                                    <span class="input-group-text" title="Click to add product">&nbsp;<i class="fa fa-cube fa-fw"></i>&nbsp; </span>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                         <div class="col-2">
                                                             <a class="btn btn-ec-regular mr-2 add"
                                                                data-bind="removeCondition">{{ 'flash_sale.admin.form.remove'|trans }}</a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mt-2">
+                                                        <div class="col-10">
+                                                            <ul class="nameList"></ul>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -355,6 +222,9 @@ file that was distributed with this source code.
                                                         class="btn btn-ec-conversion px-5 mb-4 mt-2">{{ 'admin.common.search'|trans }}</button>
                                                 <div class="searchDataModalList"></div>
                                             </div>
+                                            <div class="modal-footer">
+                                                <button class="btn btn-ec-conversion" type="button" data-dismiss="modal">OK</button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -370,6 +240,9 @@ file that was distributed with this source code.
                                             </div>
                                             <div class="modal-body">
                                                 <div class="searchDataModalList"></div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button class="btn btn-ec-conversion" type="button" data-dismiss="modal">OK</button>
                                             </div>
                                         </div>
                                     </div>

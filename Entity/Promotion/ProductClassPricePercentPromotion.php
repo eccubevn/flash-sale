@@ -34,26 +34,6 @@ class ProductClassPricePercentPromotion extends Promotion implements PromotionIn
     const TYPE = 'promotion_product_class_price_percent';
 
     /**
-     * @var EntityManagerInterface
-     */
-    protected $entityManager;
-
-    /**
-     * Set $entityManager
-     *
-     * @param EntityManagerInterface $entityManager
-     *
-     * @return $this
-     * @required
-     */
-    public function setEntityManager(EntityManagerInterface $entityManager)
-    {
-        $this->entityManager = $entityManager;
-
-        return $this;
-    }
-
-    /**
      * {@inheritdoc}
      *
      * @param $object

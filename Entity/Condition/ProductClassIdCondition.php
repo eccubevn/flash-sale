@@ -14,35 +14,18 @@
 namespace Plugin\FlashSale\Entity\Condition;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\QueryBuilder;
 use Eccube\Entity\ProductClass;
 use Plugin\FlashSale\Entity\Condition;
-use Plugin\FlashSale\Service\Condition\ConditionInterface;
 use Plugin\FlashSale\Service\Operator as Operator;
+use Plugin\FlashSale\Service\Operator\OperatorInterface;
 
 /**
  * @ORM\Entity
  */
-class ProductClassIdCondition extends Condition implements ConditionInterface
+class ProductClassIdCondition extends Condition
 {
     const TYPE = 'condition_product_class_id';
-
-    /**
-     * @var Operator\OperatorFactory
-     */
-    protected $operatorFactory;
-
-    /**
-     * @param Operator\OperatorFactory $operatorFactory
-     *
-     * @return $this
-     * @required
-     */
-    public function setOperatorFactory(Operator\OperatorFactory $operatorFactory)
-    {
-        $this->operatorFactory = $operatorFactory;
-
-        return $this;
-    }
 
     /**
      * {@inheritdoc}
@@ -58,7 +41,35 @@ class ProductClassIdCondition extends Condition implements ConditionInterface
             return false;
         }
 
-        return $this->operatorFactory->createByType($this->getOperator())->match($this->value, $ProductClass->getId());
+        return $this->getOperatorFactory()->createByType($this->getOperator())->match($this->value, $ProductClass->getId());
+    }
+
+    /**
+     * @param QueryBuilder &$queryBuilder
+     * @param OperatorInterface $operatorRule
+     * @param OperatorInterface $operatorCondition
+     *
+     * @return QueryBuilder
+     */
+    public function createQueryBuilder(QueryBuilder $queryBuilder, OperatorInterface $operatorRule, OperatorInterface $operatorCondition): QueryBuilder
+    {
+        // Check is support
+        if (!in_array($operatorCondition->getType(), $this->getOperatorTypes())) {
+            return $queryBuilder;
+        }
+
+        // rule check
+        switch ($operatorRule->getType()) {
+            case Operator\InOperator::TYPE:
+                $this->createInRule($queryBuilder, $operatorCondition);
+                break;
+
+            case Operator\AllOperator::TYPE:
+                $this->createAllRule($queryBuilder, $operatorCondition);
+                break;
+        }
+
+        return $queryBuilder;
     }
 
     /**
@@ -72,5 +83,41 @@ class ProductClassIdCondition extends Condition implements ConditionInterface
             Operator\InOperator::TYPE,
             Operator\NotEqualOperator::TYPE,
         ];
+    }
+
+    /**
+     * @param QueryBuilder $queryBuilder
+     * @param OperatorInterface $operatorCondition
+     */
+    private function createInRule(QueryBuilder $queryBuilder, OperatorInterface $operatorCondition): void
+    {
+        // condition
+        switch ($operatorCondition->getType()) {
+            case Operator\InOperator::TYPE:
+                $queryBuilder->orWhere($queryBuilder->expr()->in('pc.id', $this->getValue()));
+                break;
+
+            case Operator\NotEqualOperator::TYPE:
+                $queryBuilder->orWhere($queryBuilder->expr()->notIn('pc.id', $this->getValue()));
+                break;
+        }
+    }
+
+    /**
+     * @param QueryBuilder $queryBuilder
+     * @param OperatorInterface $operatorCondition
+     */
+    private function createAllRule(QueryBuilder $queryBuilder, OperatorInterface $operatorCondition): void
+    {
+        // condition
+        switch ($operatorCondition->getType()) {
+            case Operator\InOperator::TYPE:
+                $queryBuilder->andWhere($queryBuilder->expr()->in('pc.id', $this->getValue()));
+                break;
+
+            case Operator\NotEqualOperator::TYPE:
+                $queryBuilder->andWhere($queryBuilder->expr()->notIn('pc.id', $this->getValue()));
+                break;
+        }
     }
 }

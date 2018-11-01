@@ -2,9 +2,9 @@
 namespace Plugin\FlashSale\Entity\Rule;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\QueryBuilder;
 use Eccube\Entity\Cart;
 use Eccube\Entity\Order;
-use Plugin\FlashSale\Service\Rule\RuleInterface;
 use Plugin\FlashSale\Entity\Rule;
 use Plugin\FlashSale\Service\Operator;
 use Plugin\FlashSale\Service\Metadata\DiscriminatorManager;
@@ -17,7 +17,7 @@ use Plugin\FlashSale\Entity\Discount;
 /**
  * @ORM\Entity
  */
-class CartRule extends Rule implements RuleInterface
+class CartRule extends Rule
 {
     const TYPE = 'rule_cart';
 
@@ -26,30 +26,11 @@ class CartRule extends Rule implements RuleInterface
      */
     protected $cached;
 
-    /**
-     * @var Operator\OperatorFactory
-     */
-    protected $operatorFactory;
 
     /**
      * @var DiscriminatorManager
      */
     protected $discriminatorManager;
-
-    /**
-     * Set $operatorFactory
-     *
-     * @param Operator\OperatorFactory $operatorFactory
-     *
-     * @return $this
-     * @required
-     */
-    public function setOperatorFactory(Operator\OperatorFactory $operatorFactory)
-    {
-        $this->operatorFactory = $operatorFactory;
-
-        return $this;
-    }
 
     /**
      * @param DiscriminatorManager $discriminatorManager
@@ -91,6 +72,20 @@ class CartRule extends Rule implements RuleInterface
     }
 
     /**
+     * Todo: implement late
+     *
+     * {@inheritdoc} createQueryBuilder
+     */
+    public function createQueryBuilder(QueryBuilder $qb, Operator\OperatorInterface $operatorRule): QueryBuilder
+    {
+        if (!in_array($operatorRule->getType(), $this->getOperatorTypes())) {
+            return $qb;
+        }
+
+        return $qb;
+    }
+
+    /**
      * {@inheritdoc}
      *
      * @return array
@@ -116,20 +111,21 @@ class CartRule extends Rule implements RuleInterface
             return false;
         }
 
-        if (isset($this->cached[__METHOD__ . $Order->getId()])) {
-            return $this->cached[__METHOD__ . $Order->getId()];
+        if (isset($this->cached[__METHOD__.$Order->getId()])) {
+            return $this->cached[__METHOD__.$Order->getId()];
         }
 
-        $this->cached[__METHOD__ . $Order->getId()] = $this->operatorFactory
+        $this->cached[__METHOD__.$Order->getId()] = $this->getOperatorFactory()
             ->createByType($this->getOperator())->match($this->getConditions(), $Order);
 
-        return $this->cached[__METHOD__ . $Order->getId()];
+        return $this->cached[__METHOD__.$Order->getId()];
     }
 
     /**
      * {@inheritdoc}
      *
      * @param $object
+     *
      * @return DiscountInterface
      */
     public function getDiscount($object): DiscountInterface
@@ -150,6 +146,7 @@ class CartRule extends Rule implements RuleInterface
      * Get discount items from cart
      *
      * @param Cart $Cart
+     *
      * @return DiscountInterface
      */
     protected function getDiscountFromCart(Cart $Cart): DiscountInterface
@@ -176,8 +173,8 @@ class CartRule extends Rule implements RuleInterface
             return $discount;
         }
 
-        if (isset($this->cached[__METHOD__ . $Order->getId()])) {
-            return $this->cached[__METHOD__ . $Order->getId()];
+        if (isset($this->cached[__METHOD__.$Order->getId()])) {
+            return $this->cached[__METHOD__.$Order->getId()];
         }
 
         $discount = $this->getPromotion()->getDiscount($Order);

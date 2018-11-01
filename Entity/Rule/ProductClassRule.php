@@ -14,6 +14,7 @@
 namespace Plugin\FlashSale\Entity\Rule;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\QueryBuilder;
 use Eccube\Entity\ProductClass;
 use Eccube\Entity\OrderItem;
 use Eccube\Entity\CartItem;
@@ -23,7 +24,7 @@ use Plugin\FlashSale\Entity\Condition\ProductClassIdCondition;
 use Plugin\FlashSale\Entity\Condition\ProductCategoryIdCondition;
 use Plugin\FlashSale\Entity\Promotion\ProductClassPricePercentPromotion;
 use Plugin\FlashSale\Entity\Promotion\ProductClassPriceAmountPromotion;
-use Plugin\FlashSale\Service\Rule\RuleInterface;
+use Plugin\FlashSale\Service\Operator\OperatorInterface;
 use Plugin\FlashSale\Service\Operator as Operator;
 use Plugin\FlashSale\Service\Metadata\DiscriminatorManager;
 use Plugin\FlashSale\Entity\DiscountInterface;
@@ -32,7 +33,7 @@ use Plugin\FlashSale\Entity\Discount;
 /**
  * @ORM\Entity
  */
-class ProductClassRule extends Rule implements RuleInterface
+class ProductClassRule extends Rule
 {
     const TYPE = 'rule_product_class';
 
@@ -42,29 +43,9 @@ class ProductClassRule extends Rule implements RuleInterface
     protected $cached;
 
     /**
-     * @var Operator\OperatorFactory
-     */
-    protected $operatorFactory;
-
-    /**
      * @var DiscriminatorManager
      */
     protected $discriminatorManager;
-
-    /**
-     * Set $operatorFactory
-     *
-     * @param Operator\OperatorFactory $operatorFactory
-     *
-     * @return $this
-     * @required
-     */
-    public function setOperatorFactory(Operator\OperatorFactory $operatorFactory)
-    {
-        $this->operatorFactory = $operatorFactory;
-
-        return $this;
-    }
 
     /**
      * @param DiscriminatorManager $discriminatorManager
@@ -91,6 +72,28 @@ class ProductClassRule extends Rule implements RuleInterface
             Operator\InOperator::TYPE,
             Operator\AllOperator::TYPE,
         ];
+    }
+
+    /**
+     * {@inheritdoc} createQueryBuilder
+     */
+    public function createQueryBuilder(QueryBuilder $qb, OperatorInterface $operatorRule): QueryBuilder
+    {
+        if (!in_array($operatorRule->getType(), $this->getOperatorTypes())) {
+            return $qb;
+        }
+
+        $qb->join('p.ProductClasses', 'pc')
+            ->groupBy('p');
+
+        // build with each condition
+        foreach ($this->getConditions() as $condition) {
+            $operatorName = $condition->getOperator();
+            $operatorCondition = $this->getOperatorFactory()->createByType($operatorName);
+            $qb = $condition->createQueryBuilder($qb, $operatorRule, $operatorCondition);
+        }
+
+        return $qb;
     }
 
     /**
@@ -132,14 +135,14 @@ class ProductClassRule extends Rule implements RuleInterface
             return false;
         }
 
-        if (isset($this->cached[__METHOD__ . $ProductClass->getId()])) {
-            return $this->cached[__METHOD__ . $ProductClass->getId()];
+        if (isset($this->cached[__METHOD__.$ProductClass->getId()])) {
+            return $this->cached[__METHOD__.$ProductClass->getId()];
         }
 
-        $this->cached[__METHOD__ . $ProductClass->getId()] = $this->operatorFactory
+        $this->cached[__METHOD__.$ProductClass->getId()] = $this->getOperatorFactory()
             ->createByType($this->getOperator())->match($this->getConditions(), $ProductClass);
 
-        return $this->cached[__METHOD__ . $ProductClass->getId()];
+        return $this->cached[__METHOD__.$ProductClass->getId()];
     }
 
     /**
@@ -173,14 +176,14 @@ class ProductClassRule extends Rule implements RuleInterface
             return $discount;
         }
 
-        if (isset($this->cached[__METHOD__ . $ProductClass->getId()])) {
-            return $this->cached[__METHOD__ . $ProductClass->getId()];
+        if (isset($this->cached[__METHOD__.$ProductClass->getId()])) {
+            return $this->cached[__METHOD__.$ProductClass->getId()];
         }
 
         $discount = $this->getPromotion()->getDiscount($ProductClass);
         $discount->setRuleId($this->getId());
         $this->cached[__METHOD__ . $ProductClass->getId()] = $discount;
 
-        return $this->cached[__METHOD__ . $ProductClass->getId()];
+        return $this->cached[__METHOD__.$ProductClass->getId()];
     }
 }
