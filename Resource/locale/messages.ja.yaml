@@ -50,5 +50,5 @@ flash_sale.admin.form.rule.cart_total_percent_promotion: 割合
 flash_sale.admin.form.rule.cart_total_amount_promotion: 金額
 flash_sale.admin.form.rule.condition.cart_total_condition: 合計金額
 
-flash_sale.front.sale_up_to: "最大%percent% ％値引き"
+flash_sale.front.sale_up_to: "最大%percent%％値引き"
 flash_sale.front.from_to: "から%from%まで%to%"
