@@ -30,11 +30,6 @@ use Plugin\FlashSale\Service\Rule\RuleInterface;
 class ProductClassRuleEventSubscriber implements EventSubscriberInterface
 {
     /**
-     * @var FlashSaleRepository
-     */
-    protected $flashSaleRepository;
-
-    /**
      * @var EccubeConfig
      */
     protected $eccubeConfig;
@@ -45,24 +40,14 @@ class ProductClassRuleEventSubscriber implements EventSubscriberInterface
     protected $formatter;
 
     /**
-     * @var \Twig_Environment
-     */
-    protected $twig;
-
-    /**
      * ProductClassRuleEventSubscriber constructor.
      *
-     * @param FlashSaleRepository $flashSaleRepository
      * @param EccubeConfig $eccubeConfig
      */
     public function __construct(
-        \Twig_Environment $twig,
-        FlashSaleRepository $flashSaleRepository,
         EccubeConfig $eccubeConfig
     ) {
-        $this->twig = $twig;
         $this->eccubeConfig = $eccubeConfig;
-        $this->flashSaleRepository = $flashSaleRepository;
         $this->formatter = new \NumberFormatter($this->eccubeConfig['locale'], \NumberFormatter::CURRENCY);
     }
 
@@ -86,25 +71,21 @@ class ProductClassRuleEventSubscriber implements EventSubscriberInterface
      */
     public function onTemplateProductDetail(TemplateEvent $event)
     {
-        $FlashSale = $this->flashSaleRepository->getAvailableFlashSale();
-        if (!$event->hasParameter('Product') || !$FlashSale instanceof FlashSale) {
+        if (!$event->hasParameter('Product')) {
             return;
         }
 
         $json = [];
 
-        /** @var RuleInterface $Rule */
-        foreach ($FlashSale->getRules() as $Rule) {
-            /** @var ProductClass $ProductClass */
-            foreach ($event->getParameter('Product')->getProductClasses() as $ProductClass) {
-                $discount = $Rule->getDiscount($ProductClass);
-                if ($discount->getValue()) {
-                    $discountPrice = $ProductClass->getPrice02IncTax() - $discount->getValue();
-                    $discountPercent = 100 - floor($discountPrice * 100 / $ProductClass->getPrice02IncTax());
-                    $json[$ProductClass->getId()] = [
-                        'message' => '<p class="ec-color-red"><span>'.$this->formatter->formatCurrency($discountPrice, $this->eccubeConfig['currency']).'</span> (-'.$discountPercent.'%)</p>',
-                    ];
-                }
+        /** @var ProductClass $ProductClass */
+        foreach ($event->getParameter('Product')->getProductClasses() as $ProductClass) {
+            $discountValue = $ProductClass->getFlashSaleDiscount();
+            if ($discountValue) {
+                $discountPrice = $ProductClass->getFlashSaleDiscountPrice();
+                $discountPercent = $ProductClass->getFlashSaleDiscountPercent();
+                $json[$ProductClass->getId()] = [
+                    'message' => '<p class="ec-color-red"><span>'.$this->formatter->formatCurrency($discountPrice, $this->eccubeConfig['currency']).'</span> (-'.$discountPercent.'%)</p>',
+                ];
             }
         }
 
@@ -123,27 +104,23 @@ class ProductClassRuleEventSubscriber implements EventSubscriberInterface
      */
     public function onTemplateProductList(TemplateEvent $event)
     {
-        $FlashSale = $this->flashSaleRepository->getAvailableFlashSale();
-        if (!$event->hasParameter('pagination') || !$FlashSale instanceof FlashSale) {
+        if (!$event->hasParameter('pagination')) {
             return;
         }
 
         $json = [];
 
-        /** @var RuleInterface $Rule */
-        foreach ($FlashSale->getRules() as $Rule) {
-            /** @var Product $Product */
-            foreach ($event->getParameter('pagination') as $Product) {
-                /** @var ProductClass $ProductClass */
-                foreach ($Product->getProductClasses() as $ProductClass) {
-                    $discount = $Rule->getDiscount($ProductClass);
-                    if ($discount->getValue()) {
-                        $discountPrice = $ProductClass->getPrice02IncTax() - $discount->getValue();
-                        $discountPercent = 100 - floor($discountPrice * 100 / $ProductClass->getPrice02IncTax());
-                        $json[$ProductClass->getId()] = [
-                            'message' => '<p class="ec-color-red"><span>'.$this->formatter->formatCurrency($discountPrice, $this->eccubeConfig['currency']).'</span> (-'.$discountPercent.'%)</p>',
-                        ];
-                    }
+        /** @var Product $Product */
+        foreach ($event->getParameter('pagination') as $Product) {
+            /** @var ProductClass $ProductClass */
+            foreach ($Product->getProductClasses() as $ProductClass) {
+                $discountValue = $ProductClass->getFlashSaleDiscount();
+                if ($discountValue) {
+                    $discountPrice = $ProductClass->getFlashSaleDiscountPrice();
+                    $discountPercent = $ProductClass->getFlashSaleDiscountPercent();
+                    $json[$ProductClass->getId()] = [
+                        'message' => '<p class="ec-color-red"><span>'.$this->formatter->formatCurrency($discountPrice, $this->eccubeConfig['currency']).'</span> (-'.$discountPercent.'%)</p>',
+                    ];
                 }
             }
         }

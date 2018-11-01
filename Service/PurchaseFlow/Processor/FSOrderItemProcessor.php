@@ -8,13 +8,13 @@
 
 namespace Plugin\FlashSale\Service\PurchaseFlow\Processor;
 
+use Eccube\Annotation;
 use Eccube\Entity\ItemHolderInterface;
 use Eccube\Entity\Order;
 use Eccube\Service\PurchaseFlow\Processor\AbstractPurchaseProcessor;
 use Eccube\Service\PurchaseFlow\PurchaseContext;
 use Plugin\FlashSale\Repository\FlashSaleRepository;
-use Plugin\FlashSale\Service\Rule\RuleInterface;
-use Eccube\Annotation;
+use Plugin\FlashSale\Entity\FlashSale;
 
 /**
  * @Annotation\ShoppingFlow()
@@ -46,22 +46,15 @@ class FSOrderItemProcessor extends AbstractPurchaseProcessor
             return;
         }
 
+        /** @var FlashSale $FlashSale */
         $FlashSale = $this->fSRepository->getAvailableFlashSale();
         foreach ($target->getProductOrderItems() as $productOrderItem) {
             if ($productOrderItem->isProduct()) {
                 $ProductClass = $productOrderItem->getProductClass();
-                $price = $ProductClass->getPrice02IncTax();
-                /** @var RuleInterface $Rule */
-                foreach ($FlashSale->getRules() as $Rule) {
-                    if (!$Rule->match($ProductClass)) {
-                        continue;
-                    }
-                    foreach ($Rule->getDiscountItems($ProductClass) as $discountItem) {
-                        $price += $discountItem->getPrice();
-                    }
+                $discount = $FlashSale->getDiscount($ProductClass);
+                if ($discount->getValue()) {
+                    $productOrderItem->setFsPrice($ProductClass->getPrice02IncTax() - $discount->getValue());
                 }
-
-                $productOrderItem->setFsPrice($price);
             }
         }
     }

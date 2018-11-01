@@ -19,8 +19,7 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\Common\EventSubscriber;
 use Eccube\Entity\CartItem;
 use Eccube\Entity\OrderItem;
-use Eccube\Entity\Cart;
-use Eccube\Entity\Order;
+use Eccube\Entity\ProductClass;
 use Plugin\FlashSale\Entity\FlashSale;
 
 class ProductClassRuleDoctrineEventSubscriber implements EventSubscriber
@@ -48,26 +47,19 @@ class ProductClassRuleDoctrineEventSubscriber implements EventSubscriber
     public function getSubscribedEvents()
     {
         return [
-            DoctrineEvents::postLoad,
+            DoctrineEvents::postLoad
         ];
     }
 
     /**
-     * Inject dependencies into entity
+     * Calc flash sale discount & add to entity
      *
      * @param LifecycleEventArgs $eventArgs
      */
     public function postLoad(LifecycleEventArgs $eventArgs)
     {
         $entity = $eventArgs->getEntity();
-        $ProductClass = null;
-        if ($entity instanceof CartItem) {
-            $ProductClass = $entity->getProductClass();
-        } elseif ($entity instanceof OrderItem) {
-            $ProductClass = $entity->getProductClass();
-        }
-
-        if (!isset($ProductClass)) {
+        if (!$entity instanceof ProductClass) {
             return;
         }
 
@@ -77,11 +69,11 @@ class ProductClassRuleDoctrineEventSubscriber implements EventSubscriber
             return;
         }
 
-        $discount = $FlashSale->getDiscount($ProductClass);
+        $discount = $FlashSale->getDiscount($entity);
         if (!$discount->getValue()) {
             return;
         }
 
-        $entity->addFlashSaleDiscount($discount->getRuleId(), $discount->getValue());
+        $entity->cleanFlashSaleDiscount()->addFlashSaleDiscount($discount->getRuleId(), $discount->getValue());
     }
 }

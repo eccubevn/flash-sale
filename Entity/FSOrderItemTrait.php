@@ -45,4 +45,56 @@ trait FSOrderItemTrait
     {
         return (empty($this->getFsPrice()) ? $this->getPriceIncTax() : $this->getFsPrice()) * $this->getQuantity();
     }
+
+    /**
+     * Get $flashSaleDiscount
+     *
+     * @return int
+     */
+    public function getFlashSaleDiscount()
+    {
+        if (!$this->getProductClass()) {
+            return 0;
+        }
+
+        return $this->getProductClass()->getFlashSaleDiscount();
+    }
+
+    /**
+     * Get flashsale discount * quantity
+     */
+    public function getFlashSaleTotalDiscount()
+    {
+        return $this->getFlashSaleDiscount() * $this->getQuantity();
+    }
+
+    /**
+     * Get discount price
+     *
+     * @return int
+     */
+    public function getFlashSaleDiscountPrice()
+    {
+        return (int) ($this->getPriceIncTax() - $this->getFlashSaleDiscount());
+    }
+
+    /**
+     * Get discount total price
+     *
+     * @return int
+     */
+    public function getFlashSaleTotalDiscountPrice()
+    {
+        return (int) ($this->getFlashSaleDiscountPrice() * $this->getQuantity());
+    }
+
+    /**
+     * Get discount percent
+     *
+     * @return int
+     */
+    public function getFlashSaleDiscountPercent()
+    {
+        return (int) ceil($this->getFlashSaleDiscount() * 100 / $this->getPriceIncTax());
+    }
 }

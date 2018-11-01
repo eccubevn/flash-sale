@@ -4,14 +4,25 @@ namespace Plugin\FlashSale\Entity;
 use Eccube\Annotation as Eccube;
 
 /**
- * @Eccube\EntityExtension("Eccube\Entity\OrderItem")
+ * @Eccube\EntityExtension("Eccube\Entity\CartItem")
  */
-trait OrderItemTrait
+trait FSCartItemTrait
 {
     /**
      * @var array
      */
     protected $flashSaleDiscount = [];
+
+    /**
+     * Clean discount from flash sale
+     *
+     * @return $this
+     */
+    public function cleanFlashSaleDiscount()
+    {
+        $this->flashSaleDiscount = [];
+        return $this;
+    }
 
 
     /**
@@ -34,11 +45,13 @@ trait OrderItemTrait
      */
     public function getFlashSaleDiscount()
     {
-        return array_sum($this->flashSaleDiscount);
+        return $this->getProductClass()->getFlashSaleDiscount();
     }
 
     /**
      * Get flashsale discount * quantity
+     *
+     * @return int
      */
     public function getFlashSaleTotalDiscount()
     {
@@ -52,7 +65,7 @@ trait OrderItemTrait
      */
     public function getFlashSaleDiscountPrice()
     {
-        return (int) ($this->getPriceIncTax() - $this->getFlashSaleDiscount());
+        return (int) ($this->getPrice() - $this->getFlashSaleDiscount());
     }
 
     /**
@@ -72,6 +85,6 @@ trait OrderItemTrait
      */
     public function getFlashSaleDiscountPercent()
     {
-        return (int) ceil($this->getFlashSaleDiscount() * 100 / $this->getPriceIncTax());
+        return (int) ceil($this->getFlashSaleDiscount() * 100 / $this->getPrice());
     }
 }

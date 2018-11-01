@@ -154,16 +154,11 @@ EOT;
             $tmp = [];
             /** @var ProductClass $ProductClass */
             foreach ($Product->getProductClasses() as $ProductClass) {
-                /** @var RuleInterface $Rule */
-                foreach ($FlashSale->getRules() as $Rule) {
-                    if ($Rule->match($ProductClass)) {
-                        // discount include tax???
-                        $discountItems = $Rule->getDiscountItems($ProductClass);
-                        $discountItem = current($discountItems);
-                        $discountPrice = $ProductClass->getPrice02IncTax() + $discountItem->getPrice();
-                        $discountPercent = 100 - floor($discountPrice * 100 / $ProductClass->getPrice02IncTax());
-                        $tmp[$ProductClass->getId()] = $discountPercent;
-                    }
+                $discount = $FlashSale->getDiscount($ProductClass);
+                if ($discount->getValue()) {
+                    $discountPrice = $ProductClass->getPrice02IncTax() - $discount->getValue();
+                    $discountPercent = 100 - floor($discountPrice * 100 / $ProductClass->getPrice02IncTax());
+                    $tmp[$ProductClass->getId()] = $discountPercent;
                 }
             }
             if (count($tmp)) {

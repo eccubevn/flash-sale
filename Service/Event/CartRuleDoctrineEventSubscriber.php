@@ -47,11 +47,12 @@ class CartRuleDoctrineEventSubscriber implements EventSubscriber
     {
         return [
             DoctrineEvents::postLoad,
+            DoctrineEvents::prePersist
         ];
     }
 
     /**
-     * Inject dependencies into entity
+     * Calc flash sale discount & add to entity
      *
      * @param LifecycleEventArgs $eventArgs
      */
@@ -62,6 +63,7 @@ class CartRuleDoctrineEventSubscriber implements EventSubscriber
         if (!$entity instanceof Cart && !$entity instanceof Order) {
             return;
         }
+        
         $repository = $this->entityManager->getRepository(FlashSale::class);
         $FlashSale = $repository->getAvailableFlashSale();
         if (!$FlashSale instanceof FlashSale) {
@@ -72,7 +74,21 @@ class CartRuleDoctrineEventSubscriber implements EventSubscriber
         if (!$discount->getValue()) {
             return;
         }
+        
+        $entity->cleanFlashSaleDiscount()->addFlashSaleDiscount($discount->getRuleId(), $discount->getValue());
+    }
 
-        $entity->addFlashSaleDiscount($discount->getRuleId(), $discount->getValue());
+    /**
+     * Calc flash sale discount & add to entity
+     *
+     * @param LifecycleEventArgs $eventArgs
+     */
+    public function prePersist(LifecycleEventArgs $eventArgs)
+    {
+        $entity = $eventArgs->getEntity();
+        if (!$entity instanceof Order) {
+            return;
+        }
+        $this->postLoad($eventArgs);
     }
 }

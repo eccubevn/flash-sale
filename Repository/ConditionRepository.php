@@ -74,9 +74,8 @@ class ConditionRepository extends AbstractRepository
                 $tmp = [];
                 foreach ($Product->getProductClasses() as $ProductClass) {
                     // discount include tax???
-                    $discountItems = $Rule->getDiscountItems($ProductClass);
-                    $discountItem = current($discountItems);
-                    $discountPrice = $ProductClass->getPrice02IncTax() + $discountItem->getPrice();
+                    $discount = $Rule->getDiscount($ProductClass);
+                    $discountPrice = $ProductClass->getPrice02IncTax() - $discount->getValue();
                     $discountPercent = 100 - floor($discountPrice * 100 / $ProductClass->getPrice02IncTax());
                     $tmp[$ProductClass->getId()] = $discountPercent;
                 }
@@ -84,6 +83,7 @@ class ConditionRepository extends AbstractRepository
                 $arrayProductTmp[$Product->getId()]['product'] = $Product;
             }
         }
+        dump($arrayProductTmp);
 
         return $arrayProductTmp;
     }

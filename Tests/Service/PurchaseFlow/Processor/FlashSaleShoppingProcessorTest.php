@@ -33,7 +33,7 @@ use Plugin\FlashSale\Entity\FlashSale;
 use Plugin\FlashSale\Entity\Rule;
 use Plugin\FlashSale\Repository\FlashSaleRepository;
 use Plugin\FlashSale\Service\FlashSaleService;
-use Plugin\FlashSale\Service\PurchaseFlow\Processor\FlashSaleShoppingProcessor;
+use Plugin\FlashSale\Service\PurchaseFlow\Processor\FSShoppingProcessor;
 
 class FlashSaleShoppingProcessorTest extends AbstractServiceTestCase
 {
@@ -52,7 +52,7 @@ class FlashSaleShoppingProcessorTest extends AbstractServiceTestCase
     /** @var PurchaseFlow */
     protected $purchaseFlow;
 
-    /** @var FlashSaleShoppingProcessor */
+    /** @var FSShoppingProcessor */
     protected $flashSaleShoppingProcessor;
 
     /**
@@ -81,7 +81,7 @@ class FlashSaleShoppingProcessorTest extends AbstractServiceTestCase
     {
         parent::setUp();
 
-        $this->flashSaleShoppingProcessor = $this->container->get(FlashSaleShoppingProcessor::class);
+        $this->flashSaleShoppingProcessor = $this->container->get(FSShoppingProcessor::class);
         $this->itemHolderPreprocessors = new ArrayCollection();
         $this->discountProcessors = new ArrayCollection();
         $this->flashSaleRepository = $this->container->get(FlashSaleRepository::class);
@@ -96,7 +96,7 @@ class FlashSaleShoppingProcessorTest extends AbstractServiceTestCase
             ->getMock();
         $mockFlashSaleRepository->method('getAvailableFlashSale')
             ->willReturn(null);
-        $flashSaleShoppingProcessor = new FlashSaleShoppingProcessor($this->entityManager, $mockFlashSaleRepository);
+        $flashSaleShoppingProcessor = new FSShoppingProcessor($this->entityManager, $mockFlashSaleRepository);
 
         $Customer = new Customer();
         $Order = new Order();
@@ -126,7 +126,7 @@ class FlashSaleShoppingProcessorTest extends AbstractServiceTestCase
 
         $mockFlashSaleRepository->method('getAvailableFlashSale')
             ->willReturn($mFlashSale);
-        $flashSaleShoppingProcessor = new FlashSaleShoppingProcessor($this->entityManager, $mockFlashSaleRepository);
+        $flashSaleShoppingProcessor = new FSShoppingProcessor($this->entityManager, $mockFlashSaleRepository);
 
         $Customer = new Customer();
         $Order = new Order();
@@ -160,7 +160,7 @@ class FlashSaleShoppingProcessorTest extends AbstractServiceTestCase
 
         $mockFlashSaleRepository->method('getAvailableFlashSale')
             ->willReturn($mFlashSale);
-        $flashSaleShoppingProcessor = new FlashSaleShoppingProcessor($this->entityManager, $mockFlashSaleRepository);
+        $flashSaleShoppingProcessor = new FSShoppingProcessor($this->entityManager, $mockFlashSaleRepository);
 
         $Customer = new Customer();
         $Order = new Order();
@@ -173,7 +173,7 @@ class FlashSaleShoppingProcessorTest extends AbstractServiceTestCase
         $flashSaleShoppingProcessor->addDiscountItem($Order, new PurchaseContext(null, $Customer));
 
         self::assertContains($discountItem, $Order->getItems());
-        self::assertContains($discountItem->getProcessorName(), FlashSaleShoppingProcessor::class);
+        self::assertContains($discountItem->getProcessorName(), FSShoppingProcessor::class);
 //        self::assertEquals($discountItem->getQuantity(), $orderItem->getQuantity());
     }
 
@@ -196,7 +196,7 @@ class FlashSaleShoppingProcessorTest extends AbstractServiceTestCase
 
         $mockFlashSaleRepository->method('getAvailableFlashSale')
             ->willReturn($mFlashSale);
-        $flashSaleShoppingProcessor = new FlashSaleShoppingProcessor($this->entityManager, $mockFlashSaleRepository);
+        $flashSaleShoppingProcessor = new FSShoppingProcessor($this->entityManager, $mockFlashSaleRepository);
 
         $Customer = new Customer();
         $Order = new Order();
@@ -207,7 +207,7 @@ class FlashSaleShoppingProcessorTest extends AbstractServiceTestCase
 
         $flashSaleShoppingProcessor->addDiscountItem($Order, new PurchaseContext(null, $Customer));
         self::assertCount(2, $Order->getItems());
-        self::assertContains($discountItem->getProcessorName(), FlashSaleShoppingProcessor::class);
+        self::assertContains($discountItem->getProcessorName(), FSShoppingProcessor::class);
         self::assertEquals($discountItem->getQuantity(), $orderItem->getQuantity());
 
         $flashSaleShoppingProcessor->removeDiscountItem($Order, new PurchaseContext(null, $Customer));

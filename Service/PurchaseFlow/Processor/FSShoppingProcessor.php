@@ -12,13 +12,11 @@ use Eccube\Entity\Master\OrderItemType;
 use Eccube\Entity\Master\TaxDisplayType;
 use Eccube\Entity\Master\TaxType;
 use Plugin\FlashSale\Repository\FlashSaleRepository;
-use Plugin\FlashSale\Entity\FlashSale;
-use Plugin\FlashSale\Service\Rule\RuleInterface;
 
 /**
  * @Annotation\ShoppingFlow()
  */
-class FlashSaleShoppingProcessor implements DiscountProcessor
+class FSShoppingProcessor implements DiscountProcessor
 {
     /**
      * @var EntityManagerInterface

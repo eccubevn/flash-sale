@@ -6,12 +6,23 @@ use Eccube\Annotation as Eccube;
 /**
  * @Eccube\EntityExtension("Eccube\Entity\Cart")
  */
-trait CartTrait
+trait FSCartTrait
 {
     /**
      * @var array
      */
     protected $flashSaleDiscount = [];
+
+    /**
+     * Clean discount from flash sale
+     *
+     * @return $this
+     */
+    public function cleanFlashSaleDiscount()
+    {
+        $this->flashSaleDiscount = [];
+        return $this;
+    }
 
     /**
      * Add an discount
@@ -36,7 +47,7 @@ trait CartTrait
     {
         $totalDiscount = 0;
         foreach ($this->getCartItems() as $CartItem) {
-            $totalDiscount += $CartItem->getFlashSaleDiscount();
+            $totalDiscount += $CartItem->getFlashSaleTotalDiscount();
         }
 
         return array_sum($this->flashSaleDiscount) + $totalDiscount;
