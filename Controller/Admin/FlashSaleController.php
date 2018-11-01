@@ -130,14 +130,13 @@ class FlashSaleController extends AbstractController
         $form->handleRequest($request);
 
         $newConditionForm = json_decode($form->get('rules')->getData(), true);
-
         foreach ($newConditionForm as $rule) {
-            if ($rule['type'] == Rule\ProductClassRule::TYPE) {
+            if ($rule['type'] == Rule\ProductClassRule::TYPE && !empty($rule['conditions'])) {
                 foreach ($rule['conditions'] as $condition) {
-                    if ($condition['type'] == Condition\ProductClassIdCondition::TYPE) {
+                    if ($condition['type'] == Condition\ProductClassIdCondition::TYPE && !empty($condition['value'])) {
                         $productClassIds = array_merge($productClassIds, explode(',', $condition['value']));
                     }
-                    if ($condition['type'] == Condition\ProductCategoryIdCondition::TYPE) {
+                    if ($condition['type'] == Condition\ProductCategoryIdCondition::TYPE && !empty($condition['value'])) {
                         $categoryIds = array_merge($categoryIds, explode(',', $condition['value']));
                     }
                 }
