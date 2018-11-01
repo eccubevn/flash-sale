@@ -128,6 +128,10 @@ class FlashSaleService
      * @return mixed
      */
     public function getCategoryName($categoryIds){
+        if (!$categoryIds) {
+            return [];
+        }
+
         $qb = $this->entityManager->createQueryBuilder();
         $qb->select('c.id, c.name')
             ->from(Category::class, 'c')
@@ -141,6 +145,10 @@ class FlashSaleService
      * @return mixed
      */
     public function getProductClassName($productClassIds){
+        if (!$productClassIds) {
+            return [];
+        }
+
         /** @var ProductClassRepository $ProductClass */
         $ProductClass = $this->entityManager->getRepository(ProductClass::class);
         $qb = $ProductClass->createQueryBuilder('pc');
