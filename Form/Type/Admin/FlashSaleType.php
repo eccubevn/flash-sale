@@ -151,7 +151,6 @@ class FlashSaleType extends AbstractType
             }
         });
 
-        // TODO: validate for a period of time
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
             /** @var FlashSale $FlashSale */
             $FlashSale = $event->getData();
@@ -163,11 +162,11 @@ class FlashSaleType extends AbstractType
             $qb = $this->flashSaleRepository->createQueryBuilder('fl');
             $qb
                 ->select('count(fl.id)')
-                ->where('(:from_time >= fl.from_time AND :from_time < fl.to_time) OR (:to_time > fl.to_time AND :to_time <= fl.to_time)')
+                ->where('(:from_time >= fl.from_time AND :from_time < fl.to_time) OR (:to_time > fl.to_time AND :to_time <= fl.to_time) OR (:from_time <= fl.from_time AND :to_time >= fl.to_time)')
                 ->setParameters(['from_time' => $FlashSale->getFromTime(), 'to_time' => $FlashSale->getToTime()])
                 ->andWhere('fl.status = :status')->setParameter('status', FlashSale::STATUS_ACTIVATED);
 
-            if ($FlashSale->getId()) {
+            if ($FlashSale->getId() && $FlashSale->getStatus() == FlashSale::STATUS_ACTIVATED) {
                 $qb
                     ->andWhere('fl.id <> :id')
                     ->setParameter('id', $FlashSale->getId());
