@@ -17,6 +17,7 @@ file that was distributed with this source code.
 {% block sub_title %}{{ 'flash_sale.admin.form.title.sub'|trans }}{% endblock %}
 
 {% form_theme searchProductModalForm '@admin/Form/bootstrap_4_horizontal_layout.html.twig' %}
+{% form_theme form '@FlashSale/admin/form/bootstrap_4_horizontal_layout_customize_form_errors.html.twig' %}
 
 {% block stylesheet %}
     <style>
@@ -42,8 +43,6 @@ file that was distributed with this source code.
         });
     </script>
 {% endblock %}
-
-{% form_theme form '@admin/Form/bootstrap_4_horizontal_layout.html.twig' %}
 
 {% block main %}
     <form role="form" class="form-horizontal" name="form1" id="form1" method="post" action="?">

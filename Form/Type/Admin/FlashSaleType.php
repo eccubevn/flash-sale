@@ -117,24 +117,24 @@ class FlashSaleType extends AbstractType
             $form = $event->getForm();
             $rules = json_decode($form->get('rules')->getData(), true);
             if (empty($rules)) {
-                $form->get('rules')->addError(new FormError(trans('flash_sale.form.rule.require')));
+                $form->get('rules')->addError(new FormError('flash_sale.form.rule.require'));
 
                 return;
             }
             foreach ($rules as $rule) {
                 if (!isset($rule['promotion']['value']) || $rule['promotion']['value'] == '') {
-                    $form->get('rules')->addError(new FormError(trans('flash_sale.form.promotion.require')));
+                    $form->get('rules')->addError(new FormError('flash_sale.form.promotion.require'));
 
                     return;
                 }
                 if (!isset($rule['conditions'])) {
-                    $form->get('rules')->addError(new FormError(trans('flash_sale.form.condition.require')));
+                    $form->get('rules')->addError(new FormError('flash_sale.form.condition.require'));
 
                     return;
                 }
                 foreach ($rule['conditions'] as $condition) {
                     if (!isset($condition['value']) || $condition['value'] == '') {
-                        $form->get('rules')->addError(new FormError(trans('flash_sale.form.condition.require')));
+                        $form->get('rules')->addError(new FormError('flash_sale.form.condition.require'));
 
                         return;
                     }
@@ -147,7 +147,7 @@ class FlashSaleType extends AbstractType
             $FlashSale = $event->getData();
             if ($FlashSale->getFromTime() >= $FlashSale->getToTime()) {
                 $form = $event->getForm();
-                $form['from_time']->addError(new FormError(trans('flash_sale.form.time.from_to')));
+                $form['from_time']->addError(new FormError('flash_sale.form.time.from_to'));
             }
         });
 
@@ -177,7 +177,7 @@ class FlashSaleType extends AbstractType
 
             if ($count > 0) {
                 $form = $event->getForm();
-                $form['from_time']->addError(new FormError(trans('flash_sale.form.multi')));
+                $form['from_time']->addError(new FormError('flash_sale.form.multi'));
             }
         });
     }
