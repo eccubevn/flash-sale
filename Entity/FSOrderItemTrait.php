@@ -18,7 +18,7 @@ trait FSOrderItemTrait
 {
     /**
      * @var float
-     * @ORM\Column(name="fs_price", type="decimal", precision=12, scale=2, options={"default":0})
+     * @ORM\Column(name="fs_price", type="decimal", precision=12, scale=2, nullable=true, options={"default":0})
      */
     private $fsPrice;
 
