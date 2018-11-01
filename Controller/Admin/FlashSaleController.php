@@ -117,22 +117,6 @@ class FlashSaleController extends AbstractController
                 throw new NotFoundHttpException();
             }
             $FlashSale->setUpdatedAt(new \DateTime());
-
-            /** @var Rule $rule */
-            foreach ($FlashSale->getRules() as $rule) {
-                /** @var Condition $condition */
-                foreach ($rule->getConditions() as $condition) {
-                    if ($condition->getRule() instanceof Rule\ProductClassRule) {
-                        if ($condition instanceof Condition\ProductClassIdCondition) {
-                            $productClassIds = array_merge($productClassIds, explode(',', $condition->getValue()));
-                        }
-                        if ($condition instanceof Condition\ProductCategoryIdCondition) {
-                            $categoryIds = array_merge($categoryIds, explode(',', $condition->getValue()));
-                        }
-                    }
-                }
-            }
-
         } else {
             $FlashSale = new FlashSale();
             $FlashSale->setCreatedAt(new \DateTime());
@@ -146,6 +130,7 @@ class FlashSaleController extends AbstractController
         $form->handleRequest($request);
 
         $newConditionForm = json_decode($form->get('rules')->getData(), true);
+
         foreach ($newConditionForm as $rule) {
             if ($rule['type'] == Rule\ProductClassRule::TYPE) {
                 foreach ($rule['conditions'] as $condition) {
@@ -214,7 +199,13 @@ class FlashSaleController extends AbstractController
             ->createBuilder(SearchProductType::class);
         $searchProductModalForm = $builder->getForm();
 
-        $conditionData['condition_product_class_id'] = $this->flashSaleService->getProductClassName($productClassIds);
+        $conditionProductClassData = $this->flashSaleService->getProductClassName($productClassIds);
+        $conditionData['condition_product_class_id'] = [];
+        foreach ($conditionProductClassData as $row){
+            $class_name2 = $row['class_name2'] ? ' - '.$row['class_name2'] : '';
+            $row['name'] = $row['name'].(($row['class_name1'] || $row['class_name2']) ? ('('. $row['class_name1'].$class_name2) .')' : '');
+            $conditionData['condition_product_class_id'][] = $row;
+        }
         $conditionData['condition_product_category_id'] = $CategoryName = $this->flashSaleService->getCategoryName($categoryIds);
 
         return [
