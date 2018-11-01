@@ -1,7 +1,7 @@
-flash_sale.admin.nav.name: FlashSale
+flash_sale.admin.nav.name: Flash Sale
 
-flash_sale.admin.list.title: FlashSale
-flash_sale.admin.list.title.sub: FlashSale一覧
+flash_sale.admin.list.title: Flash Sale
+flash_sale.admin.list.title.sub: Flash Sale list
 
 flash_sale.admin.list.id: ID
 flash_sale.admin.list.description: Description
@@ -13,13 +13,13 @@ flash_sale.admin.list.status: Status
 flash_sale.admin.list.status.draft: Draft
 flash_sale.admin.list.status.activated: Activated
 
-flash_sale.admin.form.title: FlashSale
-flash_sale.admin.form.title.sub: FlashSale編集
+flash_sale.admin.form.title: Flash Sale
+flash_sale.admin.form.title.sub: Flash Sale Edit
 
-flash_sale.admin.form.information: Flash sale情報登録
+flash_sale.admin.form.information: Flash Sale information registration
 flash_sale.admin.form.name: Name
 flash_sale.admin.form.note: Note
-flash_sale.admin.form.note.tooltip: この情報は顧客画面に表示する情報ではありません
+flash_sale.admin.form.note.tooltip: This information is not information displayed on the customer screen
 flash_sale.admin.form.rule.box: Rule
 flash_sale.admin.form.rule.add: Add
 flash_sale.admin.form.rule.type: Type
@@ -29,7 +29,7 @@ flash_sale.admin.form.rule.condition: Condition
 
 flash_sale.admin.form.rule.condition.add: Add
 flash_sale.admin.form.remove: Remove
-flash_sale.admin.form.back.to.flash_sale.list: FlashSale一覧
+flash_sale.admin.form.back.to.flash_sale.list: Flash Sale list
 
 flash_sale.admin.form.rule.product_class_rule: Product class rule
 flash_sale.admin.form.rule.cart_rule: Cart rule
