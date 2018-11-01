@@ -14,6 +14,7 @@
 namespace Plugin\FlashSale\Repository;
 
 use Eccube\Entity\Product;
+use Eccube\Entity\ProductClass;
 use Eccube\Repository\AbstractRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Plugin\FlashSale\Entity\Condition;
@@ -72,15 +73,9 @@ class ConditionRepository extends AbstractRepository
             /** @var Product $Product */
             foreach ($qbItem->getQuery()->getResult() as $Product) {
                 $tmp = [];
+                /** @var ProductClass $ProductClass */
                 foreach ($Product->getProductClasses() as $ProductClass) {
-                    // discount include tax???
-                    $discount = $Rule->getDiscount($ProductClass);
-                    if (empty($discount->getValue())) {
-                        continue;
-                    }
-                    $discountPrice = $ProductClass->getPrice02IncTax() - $discount->getValue();
-                    $discountPercent = 100 - floor($discountPrice * 100 / $ProductClass->getPrice02IncTax());
-                    $tmp[$ProductClass->getId()] = $discountPercent;
+                    $tmp[$ProductClass->getId()] = $ProductClass->getFlashSaleDiscountPercent();
                 }
                 if (count($tmp) == 0) {
                     continue;
