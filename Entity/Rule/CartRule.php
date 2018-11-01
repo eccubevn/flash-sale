@@ -11,6 +11,8 @@ use Plugin\FlashSale\Service\Metadata\DiscriminatorManager;
 use Plugin\FlashSale\Entity\Condition\CartTotalCondition;
 use Plugin\FlashSale\Entity\Promotion\CartTotalPercentPromotion;
 use Plugin\FlashSale\Entity\Promotion\CartTotalAmountPromotion;
+use Plugin\FlashSale\Entity\DiscountInterface;
+use Plugin\FlashSale\Entity\Discount;
 
 /**
  * @ORM\Entity
@@ -124,17 +126,20 @@ class CartRule extends Rule
      *
      * @param $object
      *
-     * @return \Eccube\Entity\ItemInterface[]
+     * @return DiscountInterface
      */
-    public function getDiscountItems($object): array
+    public function getDiscount($object): DiscountInterface
     {
         if ($object instanceof Order) {
-            return $this->getDiscountItemsFromOrder($object);
+            return $this->getDiscountFromOrder($object);
         } elseif ($object instanceof Cart) {
-            return $this->getDiscountItemsFromCart($object);
+            return $this->getDiscountFromCart($object);
         }
 
-        return [];
+        $discount = new Discount();
+        $discount->setRuleId($this->getId());
+
+        return $discount;
     }
 
     /**
@@ -142,41 +147,40 @@ class CartRule extends Rule
      *
      * @param Cart $Cart
      *
-     * @return array
+     * @return DiscountInterface
      */
-    protected function getDiscountItemsFromCart(Cart $Cart): array
+    protected function getDiscountFromCart(Cart $Cart): DiscountInterface
     {
-        if (isset($this->cached[__METHOD__.$Cart->getId()])) {
-            return $this->cached[__METHOD__.$Cart->getId()];
-        }
-
         $Order = new Order();
+        $Order->offsetSet('id', 'C' . $Cart->getId());
         $Order->setSubtotal($Cart->getTotal());
 
-        $this->cached[__METHOD__.$Cart->getId()] = $this->getDiscountItemsFromOrder($Order);
-
-        return $this->cached[__METHOD__.$Cart->getId()];
+        return $this->getDiscountFromOrder($Order);
     }
 
     /**
      * Get discount items from order
      *
      * @param Order $Order
-     *
-     * @return array
+     * @return DiscountInterface
      */
-    public function getDiscountItemsFromOrder(Order $Order): array
+    public function getDiscountFromOrder(Order $Order): DiscountInterface
     {
+        $discount = new Discount();
+        $discount->setRuleId($this->getId());
+
         if (!$this->match($Order)) {
-            return [];
+            return $discount;
         }
 
         if (isset($this->cached[__METHOD__.$Order->getId()])) {
             return $this->cached[__METHOD__.$Order->getId()];
         }
 
-        $this->cached[__METHOD__.$Order->getId()] = $this->getPromotion()->getDiscountItems($Order);
+        $discount = $this->getPromotion()->getDiscount($Order);
+        $discount->setRuleId($this->getId());
+        $this->cached[__METHOD__ . $Order->getId()] = $discount;
 
-        return $this->cached[__METHOD__.$Order->getId()];
+        return $discount;
     }
 }

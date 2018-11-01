@@ -13,14 +13,16 @@
 
 namespace Plugin\FlashSale\Service\Promotion;
 
+use Plugin\FlashSale\Entity\DiscountInterface;
+
 interface PromotionInterface
 {
     /**
-     * Calculate discount items
+     * Calculate discount item
      *
      * @param $object
      *
-     * @return \Eccube\Entity\ItemInterface[]
+     * @return DiscountInterface
      */
-    public function getDiscountItems($object);
+    public function getDiscount($object);
 }

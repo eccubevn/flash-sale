@@ -16,9 +16,18 @@ namespace Plugin\FlashSale\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection as DoctrineCollection;
+use Eccube\Entity\ProductClass;
+use Eccube\Entity\Cart;
+use Eccube\Entity\Order;
+use Plugin\FlashSale\Entity\Rule\ProductClassRule;
+use Plugin\FlashSale\Entity\Rule\CartRule;
 use Plugin\FlashSale\Service\Rule\RuleFactory;
 use Plugin\FlashSale\Service\Promotion\PromotionFactory;
 use Plugin\FlashSale\Service\Condition\ConditionFactory;
+use Plugin\FlashSale\Service\Rule\RuleInterface;
+use Plugin\FlashSale\Entity\DiscountInterface;
+use Plugin\FlashSale\Entity\Discount;
+
 
 /**
  * FlashSale
@@ -126,10 +135,17 @@ class FlashSale
     }
 
     /**
+     * @param array $criteria
      * @return DoctrineCollection
      */
-    public function getRules(): DoctrineCollection
+    public function getRules(array $criteria = []): DoctrineCollection
     {
+        if (isset($criteria['type'])) {
+            return $this->Rules->filter(function ($Rule) use ($criteria) {
+                return $Rule::TYPE === $criteria['type'];
+            });
+        }
+
         return $this->Rules;
     }
 
@@ -389,5 +405,32 @@ class FlashSale
                 }
             }
         }
+    }
+
+    /**
+     * Get discount items of flashsale
+     *
+     * @param $object
+     * @return DiscountInterface
+     */
+    public function getDiscount($object)
+    {
+        $discount = new Discount();
+        $Rules = [];
+
+        /** @var $Rules RuleInterface[] */
+        if ($object instanceof ProductClass) {
+            $Rules = array_reverse($this->getRules(['type' => ProductClassRule::TYPE])->toArray());
+        } elseif ($object instanceof Cart || $object instanceof Order) {
+            $Rules = array_reverse($this->getRules(['type' => CartRule::TYPE])->toArray());
+        }
+
+        foreach ($Rules as $Rule) {
+            $discount = $Rule->getDiscount($object);
+            if ($discount->getValue()) {
+                return $discount;
+            }
+        }
+        return $discount;
     }
 }

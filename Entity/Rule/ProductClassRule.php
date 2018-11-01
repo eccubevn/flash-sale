@@ -17,6 +17,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\QueryBuilder;
 use Eccube\Entity\ProductClass;
 use Eccube\Entity\OrderItem;
+use Eccube\Entity\CartItem;
 use Eccube\Entity\Order;
 use Plugin\FlashSale\Entity\Rule;
 use Plugin\FlashSale\Entity\Condition\ProductClassIdCondition;
@@ -26,6 +27,8 @@ use Plugin\FlashSale\Entity\Promotion\ProductClassPriceAmountPromotion;
 use Plugin\FlashSale\Service\Operator\OperatorInterface;
 use Plugin\FlashSale\Service\Operator as Operator;
 use Plugin\FlashSale\Service\Metadata\DiscriminatorManager;
+use Plugin\FlashSale\Entity\DiscountInterface;
+use Plugin\FlashSale\Entity\Discount;
 
 /**
  * @ORM\Entity
@@ -146,90 +149,41 @@ class ProductClassRule extends Rule
      * {@inheritdoc}
      *
      * @param $object
-     *
-     * @return \Eccube\Entity\ItemInterface[]
+     * @return DiscountInterface
      */
-    public function getDiscountItems($object): array
+    public function getDiscount($object): DiscountInterface
     {
-        if ($object instanceof ProductClass) {
-            return $this->getDiscountItemsFromProductClass($object);
-        } elseif ($object instanceof OrderItem) {
-            return $this->getDiscountItemsFromOrderItem($object);
-        } elseif ($object instanceof Order) {
-            return $this->getDiscountItemsFromOrder($object);
+        if (!$object instanceof ProductClass) {
+            $discount = new Discount();
+            $discount->setRuleId($this->getId());
+            return $discount;
         }
 
-        return [];
+        return $this->getDiscountFromProductClass($object);;
     }
 
     /**
      * Get discount items of productClass
      *
      * @param ProductClass $ProductClass
-     *
-     * @return OrderItem[]
+     * @return DiscountInterface
      */
-    protected function getDiscountItemsFromProductClass(ProductClass $ProductClass)
+    protected function getDiscountFromProductClass(ProductClass $ProductClass)
     {
+        $discount = new Discount();
+        $discount->setRuleId($this->getId());
         if (!$this->match($ProductClass)) {
-            return [];
+            return $discount;
         }
 
         if (isset($this->cached[__METHOD__.$ProductClass->getId()])) {
             return $this->cached[__METHOD__.$ProductClass->getId()];
         }
 
-        $this->cached[__METHOD__.$ProductClass->getId()] = $this->getPromotion()->getDiscountItems($ProductClass);
+        $discount = $this->getPromotion()->getDiscount($ProductClass);
+        $discount->setRuleId($this->getId());
+        $this->cached[__METHOD__ . $ProductClass->getId()] = $discount;
 
         return $this->cached[__METHOD__.$ProductClass->getId()];
-    }
-
-    /**
-     * Get discount items from order item
-     *
-     * @param OrderItem $OrderItem
-     *
-     * @return OrderItem[]
-     */
-    protected function getDiscountItemsFromOrderItem(OrderItem $OrderItem)
-    {
-        if (!$OrderItem->isProduct()) {
-            return [];
-        }
-
-        if (isset($this->cached[__METHOD__.$OrderItem->getId()])) {
-            return $this->cached[__METHOD__.$OrderItem->getId()];
-        }
-
-        $result = $this->getDiscountItemsFromProductClass($OrderItem->getProductClass());
-        /** @var OrderItem $DiscountItem */
-        foreach ($result as $DiscountItem) {
-            $DiscountItem->setQuantity($OrderItem->getQuantity());
-        }
-        $this->cached[__METHOD__.$OrderItem->getId()] = $result;
-
-        return $this->cached[__METHOD__.$OrderItem->getId()];
-    }
-
-    /**
-     * Get discount items from order
-     *
-     * @param Order $Order
-     *
-     * @return OrderItem[]
-     */
-    protected function getDiscountItemsFromOrder(Order $Order)
-    {
-        if (isset($this->cached[__METHOD__.$Order->getId()])) {
-            return $this->cached[__METHOD__.$Order->getId()];
-        }
-
-        $result = [];
-        foreach ($Order->getItems() as $OrderItem) {
-            $result = array_merge($result, $this->getDiscountItemsFromOrderItem($OrderItem));
-        }
-        $this->cached[__METHOD__.$Order->getId()] = $result;
-
-        return $this->cached[__METHOD__.$Order->getId()];
     }
 }

@@ -11,7 +11,7 @@ services:
         lazy: true
         public: true
         autowire: true
-    Plugin\FlashSale\Service\PurchaseFlow\Processor\FlashSaleShoppingProcessor:
+    Plugin\FlashSale\Service\PurchaseFlow\Processor\FSShoppingProcessor:
         lazy: true
         public: true
         autowire: true

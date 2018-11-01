@@ -16,6 +16,7 @@ namespace Plugin\FlashSale\Service\Rule;
 use Doctrine\ORM\QueryBuilder;
 use Plugin\FlashSale\Service\Metadata\DiscriminatorInterface;
 use Plugin\FlashSale\Service\Operator\OperatorInterface;
+use Plugin\FlashSale\Entity\DiscountInterface;
 
 interface RuleInterface
 {
@@ -61,9 +62,9 @@ interface RuleInterface
      *
      * @param $object
      *
-     * @return \Eccube\Entity\ItemInterface[]
+     * @return DiscountInterface
      */
-    public function getDiscountItems($object): array;
+    public function getDiscount($object): DiscountInterface;
 
     /**
      * create list

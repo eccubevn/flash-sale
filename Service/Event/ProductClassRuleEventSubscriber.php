@@ -17,18 +17,18 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Eccube\Event\TemplateEvent;
 use Eccube\Entity\Product;
 use Eccube\Entity\ProductClass;
+use Eccube\Entity\Cart;
+use Eccube\Entity\Order;
+use Eccube\Entity\OrderItem;
+use Eccube\Entity\CartItem;
 use Eccube\Common\EccubeConfig;
+use Eccube\Twig\Extension\CartServiceExtension;
 use Plugin\FlashSale\Repository\FlashSaleRepository;
 use Plugin\FlashSale\Entity\FlashSale;
 use Plugin\FlashSale\Service\Rule\RuleInterface;
 
 class ProductClassRuleEventSubscriber implements EventSubscriberInterface
 {
-    /**
-     * @var FlashSaleRepository
-     */
-    protected $flashSaleRepository;
-
     /**
      * @var EccubeConfig
      */
@@ -42,15 +42,12 @@ class ProductClassRuleEventSubscriber implements EventSubscriberInterface
     /**
      * ProductClassRuleEventSubscriber constructor.
      *
-     * @param FlashSaleRepository $flashSaleRepository
      * @param EccubeConfig $eccubeConfig
      */
     public function __construct(
-        FlashSaleRepository $flashSaleRepository,
         EccubeConfig $eccubeConfig
     ) {
         $this->eccubeConfig = $eccubeConfig;
-        $this->flashSaleRepository = $flashSaleRepository;
         $this->formatter = new \NumberFormatter($this->eccubeConfig['locale'], \NumberFormatter::CURRENCY);
     }
 
@@ -63,10 +60,7 @@ class ProductClassRuleEventSubscriber implements EventSubscriberInterface
     {
         return [
             'Product/detail.twig' => 'onTemplateProductDetail',
-            'Product/list.twig' => 'onTemplateProductList',
-            'Cart/index.twig' => 'onTemplateCartIndex',
-            'Shopping/index.twig' => 'onTemplateShoppingIndex',
-            'Shopping/confirm.twig' => 'onTemplateShoppingConfirm',
+            'Product/list.twig' => 'onTemplateProductList'
         ];
     }
 
@@ -77,26 +71,21 @@ class ProductClassRuleEventSubscriber implements EventSubscriberInterface
      */
     public function onTemplateProductDetail(TemplateEvent $event)
     {
-        $FlashSale = $this->flashSaleRepository->getAvailableFlashSale();
-        if (!$event->hasParameter('Product') || !$FlashSale instanceof FlashSale) {
+        if (!$event->hasParameter('Product')) {
             return;
         }
 
         $json = [];
 
-        /** @var RuleInterface $Rule */
-        foreach ($FlashSale->getRules() as $Rule) {
-            /** @var ProductClass $ProductClass */
-            foreach ($event->getParameter('Product')->getProductClasses() as $ProductClass) {
-                if ($Rule->match($ProductClass)) {
-                    $discountItems = $Rule->getDiscountItems($ProductClass);
-                    $discountItem = current($discountItems);
-                    $discountPrice = $ProductClass->getPrice02IncTax() + $discountItem->getPrice();
-                    $discountPercent = 100 - floor($discountPrice * 100 / $ProductClass->getPrice02IncTax());
-                    $json[$ProductClass->getId()] = [
-                        'message' => '<p class="ec-color-red"><span>'.$this->formatter->formatCurrency($discountPrice, $this->eccubeConfig['currency']).'</span> (-'.$discountPercent.'%)</p>',
-                    ];
-                }
+        /** @var ProductClass $ProductClass */
+        foreach ($event->getParameter('Product')->getProductClasses() as $ProductClass) {
+            $discountValue = $ProductClass->getFlashSaleDiscount();
+            if ($discountValue) {
+                $discountPrice = $ProductClass->getFlashSaleDiscountPrice();
+                $discountPercent = $ProductClass->getFlashSaleDiscountPercent();
+                $json[$ProductClass->getId()] = [
+                    'message' => '<p class="ec-color-red"><span>'.$this->formatter->formatCurrency($discountPrice, $this->eccubeConfig['currency']).'</span> (-'.$discountPercent.'%)</p>',
+                ];
             }
         }
 
@@ -115,28 +104,23 @@ class ProductClassRuleEventSubscriber implements EventSubscriberInterface
      */
     public function onTemplateProductList(TemplateEvent $event)
     {
-        $FlashSale = $this->flashSaleRepository->getAvailableFlashSale();
-        if (!$event->hasParameter('pagination') || !$FlashSale instanceof FlashSale) {
+        if (!$event->hasParameter('pagination')) {
             return;
         }
 
         $json = [];
 
-        /** @var RuleInterface $Rule */
-        foreach ($FlashSale->getRules() as $Rule) {
-            /** @var Product $Product */
-            foreach ($event->getParameter('pagination') as $Product) {
-                /** @var ProductClass $ProductClass */
-                foreach ($Product->getProductClasses() as $ProductClass) {
-                    if ($Rule->match($ProductClass)) {
-                        $discountItems = $Rule->getDiscountItems($ProductClass);
-                        $discountItem = current($discountItems);
-                        $discountPrice = $ProductClass->getPrice02IncTax() + $discountItem->getPrice();
-                        $discountPercent = 100 - floor($discountPrice * 100 / $ProductClass->getPrice02IncTax());
-                        $json[$ProductClass->getId()] = [
-                            'message' => '<p class="ec-color-red"><span>'.$this->formatter->formatCurrency($discountPrice, $this->eccubeConfig['currency']).'</span> (-'.$discountPercent.'%)</p>',
-                        ];
-                    }
+        /** @var Product $Product */
+        foreach ($event->getParameter('pagination') as $Product) {
+            /** @var ProductClass $ProductClass */
+            foreach ($Product->getProductClasses() as $ProductClass) {
+                $discountValue = $ProductClass->getFlashSaleDiscount();
+                if ($discountValue) {
+                    $discountPrice = $ProductClass->getFlashSaleDiscountPrice();
+                    $discountPercent = $ProductClass->getFlashSaleDiscountPercent();
+                    $json[$ProductClass->getId()] = [
+                        'message' => '<p class="ec-color-red"><span>'.$this->formatter->formatCurrency($discountPrice, $this->eccubeConfig['currency']).'</span> (-'.$discountPercent.'%)</p>',
+                    ];
                 }
             }
         }
@@ -147,47 +131,5 @@ class ProductClassRuleEventSubscriber implements EventSubscriberInterface
 
         $event->setParameter('ProductFlashSale', json_encode($json));
         $event->addSnippet('@FlashSale/default/list.twig');
-    }
-
-    /**
-     * Display price of flashsale on cart index template
-     *
-     * @param TemplateEvent $event
-     */
-    public function onTemplateCartIndex(TemplateEvent $event)
-    {
-        $source = $event->getSource();
-
-        $source = str_replace('CartItem.price|price', 'flashSalePrice(CartItem, CartItem.price)|raw', $source);
-
-        $event->setSource($source);
-    }
-
-    /**
-     * Display price of flashsale on shopping index template
-     *
-     * @param TemplateEvent $event
-     */
-    public function onTemplateShoppingIndex(TemplateEvent $event)
-    {
-        $source = $event->getSource();
-
-        $source = str_replace('orderItem.priceIncTax|price', 'flashSalePrice(orderItem,orderItem.priceIncTax)|raw', $source);
-
-        $event->setSource($source);
-    }
-
-    /**
-     * Display price of flashsale on shopping confirm template
-     *
-     * @param TemplateEvent $event
-     */
-    public function onTemplateShoppingConfirm(TemplateEvent $event)
-    {
-        $source = $event->getSource();
-
-        $source = str_replace('orderItem.priceIncTax|price', 'flashSalePrice(orderItem,orderItem.priceIncTax)|raw', $source);
-
-        $event->setSource($source);
     }
 }
