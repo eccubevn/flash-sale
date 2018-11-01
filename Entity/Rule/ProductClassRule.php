@@ -81,11 +81,7 @@ class ProductClassRule extends Rule
             return $qb;
         }
 
-        $qb->join('p.ProductClasses', 'pc')
-            ->groupBy('p')
-            ->where('p.Status = :status')
-            ->setParameter('status', ProductStatus::DISPLAY_SHOW)
-            ->andWhere('pc.visible = true');
+        $qb->join('p.ProductClasses', 'pc');
 
         // build with each condition
         foreach ($this->getConditions() as $condition) {
@@ -93,6 +89,11 @@ class ProductClassRule extends Rule
             $operatorCondition = $this->getOperatorFactory()->createByType($operatorName);
             $qb = $condition->createQueryBuilder($qb, $operatorRule, $operatorCondition);
         }
+
+        $qb->groupBy('p')
+        ->andWhere('p.Status = :status')
+        ->setParameter('status', ProductStatus::DISPLAY_SHOW)
+        ->andWhere('pc.visible = true');
 
         return $qb;
     }
