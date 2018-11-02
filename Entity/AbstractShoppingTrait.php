@@ -58,13 +58,13 @@ trait AbstractShoppingTrait
             $totalDiscount += $item->getFlashSaleTotalDiscount();
         }
 
-        $sum = array_sum($this->flashSaleDiscount);
+        $sum = array_sum($this->flashSaleDiscount) + $totalDiscount;
 
-        if ($sum > $totalDiscount) {
-            return $totalDiscount;
+        if ($sum > $this->getTotal()) {
+            return $this->getTotal();
         }
 
-        return $sum + $totalDiscount;
+        return $sum;
     }
 
     /**
