@@ -28,11 +28,17 @@ class OperatorFactory
             case AllOperator::TYPE:
                 return new AllOperator();
 
-            case EqualOperator::TYPE:
-                return new EqualOperator();
+            case OrOperator::TYPE:
+                return new OrOperator();
 
             case InOperator::TYPE:
                 return new InOperator();
+
+            case NotInOperator::TYPE:
+                return new NotInOperator();
+
+            case EqualOperator::TYPE:
+                return new EqualOperator();
 
             case NotEqualOperator::TYPE:
                 return new NotEqualOperator();

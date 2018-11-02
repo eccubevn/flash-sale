@@ -98,8 +98,8 @@ class ProductCategoryIdCondition extends Condition
 
         // rule check
         switch ($operatorRule->getType()) {
-            case Operator\InOperator::TYPE:
-                $this->createInRule($queryBuilder, $operatorCondition);
+            case Operator\OrOperator::TYPE:
+                $this->createOrRule($queryBuilder, $operatorCondition);
                 break;
 
             case Operator\AllOperator::TYPE:
@@ -119,7 +119,7 @@ class ProductCategoryIdCondition extends Condition
     {
         return [
             Operator\InOperator::TYPE,
-            Operator\NotEqualOperator::TYPE,
+            Operator\NotInOperator::TYPE,
         ];
     }
 
@@ -134,7 +134,7 @@ class ProductCategoryIdCondition extends Condition
                 $queryBuilder->andWhere($queryBuilder->expr()->in('pct.category_id', $this->getValue()));
                 break;
 
-            case Operator\NotEqualOperator::TYPE:
+            case Operator\NotInOperator::TYPE:
                 // get product in category
                 $productRepo = $this->getEntityManager()->getRepository(Product::class);
                 $qb2 = $productRepo->createQueryBuilder('p2');
@@ -150,14 +150,14 @@ class ProductCategoryIdCondition extends Condition
      * @param QueryBuilder $queryBuilder
      * @param OperatorInterface $operatorCondition
      */
-    private function createInRule(QueryBuilder $queryBuilder, OperatorInterface $operatorCondition): void
+    private function createOrRule(QueryBuilder $queryBuilder, OperatorInterface $operatorCondition): void
     {
         switch ($operatorCondition->getType()) {
             case Operator\InOperator::TYPE:
                 $queryBuilder->orWhere($queryBuilder->expr()->in('pct.category_id', $this->getValue()));
                 break;
 
-            case Operator\NotEqualOperator::TYPE:
+            case Operator\NotInOperator::TYPE:
                 // get product in category
                 $productRepo = $this->getEntityManager()->getRepository(Product::class);
                 $qb2 = $productRepo->createQueryBuilder('p2');

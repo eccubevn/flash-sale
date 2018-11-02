@@ -40,7 +40,7 @@ class EqualOperator implements OperatorInterface
      */
     public function getName(): string
     {
-        return 'is equal to';
+        return trans('flash_sale.admin.form.rule.operator.is_equal_to');
     }
 
     /**
