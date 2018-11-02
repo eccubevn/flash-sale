@@ -117,24 +117,24 @@ class FlashSaleType extends AbstractType
             $form = $event->getForm();
             $rules = json_decode($form->get('rules')->getData(), true);
             if (empty($rules)) {
-                $form->get('rules')->addError(new FormError('Rule must be required'));
+                $form->get('rules')->addError(new FormError('flash_sale.form.rule.require'));
 
                 return;
             }
             foreach ($rules as $rule) {
                 if (!isset($rule['promotion']['value']) || $rule['promotion']['value'] == '') {
-                    $form->get('rules')->addError(new FormError('Promotion must be required'));
+                    $form->get('rules')->addError(new FormError('flash_sale.form.promotion.require'));
 
                     return;
                 }
                 if (!isset($rule['conditions'])) {
-                    $form->get('rules')->addError(new FormError('Condition must be required'));
+                    $form->get('rules')->addError(new FormError('flash_sale.form.condition.require'));
 
                     return;
                 }
                 foreach ($rule['conditions'] as $condition) {
                     if (!isset($condition['value']) || $condition['value'] == '') {
-                        $form->get('rules')->addError(new FormError('Condition must be required'));
+                        $form->get('rules')->addError(new FormError('flash_sale.form.condition.require'));
 
                         return;
                     }
@@ -147,11 +147,10 @@ class FlashSaleType extends AbstractType
             $FlashSale = $event->getData();
             if ($FlashSale->getFromTime() >= $FlashSale->getToTime()) {
                 $form = $event->getForm();
-                $form['from_time']->addError(new FormError('Start time should be earlier than end time'));
+                $form['from_time']->addError(new FormError('flash_sale.form.time.from_to'));
             }
         });
 
-        // TODO: validate for a period of time
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
             /** @var FlashSale $FlashSale */
             $FlashSale = $event->getData();
@@ -163,11 +162,11 @@ class FlashSaleType extends AbstractType
             $qb = $this->flashSaleRepository->createQueryBuilder('fl');
             $qb
                 ->select('count(fl.id)')
-                ->where('(:from_time >= fl.from_time AND :from_time < fl.to_time) OR (:to_time > fl.to_time AND :to_time <= fl.to_time)')
+                ->where('(:from_time >= fl.from_time AND :from_time < fl.to_time) OR (:to_time > fl.to_time AND :to_time <= fl.to_time) OR (:from_time <= fl.from_time AND :to_time >= fl.to_time)')
                 ->setParameters(['from_time' => $FlashSale->getFromTime(), 'to_time' => $FlashSale->getToTime()])
                 ->andWhere('fl.status = :status')->setParameter('status', FlashSale::STATUS_ACTIVATED);
 
-            if ($FlashSale->getId()) {
+            if ($FlashSale->getId() && $FlashSale->getStatus() == FlashSale::STATUS_ACTIVATED) {
                 $qb
                     ->andWhere('fl.id <> :id')
                     ->setParameter('id', $FlashSale->getId());
@@ -177,7 +176,7 @@ class FlashSaleType extends AbstractType
 
             if ($count > 0) {
                 $form = $event->getForm();
-                $form['from_time']->addError(new FormError('There was one event at this time'));
+                $form['from_time']->addError(new FormError('flash_sale.form.multi'));
             }
         });
     }

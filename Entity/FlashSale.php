@@ -128,6 +128,10 @@ class FlashSale
     public function __construct()
     {
         $this->Rules = new ArrayCollection();
+
+        // set default for date
+        $this->from_time = new \DateTime();
+        $this->to_time = (new \DateTime())->modify('+1 day');
     }
 
     /**

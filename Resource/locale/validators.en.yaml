@@ -1,0 +1,5 @@
+flash_sale.form.rule.require: 'Rule must be required.'
+flash_sale.form.promotion.require: 'Promotion must be required.'
+flash_sale.form.condition.require: 'Condition must be required.'
+flash_sale.form.time.from_to: 'Start time should be earlier than end time.'
+flash_sale.form.multi: 'There was one event at this time.'

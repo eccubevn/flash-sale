@@ -128,6 +128,10 @@ class FlashSaleService
      * @return mixed
      */
     public function getCategoryName($categoryIds){
+        if (!$categoryIds) {
+            return [];
+        }
+
         $qb = $this->entityManager->createQueryBuilder();
         $qb->select('c.id, c.name')
             ->from(Category::class, 'c')
@@ -141,13 +145,17 @@ class FlashSaleService
      * @return mixed
      */
     public function getProductClassName($productClassIds){
+        if (!$productClassIds) {
+            return [];
+        }
+
         /** @var ProductClassRepository $ProductClass */
         $ProductClass = $this->entityManager->getRepository(ProductClass::class);
         $qb = $ProductClass->createQueryBuilder('pc');
-        $qb->select("pc.id as id, p.name as name, CONCAT(pc1.name, ' - ',pc2.name) AS class_name")
+        $qb->select("pc.id as id, p.name as name, pc1.name AS class_name1, pc2.name AS class_name2")
             ->innerJoin('pc.Product', 'p')
-            ->innerJoin('pc.ClassCategory1', 'pc1')
-            ->innerJoin('pc.ClassCategory2', 'pc2')
+            ->leftJoin('pc.ClassCategory1', 'pc1')
+            ->leftJoin('pc.ClassCategory2', 'pc2')
             ->where($qb->expr()->in('pc.id', ':ids'))
             ->setParameter('ids', $productClassIds);
         return $qb->getQuery()->getResult();

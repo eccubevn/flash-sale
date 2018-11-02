@@ -117,8 +117,7 @@
                 $.each(dataValueArr, function (dKey, dValue) {
                     $.each(conditionData[data.type], function (cKey, cData) {
                         if (dValue == cData.id) {
-                            var className = (cData.class_name != undefined) ? ' (' + cData.class_name + ')' : '';
-                            nameHtml += '<li data-id="' + cData.id + '"><a href="#"><i class="fas fa-times"></i></a> ' + cData.name + className + '</li>';
+                            nameHtml += '<li data-id="' + cData.id + '"><a href="#"><i class="fas fa-times"></i></a> ' + cData.name + '</li>';
                         }
                     });
                 });

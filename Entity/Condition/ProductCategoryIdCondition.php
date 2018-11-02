@@ -92,7 +92,9 @@ class ProductCategoryIdCondition extends Condition
             return $queryBuilder;
         }
 
-        $queryBuilder->join('p.ProductCategories', 'pct');
+        if (!in_array('pct', $queryBuilder->getAllAliases())) {
+            $queryBuilder->join('p.ProductCategories', 'pct');
+        }
 
         // rule check
         switch ($operatorRule->getType()) {
