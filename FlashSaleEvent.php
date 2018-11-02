@@ -82,7 +82,7 @@ class FlashSaleEvent implements EventSubscriberInterface
     {
         $source = $event->getSource();
         $target = '{{ orderItem.price_inc_tax|price }}';
-        $change = "{% if orderItem.fs_price %}<del>{{orderItem.price_inc_tax|price}}</del><span class='ec-color-red'>{{orderItem.fs_price|price}}</span>{% else %}{$target}{% endif %}";
+        $change = "{% if orderItem.fs_price is defined and orderItem.fs_price is not null %}<del>{{orderItem.price_inc_tax|price}}</del><span class='ec-color-red'>{{orderItem.fs_price|price}}</span>{% else %}{$target}{% endif %}";
         $source = str_replace($target, $change, $source);
         $event->setSource($source);
     }
@@ -94,7 +94,7 @@ class FlashSaleEvent implements EventSubscriberInterface
     {
         $source = $event->getSource();
         $target = '{{ OrderItem.price_inc_tax|price }}';
-        $change = "{% if OrderItem.fs_price %}<del>{{OrderItem.price_inc_tax|price}}</del><span class='ec-color-red'>{{OrderItem.fs_price|price}}</span>{% else %}{$target}{% endif %}";
+        $change = "{% if OrderItem.fs_price is defined and OrderItem.fs_price is not null %}<del>{{OrderItem.price_inc_tax|price}}</del><span class='ec-color-red'>{{OrderItem.fs_price|price}}</span>{% else %}{$target}{% endif %}";
         $source = str_replace($target, $change, $source);
 
         $target = 'Order.MergedProductOrderItems';
@@ -137,7 +137,7 @@ class FlashSaleEvent implements EventSubscriberInterface
 
         $insert = <<<EOT
         {% if fs_data is defined and fs_data[Product.id] is defined %}
-<p id="discount" class="ec-color-red ec-font-size-5">
+<p id="discount" class="ec-color-red ec-font-size-4">
     {{ 'flash_sale.front.sale_up_to'|trans({'%percent%' : fs_data[Product.id] }) }}
 </p>
 {%endif%}
@@ -154,12 +154,7 @@ EOT;
             $tmp = [];
             /** @var ProductClass $ProductClass */
             foreach ($Product->getProductClasses() as $ProductClass) {
-                $discount = $FlashSale->getDiscount($ProductClass);
-                if ($discount->getValue()) {
-                    $discountPrice = $ProductClass->getPrice02IncTax() - $discount->getValue();
-                    $discountPercent = 100 - floor($discountPrice * 100 / $ProductClass->getPrice02IncTax());
-                    $tmp[$ProductClass->getId()] = $discountPercent;
-                }
+                $tmp[$ProductClass->getId()] = $ProductClass->getFlashSaleDiscountPercent();
             }
             if (count($tmp)) {
                 $data[$Product->getId()] = max($tmp);

@@ -18,10 +18,7 @@ use Eccube\Entity\OrderItem;
  */
 trait FSOrderTrait
 {
-    /**
-     * @var array
-     */
-    protected $flashSaleDiscount = [];
+    use AbstractShoppingTrait;
 
     /**
      * @see Order::getMergedProductOrderItems()
@@ -53,61 +50,11 @@ trait FSOrderTrait
                     ->setPrice($ProductOrderItem->getPrice())
                     ->setTax($ProductOrderItem->getTax())
                     ->setQuantity($ProductOrderItem->getQuantity())
-                    ->setFsPrice(floatval($ProductOrderItem->getFsPrice())); //new
+                    ->setFsPrice((float) $ProductOrderItem->getFsPrice()); //new
                 $orderItemArray[$productClassId] = $OrderItem;
             }
         }
 
         return array_values($orderItemArray);
-    }
-
-    /**
-     * Clean discount from flash sale
-     *
-     * @return $this
-     */
-    public function cleanFlashSaleDiscount()
-    {
-        $this->flashSaleDiscount = [];
-        return $this;
-    }
-
-    /**
-     * Add an discount
-     *
-     * @param int $ruleId
-     * @param int $discountValue
-     * @return $this
-     */
-    public function addFlashSaleDiscount(int $ruleId, int $discountValue)
-    {
-        $this->flashSaleDiscount[$ruleId] = $discountValue;
-
-        return $this;
-    }
-
-    /**
-     * Get $flashSaleTotalDiscount
-     *
-     * @return string
-     */
-    public function getFlashSaleTotalDiscount()
-    {
-        $totalDiscount = 0;
-        foreach ($this->getItems() as $OrderItem) {
-            $totalDiscount += $OrderItem->getFlashSaleTotalDiscount();
-        }
-
-        return array_sum($this->flashSaleDiscount) + $totalDiscount;
-    }
-
-    /**
-     * Get total discount price
-     *
-     * @return int
-     */
-    public function getFlashSaleTotalDiscountPrice()
-    {
-        return (int) $this->getTotalPrice() - $this->getFlashSaleTotalDiscount();
     }
 }

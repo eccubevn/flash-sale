@@ -52,7 +52,7 @@ class FSShoppingProcessor implements DiscountProcessor
     {
         /** @var OrderItem $item */
         foreach ($itemHolder->getItems() as $item) {
-            if ($item->getProcessorName() == static::class) {
+            if ($item->isDiscount() && $item->getProcessorName() == static::class) {
                 $itemHolder->removeOrderItem($item);
                 $this->entityManager->remove($item);
             }

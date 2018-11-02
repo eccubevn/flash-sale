@@ -75,7 +75,7 @@ class DiscriminatorManager
                     ->setClass(Operator\NotInOperator::class)
                     ->setDescription('');
 
-                return $this->container[Operator\InOperator::TYPE];
+                return $this->container[Operator\NotInOperator::TYPE];
 
             case Operator\EqualOperator::TYPE:
                 $this->container[Operator\EqualOperator::TYPE] = (new Discriminator())

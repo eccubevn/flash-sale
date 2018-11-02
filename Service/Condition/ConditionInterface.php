@@ -14,6 +14,7 @@
 namespace Plugin\FlashSale\Service\Condition;
 
 use Doctrine\ORM\QueryBuilder;
+use Plugin\FlashSale\Exception\ConditionException;
 use Plugin\FlashSale\Service\Operator\OperatorInterface;
 
 interface ConditionInterface
@@ -42,6 +43,7 @@ interface ConditionInterface
      * @param OperatorInterface $operatorCondition this is operator of condition
      *
      * @return QueryBuilder
+     * @throws ConditionException
      */
     public function createQueryBuilder(QueryBuilder $queryBuilder, OperatorInterface $operatorRule, OperatorInterface $operatorCondition): QueryBuilder;
 }

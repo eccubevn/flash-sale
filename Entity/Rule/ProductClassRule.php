@@ -22,6 +22,7 @@ use Plugin\FlashSale\Entity\Condition\ProductClassIdCondition;
 use Plugin\FlashSale\Entity\Condition\ProductCategoryIdCondition;
 use Plugin\FlashSale\Entity\Promotion\ProductClassPricePercentPromotion;
 use Plugin\FlashSale\Entity\Promotion\ProductClassPriceAmountPromotion;
+use Plugin\FlashSale\Exception\RuleException;
 use Plugin\FlashSale\Service\Operator\OperatorInterface;
 use Plugin\FlashSale\Service\Operator as Operator;
 use Plugin\FlashSale\Service\Metadata\DiscriminatorManager;
@@ -73,12 +74,16 @@ class ProductClassRule extends Rule
     }
 
     /**
-     * {@inheritdoc} createQueryBuilder
+     * @param QueryBuilder $qb
+     * @param OperatorInterface $operatorRule
+     * @return QueryBuilder
+     * @throws RuleException
+     * @throws \Plugin\FlashSale\Exception\ConditionException
      */
     public function createQueryBuilder(QueryBuilder $qb, OperatorInterface $operatorRule): QueryBuilder
     {
         if (!in_array($operatorRule->getType(), $this->getOperatorTypes())) {
-            return $qb;
+            throw new RuleException(trans('flash_sale.rule.exception', ['%operator%' => $operatorRule->getType()]));
         }
 
         $qb->join('p.ProductClasses', 'pc');
@@ -161,7 +166,7 @@ class ProductClassRule extends Rule
             return $discount;
         }
 
-        return $this->getDiscountFromProductClass($object);;
+        return $this->getDiscountFromProductClass($object);
     }
 
     /**

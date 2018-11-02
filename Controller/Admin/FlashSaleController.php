@@ -121,6 +121,7 @@ class FlashSaleController extends AbstractController
             $FlashSale = new FlashSale();
             $FlashSale->setCreatedAt(new \DateTime());
             $FlashSale->setUpdatedAt(new \DateTime());
+            $FlashSale->setCreatedBy($this->getUser());
         }
 
         $builder = $this->formFactory

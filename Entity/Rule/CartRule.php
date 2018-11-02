@@ -6,6 +6,7 @@ use Doctrine\ORM\QueryBuilder;
 use Eccube\Entity\Cart;
 use Eccube\Entity\Order;
 use Plugin\FlashSale\Entity\Rule;
+use Plugin\FlashSale\Exception\RuleException;
 use Plugin\FlashSale\Service\Operator;
 use Plugin\FlashSale\Service\Metadata\DiscriminatorManager;
 use Plugin\FlashSale\Entity\Condition\CartTotalCondition;
@@ -79,7 +80,7 @@ class CartRule extends Rule
     public function createQueryBuilder(QueryBuilder $qb, Operator\OperatorInterface $operatorRule): QueryBuilder
     {
         if (!in_array($operatorRule->getType(), $this->getOperatorTypes())) {
-            return $qb;
+            throw new RuleException(trans('flash_sale.rule.exception', ['%operator%' => $operatorRule->getType()]));
         }
 
         return $qb;
