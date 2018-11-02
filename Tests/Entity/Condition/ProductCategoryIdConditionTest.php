@@ -34,6 +34,13 @@ class ProductCategoryIdConditionTest extends AbstractEntityTest
 
     public function setUp()
     {
+        $case1 = CartTotalConditionTest::dataProvider_testMatch()['true#1'][0];
+        $true1 = CartTotalConditionTest::$case1();
+        dump($true1);
+        die('2');
+//        $true1 = CartTotalConditionTest::$case1();
+//        dump($true1);
+//        die('2');
         $this->markTestSkipped();
         parent::setUp();
 

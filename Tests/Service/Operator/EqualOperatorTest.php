@@ -11,18 +11,19 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\FlashSale\Service\Operator;
+namespace Plugin\FlashSale\Tests\Service\Operator;
 
-use Plugin\FlashSale\Entity\Condition\ProductClassIdCondition;
-use Plugin\FlashSale\Entity\Rule;
-use Plugin\FlashSale\Tests\Service\AbstractServiceTestCase;
+use Eccube\Tests\EccubeTestCase;
+use Plugin\FlashSale\Service\Operator\EqualOperator;
 
-class EqualOperatorTest extends AbstractServiceTestCase
+class EqualOperatorTest extends EccubeTestCase
 {
+    use EqualOperatorDataProviderTrait;
+
     /**
-     * @var InOperator
+     * @var EqualOperator
      */
-    protected $operator;
+    protected $equalOperator;
 
     /**
      * {@inheritdoc}
@@ -31,26 +32,27 @@ class EqualOperatorTest extends AbstractServiceTestCase
     {
         parent::setUp();
 
-        $this->operator = new EqualOperator();
+        $this->equalOperator = new EqualOperator();
     }
 
-    public function testGetName()
+    /**
+     * @param $method
+     * @dataProvider dataProvider_testMatch
+     */
+    public function testMatch($method)
     {
-        self::assertEquals('is equal to', $this->operator->getName());
+        list($condition, $data, $expected) = $this->$method();
+        $actual = $this->equalOperator->match($condition, $data);
+        $this->assertEquals($expected, $actual);
     }
 
-    public function testGetType()
+    public function dataProvider_testMatch()
     {
-        self::assertEquals(EqualOperator::TYPE, $this->operator->getType());
-    }
-
-    public function testMatchScalarTypeTrue()
-    {
-        self::assertTrue($this->operator->match(5, 5));
-    }
-
-    public function testMatchScalarTypeFalse()
-    {
-        self::assertFalse($this->operator->match(1, 10));
+        return [
+            'true#1' => ['dataProvider_testMatch_True1'],
+            'true#2' => ['dataProvider_testMatch_True2'],
+            'false#1' => ['dataProvider_testMatch_False1'],
+            'false#2' => ['dataProvider_testMatch_False2'],
+        ];
     }
 }

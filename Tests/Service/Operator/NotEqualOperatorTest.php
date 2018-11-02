@@ -11,18 +11,18 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\FlashSale\Service\Operator;
+namespace Plugin\FlashSale\Tests\Service\Operator;
 
-use Plugin\FlashSale\Entity\Condition\ProductClassIdCondition;
-use Plugin\FlashSale\Entity\Rule;
-use Plugin\FlashSale\Tests\Service\AbstractServiceTestCase;
+use Eccube\Tests\EccubeTestCase;
+use Plugin\FlashSale\Service\Operator\NotEqualOperator;
 
-class NotEqualOperatorTest extends AbstractServiceTestCase
+class NotEqualOperatorTest extends EccubeTestCase
 {
+
     /**
-     * @var InOperator
+     * @var NotEqualOperator
      */
-    protected $operator;
+    protected $notEqualOperator;
 
     /**
      * {@inheritdoc}
@@ -31,26 +31,30 @@ class NotEqualOperatorTest extends AbstractServiceTestCase
     {
         parent::setUp();
 
-        $this->operator = new NotEqualOperator();
+        $this->notEqualOperator = new NotEqualOperator();
+
+        dump(NotEqualOperatorDataProviderTrait::dataProvider_testMatch_False1());
+        die('2');
     }
 
-    public function testGetName()
+    /**
+     * @param $method
+     * @dataProvider dataProvider_testMatch
+     */
+    public function testMatch($method)
     {
-        self::assertEquals('is not equal to', $this->operator->getName());
+        list($condition, $data, $expected) = $this->$method();
+        $actual = $this->equalOperator->match($condition, $data);
+        $this->assertEquals($expected, $actual);
     }
 
-    public function testGetType()
+    public function dataProvider_testMatch()
     {
-        self::assertEquals(NotEqualOperator::TYPE, $this->operator->getType());
-    }
-
-    public function testMatchScalarTypeTrue()
-    {
-        self::assertTrue($this->operator->match(5, 10));
-    }
-
-    public function testMatchScalarTypeFalse()
-    {
-        self::assertFalse($this->operator->match(10, 10));
+        return [
+            'true#1' => ['dataProvider_testMatch_True1'],
+            'true#2' => ['dataProvider_testMatch_True2'],
+            'false#1' => ['dataProvider_testMatch_False1'],
+            'false#2' => ['dataProvider_testMatch_False2'],
+        ];
     }
 }
