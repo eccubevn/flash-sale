@@ -13,7 +13,6 @@ flash_sale.admin.list.status: ステータス
 flash_sale.admin.list.status.draft: 非公開
 flash_sale.admin.list.status.activated: 公開
 
-
 flash_sale.admin.edit.setting.rule: ルール
 
 flash_sale.admin.form.title: FlashSale
@@ -52,3 +51,6 @@ flash_sale.admin.form.rule.condition.cart_total_condition: 合計金額
 
 flash_sale.front.sale_up_to: "最大%percent%％値引き"
 flash_sale.front.from_to: "から%from%まで%to%"
+
+flash_sale.rule.exception: "%operator%演算子はサポートされていません！"
+flash_sale.condition.exception: "%operator%演算子はサポートされていません！"

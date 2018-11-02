@@ -51,3 +51,6 @@ flash_sale.admin.form.rule.condition.cart_total_condition: Cart total condition
 
 flash_sale.front.sale_up_to: "Sale up to %percent% %"
 flash_sale.front.from_to: "From %from% to %to%"
+
+flash_sale.rule.exception: "%operator% operator is not supported!"
+flash_sale.condition.exception: "%operator% operator is not supported!"

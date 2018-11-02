@@ -52,7 +52,7 @@ class FlashSaleRepository extends AbstractRepository
     }
 
     /**
-     * @return bool|mixed
+     * @return FlashSale
      */
     public function getAvailableFlashSale()
     {

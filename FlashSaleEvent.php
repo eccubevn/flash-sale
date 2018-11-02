@@ -137,7 +137,7 @@ class FlashSaleEvent implements EventSubscriberInterface
 
         $insert = <<<EOT
         {% if fs_data is defined and fs_data[Product.id] is defined %}
-<p id="discount" class="ec-color-red ec-font-size-5">
+<p id="discount" class="ec-color-red ec-font-size-4">
     {{ 'flash_sale.front.sale_up_to'|trans({'%percent%' : fs_data[Product.id] }) }}
 </p>
 {%endif%}
