@@ -64,6 +64,7 @@ abstract class Rule extends AbstractEntity implements RuleInterface
     /**
      * @var ArrayCollection
      * @ORM\OneToMany(targetEntity=Condition::class, mappedBy="Rule", indexBy="id", cascade={"persist"})
+     * @ORM\OrderBy({"sort_no" = "ASC"})
      */
     protected $Conditions;
 
@@ -72,6 +73,13 @@ abstract class Rule extends AbstractEntity implements RuleInterface
      * @ORM\OneToOne(targetEntity=Promotion::class, mappedBy="Rule", cascade={"persist"})
      */
     protected $Promotion;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="sort_no", type="integer", nullable=true)
+     */
+    protected $sort_no;
 
     /**
      * @var DiscriminatorInterface
@@ -182,6 +190,22 @@ abstract class Rule extends AbstractEntity implements RuleInterface
     public function setPromotion(Promotion $Promotion): void
     {
         $this->Promotion = $Promotion;
+    }
+
+    /**
+     * @return int
+     */
+    public function getSortNo(): int
+    {
+        return $this->sort_no;
+    }
+
+    /**
+     * @param int $sort_no
+     */
+    public function setSortNo(int $sort_no)
+    {
+        $this->sort_no = $sort_no;
     }
 
     /**

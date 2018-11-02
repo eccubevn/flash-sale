@@ -119,6 +119,7 @@ class FlashSale
      * @var ArrayCollection Rule
      *
      * @ORM\OneToMany(targetEntity=Rule::class, mappedBy="FlashSale", indexBy="id", cascade={"persist","remove"})
+     * @ORM\OrderBy({"sort_no" = "ASC"})
      */
     private $Rules;
 
@@ -347,7 +348,7 @@ class FlashSale
      */
     public function updateFromArray($data)
     {
-        foreach ($data['rules'] as $rule) {
+        foreach ($data['rules'] as $key => $rule) {
             if (!empty($rule['id'])) {
                 $Rule = $this->getRules()->get($rule['id']);
                 if ($Rule::TYPE != $rule['type']) {
@@ -367,6 +368,7 @@ class FlashSale
             $Rule->modified = true;
             $Rule->setFlashSale($this);
             $Rule->setOperator($rule['operator']);
+            $Rule->setSortNo($key);
 
             if (!empty($rule['promotion'])) {
                 $Promotion = $Rule->getPromotion();
@@ -385,7 +387,7 @@ class FlashSale
                 if (!$Rule->getConditions()) {
                     $Rule->setConditions(new ArrayCollection());
                 }
-                foreach ($rule['conditions'] as $condition) {
+                foreach ($rule['conditions'] as $num => $condition) {
                     if (!empty($condition['id']) && $Rule->getConditions()->containsKey($condition['id'])) {
                         $Condition = $Rule->getConditions()->get($condition['id']);
                         if ($Condition::TYPE != $condition['type']) {
@@ -401,6 +403,7 @@ class FlashSale
                     $Condition->modified = true;
                     $Condition->setOperator($condition['operator']);
                     $Condition->setValue($condition['value']);
+                    $Condition->setSortNo($num);
                     $Condition->setRule($Rule);
                 }
             }
