@@ -13,25 +13,18 @@
 
 namespace Plugin\FlashSale\Tests\Entity\Condition;
 
-use Eccube\Entity\Cart;
-use Eccube\Entity\CartItem;
-use Eccube\Entity\Order;
-use Eccube\Entity\OrderItem;
-use Eccube\Entity\Product;
-use Eccube\Entity\ProductClass;
+use Eccube\Tests\EccubeTestCase;
 use Plugin\FlashSale\Entity\Condition\CartTotalCondition;
 use Plugin\FlashSale\Service\Operator\OperatorFactory;
-use Plugin\FlashSale\Tests\Entity\AbstractEntityTest;
 use Plugin\FlashSale\Service\Operator as Operator;
+use Plugin\FlashSale\Tests\DataProvider\Entity\Condition\CartTotalConditionDataProvider;
 
 /**
  * Class ProductClassIdConditionTest
  * @package Plugin\FlashSale\Tests\Entity\Condition
  */
-class CartTotalConditionTest extends AbstractEntityTest
+class CartTotalConditionTest extends EccubeTestCase
 {
-    use CartTotalConditionDataProviderTrait;
-
     /**
      * @var CartTotalCondition
      */
@@ -61,7 +54,7 @@ class CartTotalConditionTest extends AbstractEntityTest
      */
     public function testMatch($dataSet)
     {
-        list($conditionData, $data, $expected) = $this->$dataSet();
+        list($conditionData, $data, $expected) = $dataSet;
 
         $this->cartTotalCondition->setId($conditionData['id']);
         $this->cartTotalCondition->setValue($conditionData['value']);
@@ -73,13 +66,13 @@ class CartTotalConditionTest extends AbstractEntityTest
     public static function dataProvider_testMatch()
     {
         return [
-            'true#1' => ['dataProvider_testMatch0'],
-            'true#2' => ['dataProvider_testMatch1'],
-            'true#3' => ['dataProvider_testMatch2'],
-            'true#4' => ['dataProvider_testMatch3'],
-            'true#5' => ['dataProvider_testMatch4'],
-            'true#6' => ['dataProvider_testMatch5'],
-            'true#7' => ['dataProvider_testMatch6'],
+            [CartTotalConditionDataProvider::testMatch_False1()],
+            [CartTotalConditionDataProvider::testMatch_EqualOperator_True1()],
+            [CartTotalConditionDataProvider::testMatch_EqualOperator_False1()],
+            [CartTotalConditionDataProvider::testMatch_GreaterThanOperator_True1()],
+            [CartTotalConditionDataProvider::testMatch_GreaterThanOperator_False1()],
+            [CartTotalConditionDataProvider::testMatch_LessThanOperator_True1()],
+            [CartTotalConditionDataProvider::testMatch_LessThanOperator_False1()],
         ];
     }
 }

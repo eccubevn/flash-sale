@@ -15,6 +15,7 @@ namespace Plugin\FlashSale\Tests\Service\Operator;
 
 use Eccube\Tests\EccubeTestCase;
 use Plugin\FlashSale\Service\Operator\NotEqualOperator;
+use Plugin\FlashSale\Tests\DataProvider\Service\Operator\NotEqualOperatorDataProvider;
 
 class NotEqualOperatorTest extends EccubeTestCase
 {
@@ -32,29 +33,26 @@ class NotEqualOperatorTest extends EccubeTestCase
         parent::setUp();
 
         $this->notEqualOperator = new NotEqualOperator();
-
-        dump(NotEqualOperatorDataProviderTrait::dataProvider_testMatch_False1());
-        die('2');
     }
 
     /**
-     * @param $method
+     * @param $dataSet
      * @dataProvider dataProvider_testMatch
      */
-    public function testMatch($method)
+    public function testMatch($dataSet)
     {
-        list($condition, $data, $expected) = $this->$method();
-        $actual = $this->equalOperator->match($condition, $data);
+        list($condition, $data, $expected) = $dataSet;
+        $actual = $this->notEqualOperator->match($condition, $data);
         $this->assertEquals($expected, $actual);
     }
 
     public function dataProvider_testMatch()
     {
         return [
-            'true#1' => ['dataProvider_testMatch_True1'],
-            'true#2' => ['dataProvider_testMatch_True2'],
-            'false#1' => ['dataProvider_testMatch_False1'],
-            'false#2' => ['dataProvider_testMatch_False2'],
+            [NotEqualOperatorDataProvider::testMatch_True1()],
+            [NotEqualOperatorDataProvider::testMatch_True2()],
+            [NotEqualOperatorDataProvider::testMatch_False1()],
+            [NotEqualOperatorDataProvider::testMatch_False2()],
         ];
     }
 }

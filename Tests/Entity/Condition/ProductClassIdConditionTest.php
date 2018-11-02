@@ -13,60 +13,70 @@
 
 namespace Plugin\FlashSale\Tests\Entity\Condition;
 
-use Eccube\Entity\Product;
-use Eccube\Entity\ProductClass;
+use Eccube\Tests\EccubeTestCase;
+use Plugin\FlashSale\Service\Operator as Operator;
 use Plugin\FlashSale\Entity\Condition\ProductClassIdCondition;
-use Plugin\FlashSale\Service\Operator\InOperator;
 use Plugin\FlashSale\Service\Operator\OperatorFactory;
-use Plugin\FlashSale\Tests\Entity\AbstractEntityTest;
+use Plugin\FlashSale\Tests\DataProvider\Entity\Condition\ProductClassIdConditionDataProvider;
 
 /**
  * Class ProductClassIdConditionTest
  * @package Plugin\FlashSale\Tests\Entity\Condition
  */
-class ProductClassIdConditionTest extends AbstractEntityTest
+class ProductClassIdConditionTest extends EccubeTestCase
 {
-    /** @var Product */
-    protected $Product;
+    /**
+     * @var ProductClassIdCondition
+     */
+    protected $productClassIdCondition;
 
-    /** @var ProductClass */
-    protected $ProductClass1;
-
+    /**
+     * {@inheritdoc}
+     */
     public function setUp()
     {
-        $this->markTestSkipped();
         parent::setUp();
-
-        $this->Product = $this->createProduct('テスト商品', 3);
-        $this->ProductClass1 = $this->Product->getProductClasses()[0];
+        $this->productClassIdCondition = new ProductClassIdCondition();
+        $this->productClassIdCondition->setOperatorFactory($this->container->get(OperatorFactory::class));
     }
 
-    public function testMatch_Invalid()
+    public function testGetOperatorTypes()
     {
-        $productClassRule = new ProductClassIdCondition();
-        $data = $productClassRule->match(new \stdClass());
-        self::assertFalse($data);
+        $this->expected = [
+            Operator\InOperator::TYPE,
+            Operator\NotInOperator::TYPE,
+        ];
+        $this->actual = $this->productClassIdCondition->getOperatorTypes();
+        $this->verify();
     }
 
-    public function testMatch_InOperator_Valid()
+    /**
+     * @param $dataSet
+     * @dataProvider dataProvider_testMatch
+     */
+    public function testMatch($dataSet)
     {
-        $productClassRule = new ProductClassIdCondition();
-        $productClassRule->setOperator(InOperator::TYPE);
-        $productClassRule->setValue($this->ProductClass1->getId());
-        $productClassRule->setOperatorFactory(new OperatorFactory());
-        $data = $productClassRule->match($this->ProductClass1);
+        list($conditionData, $data, $expected) = $dataSet;
 
-        self::assertTrue($data);
+        $this->productClassIdCondition->setId($conditionData['id']);
+        $this->productClassIdCondition->setValue($conditionData['value']);
+        $this->productClassIdCondition->setOperator($conditionData['operator']);
+        $result = $this->productClassIdCondition->match($data);
+        $this->assertEquals($expected, $result);
     }
 
-    public function testMatch_InOperator_Invalid()
+    public static function dataProvider_testMatch()
     {
-        $productClassRule = new ProductClassIdCondition();
-        $productClassRule->setOperator(InOperator::TYPE);
-        $productClassRule->setValue(0);
-        $productClassRule->setOperatorFactory(new OperatorFactory());
-        $data = $productClassRule->match($this->ProductClass1);
-
-        self::assertFalse($data);
+        return [
+            [ProductClassIdConditionDataProvider::testMatch_False1()],
+            [ProductClassIdConditionDataProvider::testMatch_InOperator_True1()],
+            [ProductClassIdConditionDataProvider::testMatch_InOperator_True2()],
+            [ProductClassIdConditionDataProvider::testMatch_InOperator_False1()],
+            [ProductClassIdConditionDataProvider::testMatch_InOperator_False2()],
+            [ProductClassIdConditionDataProvider::testMatch_NotInOperator_True1()],
+            [ProductClassIdConditionDataProvider::testMatch_NotInOperator_True2()],
+            [ProductClassIdConditionDataProvider::testMatch_NotInOperator_False1()],
+            [ProductClassIdConditionDataProvider::testMatch_NotInOperator_False2()],
+        ];
     }
 }

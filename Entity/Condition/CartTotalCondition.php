@@ -26,7 +26,12 @@ class CartTotalCondition extends Condition implements ConditionInterface
     public function match($data)
     {
         if ($data instanceof Order) {
-            return $this->getOperatorFactory()->createByType($this->getOperator())->match($this->value, $data->getSubtotal());
+            $subtotal = $data->getSubtotal();
+            foreach ($data->getItems() as $OrderItem) {
+                $subtotal -= $OrderItem->getFlashSaleTotalDiscount();
+            }
+
+            return $this->getOperatorFactory()->createByType($this->getOperator())->match($this->value, $subtotal);
         }
 
         return false;

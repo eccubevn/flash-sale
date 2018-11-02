@@ -13,15 +13,18 @@
 
 namespace Plugin\FlashSale\Tests\Service\Operator;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Eccube\Tests\EccubeTestCase;
+use Plugin\FlashSale\Entity\Condition\ProductClassIdCondition;
+use Plugin\FlashSale\Tests\Service\AbstractServiceTestCase;
 use Plugin\FlashSale\Service\Operator as Operator;
 
-class AllOperatorTest extends EccubeTestCase
+class OrOperatorTest extends EccubeTestCase
 {
     /**
-     * @var Operator\AllOperator
+     * @var Operator\OrOperator
      */
-    protected $allOperator;
+    protected $orOperator;
 
     /**
      * {@inheritdoc}
@@ -31,25 +34,24 @@ class AllOperatorTest extends EccubeTestCase
         $this->markTestIncomplete();
         parent::setUp();
 
-        $this->allOperator = new Operator\AllOperator();
+        $this->orOperator = new Operator\OrOperator();
     }
 
 
     /**
      * @param $dataSet
-     * @dataProvider dataProvider_testMatch
      */
     public function testMatch($dataSet)
     {
         list($condition, $data, $expected) = $this->$dataSet();
-        $result = $this->allOperator->match($condition, $data);
+        $result = $this->orOperator->match($condition, $data);
         $this->assertEquals($expected, $result);
     }
 
     public function dataProvider_testMatch()
     {
         return [
-
+            'true#1' => []
         ];
     }
 }

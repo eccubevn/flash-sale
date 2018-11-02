@@ -13,11 +13,10 @@
 
 namespace Plugin\FlashSale\Tests\Entity\Promotion;
 
-use Eccube\Entity\Order;
-use Eccube\Entity\Cart;
 use Plugin\FlashSale\Entity\Discount;
 use Eccube\Tests\EccubeTestCase;
 use Plugin\FlashSale\Entity\Promotion\CartTotalAmountPromotion;
+use Plugin\FlashSale\Tests\DataProvider\Entity\Promotion\CartTotalAmountPromotionDataProvider;
 
 /**
  * AbstractEntity test cases.
@@ -42,13 +41,12 @@ class CartTotalAmountPromotionTest extends EccubeTestCase
     }
 
     /**
-     * @param $promotionData
-     * @param $object
-     * @param $expectedData
+     * @param $dataSet
      * @dataProvider dataProvider_testGetDiscount
      */
-    public function testGetDiscount($promotionData, $object, $expectedData)
+    public function testGetDiscount($dataSet)
     {
+        list($promotionData, $object, $expectedData) = $dataSet;
         $this->cartTotalAmountPromotion->setId($promotionData['id']);
         $this->cartTotalAmountPromotion->setValue($promotionData['value']);
 
@@ -62,39 +60,9 @@ class CartTotalAmountPromotionTest extends EccubeTestCase
     public function dataProvider_testGetDiscount()
     {
         return [
-            [
-                [
-                    'id' => 1,
-                    'value' => 100,
-                ],
-                new \stdClass(),
-                [
-                    'id' => 1,
-                    'value' => 0,
-                ],
-            ],
-            [
-                [
-                    'id' => 2,
-                    'value' => 200,
-                ],
-                new Cart(),
-                [
-                    'id' => 2,
-                    'value' => 200,
-                ],
-            ],
-            [
-                [
-                    'id' => 3,
-                    'value' => 300,
-                ],
-                new Order(),
-                [
-                    'id' => 3,
-                    'value' => 300,
-                ],
-            ]
+            [CartTotalAmountPromotionDataProvider::testGetDiscount_False1()],
+            [CartTotalAmountPromotionDataProvider::testGetDiscount_Cart_True1()],
+            [CartTotalAmountPromotionDataProvider::testGetDiscount_Order_True1()],
         ];
     }
 }

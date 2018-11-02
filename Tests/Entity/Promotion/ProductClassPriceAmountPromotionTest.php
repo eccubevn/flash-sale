@@ -18,6 +18,7 @@ use Eccube\Entity\ProductClass;
 use Eccube\Entity\Cart;
 use Plugin\FlashSale\Entity\Discount;
 use Plugin\FlashSale\Entity\Promotion\ProductClassPriceAmountPromotion;
+use Plugin\FlashSale\Tests\DataProvider\Entity\Promotion\ProductClassPriceAmountPromotionDataProvider;
 
 /**
  * AbstractEntity test cases.
@@ -42,13 +43,12 @@ class ProductClassPriceAmountPromotionTest extends EccubeTestCase
     }
 
     /**
-     * @param $promotionData
-     * @param $object
-     * @param $expectedData
+     * @param $dataSet
      * @dataProvider dataProvider_testGetDiscount
      */
-    public function testGetDiscount($promotionData, $object, $expectedData)
+    public function testGetDiscount($dataSet)
     {
+        list($promotionData, $object, $expectedData) = $dataSet;
         $this->productClassPriceAmountPromotion->setId($promotionData['id']);
         $this->productClassPriceAmountPromotion->setValue($promotionData['value']);
 
@@ -62,39 +62,9 @@ class ProductClassPriceAmountPromotionTest extends EccubeTestCase
     public function dataProvider_testGetDiscount()
     {
         return [
-            [
-                [
-                    'id' => 1,
-                    'value' => 100,
-                ],
-                new \stdClass(),
-                [
-                    'id' => 1,
-                    'value' => 0,
-                ],
-            ],
-            [
-                [
-                    'id' => 2,
-                    'value' => 200,
-                ],
-                new Cart(),
-                [
-                    'id' => 2,
-                    'value' => 0,
-                ],
-            ],
-            [
-                [
-                    'id' => 3,
-                    'value' => 300,
-                ],
-                new ProductClass(),
-                [
-                    'id' => 3,
-                    'value' => 300,
-                ],
-            ]
+            [ProductClassPriceAmountPromotionDataProvider::testGetDiscount_True1()],
+            [ProductClassPriceAmountPromotionDataProvider::testGetDiscount_False1()],
+            [ProductClassPriceAmountPromotionDataProvider::testGetDiscount_False2()],
         ];
     }
 }

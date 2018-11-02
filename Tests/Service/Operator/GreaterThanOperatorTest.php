@@ -15,11 +15,10 @@ namespace Plugin\FlashSale\Tests\Service\Operator;
 
 use Eccube\Tests\EccubeTestCase;
 use Plugin\FlashSale\Service\Operator\GreaterThanOperator;
+use Plugin\FlashSale\Tests\DataProvider\Service\Operator\GreaterThanOperatorDataProvider;
 
 class GreaterThanOperatorTest extends EccubeTestCase
 {
-    use GreaterThanOperatorDataProviderTrait;
-
     /**
      * @var GreaterThanOperator
      */
@@ -36,12 +35,12 @@ class GreaterThanOperatorTest extends EccubeTestCase
     }
 
     /**
-     * @param $method
+     * @param $dataSet
      * @dataProvider dataProvider_testMatch
      */
-    public function testMatch($method)
+    public function testMatch($dataSet)
     {
-        list($condition, $data, $expected) = $this->$method();
+        list($condition, $data, $expected) = $dataSet;
         $actual = $this->greaterThanOperator->match($condition, $data);
         $this->assertEquals($expected, $actual);
     }
@@ -49,10 +48,10 @@ class GreaterThanOperatorTest extends EccubeTestCase
     public function dataProvider_testMatch()
     {
         return [
-            'true#1' => ['dataProvider_testMatch_True1'],
-            'true#2' => ['dataProvider_testMatch_True2'],
-            'false#1' => ['dataProvider_testMatch_False1'],
-            'false#2' => ['dataProvider_testMatch_False2'],
+            [GreaterThanOperatorDataProvider::testMatch_True1()],
+            [GreaterThanOperatorDataProvider::testMatch_True2()],
+            [GreaterThanOperatorDataProvider::testMatch_False1()],
+            [GreaterThanOperatorDataProvider::testMatch_False2()],
         ];
     }
 }

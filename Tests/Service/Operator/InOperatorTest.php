@@ -15,11 +15,10 @@ namespace Plugin\FlashSale\Tests\Service\Operator;
 
 use Eccube\Tests\EccubeTestCase;
 use Plugin\FlashSale\Service\Operator\InOperator;
+use Plugin\FlashSale\Tests\DataProvider\Service\Operator\InOperatorDataProvider;
 
 class InOperatorTest extends EccubeTestCase
 {
-    use InOperatorDataProviderTrait;
-
     /**
      * @var InOperator
      */
@@ -36,12 +35,12 @@ class InOperatorTest extends EccubeTestCase
     }
 
     /**
-     * @param $method
+     * @param $dataSet
      * @dataProvider dataProvider_testMatch
      */
-    public function testMatch($method)
+    public function testMatch($dataSet)
     {
-        list($condition, $data, $expected) = $this->$method();
+        list($condition, $data, $expected) = $dataSet;
         $actual = $this->inOperator->match($condition, $data);
         $this->assertEquals($expected, $actual);
     }
@@ -49,10 +48,10 @@ class InOperatorTest extends EccubeTestCase
     public function dataProvider_testMatch()
     {
         return [
-            'true#1' => ['dataProvider_testMatch_True1'],
-            'true#2' => ['dataProvider_testMatch_True2'],
-            'false#1' => ['dataProvider_testMatch_False1'],
-            'false#2' => ['dataProvider_testMatch_False2'],
+            [InOperatorDataProvider::testMatch_True1()],
+            [InOperatorDataProvider::testMatch_True2()],
+            [InOperatorDataProvider::testMatch_False1()],
+            [InOperatorDataProvider::testMatch_False2()],
         ];
     }
 }

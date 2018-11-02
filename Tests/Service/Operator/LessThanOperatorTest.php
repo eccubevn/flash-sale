@@ -15,10 +15,10 @@ namespace Plugin\FlashSale\Tests\Service\Operator;
 
 use Eccube\Tests\EccubeTestCase;
 use Plugin\FlashSale\Service\Operator\LessThanOperator;
+use Plugin\FlashSale\Tests\DataProvider\Service\Operator\LessThanOperatorDataProvider;
 
 class LessThanOperatorTest extends EccubeTestCase
 {
-    use LessThanOperatorDataProviderTrait;
 
     /**
      * @var LessThanOperator
@@ -36,12 +36,12 @@ class LessThanOperatorTest extends EccubeTestCase
     }
 
     /**
-     * @param $method
+     * @param $dataSet
      * @dataProvider dataProvider_testMatch
      */
-    public function testMatch($method)
+    public function testMatch($dataSet)
     {
-        list($condition, $data, $expected) = $this->$method();
+        list($condition, $data, $expected) = $dataSet;
         $actual = $this->lessThanOperator->match($condition, $data);
         $this->assertEquals($expected, $actual);
     }
@@ -49,10 +49,10 @@ class LessThanOperatorTest extends EccubeTestCase
     public function dataProvider_testMatch()
     {
         return [
-            'true#1' => ['dataProvider_testMatch_True1'],
-            'true#2' => ['dataProvider_testMatch_True2'],
-            'false#1' => ['dataProvider_testMatch_False1'],
-            'false#2' => ['dataProvider_testMatch_False2'],
+            [LessThanOperatorDataProvider::testMatch_True1()],
+            [LessThanOperatorDataProvider::testMatch_True2()],
+            [LessThanOperatorDataProvider::testMatch_False1()],
+            [LessThanOperatorDataProvider::testMatch_False2()],
         ];
     }
 }

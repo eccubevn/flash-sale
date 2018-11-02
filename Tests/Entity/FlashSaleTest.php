@@ -25,11 +25,13 @@ class FlashSaleTest extends EccubeTestCase
 {
     public function setUp()
     {
+        $this->markTestIncomplete();
         parent::setUp();
     }
 
     public function testConstructor()
     {
+        $this->markTestIncomplete();
         $FlashSale = new FlashSale();
         $FlashSale->setStatus(FlashSale::STATUS_ACTIVATED);
 

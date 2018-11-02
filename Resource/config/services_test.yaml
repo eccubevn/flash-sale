@@ -1,4 +1,0 @@
-services:
-    Plugin\FlashSale\Service\FlashSaleService:
-        public: true
-        autowire: true

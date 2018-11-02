@@ -14,15 +14,15 @@
 namespace Plugin\FlashSale\Tests\Service\Operator;
 
 use Eccube\Tests\EccubeTestCase;
-use Plugin\FlashSale\Tests\DataProvider\Service\Operator\EqualOperatorDataProvider;
-use Plugin\FlashSale\Service\Operator\EqualOperator;
+use Plugin\FlashSale\Service\Operator\NotInOperator;
+use Plugin\FlashSale\Tests\DataProvider\Service\Operator\NotInOperatorDataProvider;
 
-class EqualOperatorTest extends EccubeTestCase
+class NotInOperatorTest extends EccubeTestCase
 {
     /**
-     * @var EqualOperator
+     * @var NotInOperator
      */
-    protected $equalOperator;
+    protected $notInOperator;
 
     /**
      * {@inheritdoc}
@@ -31,7 +31,7 @@ class EqualOperatorTest extends EccubeTestCase
     {
         parent::setUp();
 
-        $this->equalOperator = new EqualOperator();
+        $this->notInOperator = new NotInOperator();
     }
 
     /**
@@ -41,17 +41,17 @@ class EqualOperatorTest extends EccubeTestCase
     public function testMatch($dataSet)
     {
         list($condition, $data, $expected) = $dataSet;
-        $actual = $this->equalOperator->match($condition, $data);
+        $actual = $this->notInOperator->match($condition, $data);
         $this->assertEquals($expected, $actual);
     }
 
     public function dataProvider_testMatch()
     {
         return [
-            [EqualOperatorDataProvider::testMatch_True1()],
-            [EqualOperatorDataProvider::testMatch_True2()],
-            [EqualOperatorDataProvider::testMatch_False1()],
-            [EqualOperatorDataProvider::testMatch_False2()],
+            [NotInOperatorDataProvider::testMatch_True1()],
+            [NotInOperatorDataProvider::testMatch_True2()],
+            [NotInOperatorDataProvider::testMatch_False1()],
+            [NotInOperatorDataProvider::testMatch_False2()],
         ];
     }
 }
