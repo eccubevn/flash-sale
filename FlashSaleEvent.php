@@ -82,7 +82,7 @@ class FlashSaleEvent implements EventSubscriberInterface
     {
         $source = $event->getSource();
         $target = '{{ orderItem.price_inc_tax|price }}';
-        $change = "{% if orderItem.fs_price %}<del>{{orderItem.price_inc_tax|price}}</del><span class='ec-color-red'>{{orderItem.fs_price|price}}</span>{% else %}{$target}{% endif %}";
+        $change = "{% if orderItem.fs_price is defined and orderItem.fs_price is not null %}<del>{{orderItem.price_inc_tax|price}}</del><span class='ec-color-red'>{{orderItem.fs_price|price}}</span>{% else %}{$target}{% endif %}";
         $source = str_replace($target, $change, $source);
         $event->setSource($source);
     }
@@ -94,7 +94,7 @@ class FlashSaleEvent implements EventSubscriberInterface
     {
         $source = $event->getSource();
         $target = '{{ OrderItem.price_inc_tax|price }}';
-        $change = "{% if OrderItem.fs_price %}<del>{{OrderItem.price_inc_tax|price}}</del><span class='ec-color-red'>{{OrderItem.fs_price|price}}</span>{% else %}{$target}{% endif %}";
+        $change = "{% if OrderItem.fs_price is defined and OrderItem.fs_price is not null %}<del>{{OrderItem.price_inc_tax|price}}</del><span class='ec-color-red'>{{OrderItem.fs_price|price}}</span>{% else %}{$target}{% endif %}";
         $source = str_replace($target, $change, $source);
 
         $target = 'Order.MergedProductOrderItems';
