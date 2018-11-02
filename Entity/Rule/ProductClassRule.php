@@ -67,7 +67,7 @@ class ProductClassRule extends Rule
     public function getOperatorTypes(): array
     {
         return [
-            Operator\InOperator::TYPE,
+            Operator\OrOperator::TYPE,
             Operator\AllOperator::TYPE,
         ];
     }

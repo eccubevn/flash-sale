@@ -37,7 +37,7 @@ class GreaterThanOperator implements OperatorInterface
      */
     public function getName(): string
     {
-        return 'is greater than to';
+        return trans('flash_sale.admin.form.rule.operator.is_greater_than_to');
     }
 
     /**

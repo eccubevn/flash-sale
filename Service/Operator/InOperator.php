@@ -62,7 +62,7 @@ class InOperator implements OperatorInterface
      */
     public function getName(): string
     {
-        return 'is one of';
+        return trans('flash_sale.admin.form.rule.operator.is_one_of');
     }
 
     /**

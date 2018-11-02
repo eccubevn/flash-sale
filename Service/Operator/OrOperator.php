@@ -16,9 +16,9 @@ namespace Plugin\FlashSale\Service\Operator;
 use Doctrine\Common\Collections\Collection as DoctrineCollection;
 use Plugin\FlashSale\Service\Condition\ConditionInterface;
 
-class AllOperator implements OperatorInterface
+class OrOperator implements OperatorInterface
 {
-    const TYPE = 'operator_all';
+    const TYPE = 'operator_or';
 
     /**
      * {@inheritdoc}
@@ -39,12 +39,12 @@ class AllOperator implements OperatorInterface
                 return false;
             }
 
-            if (!$cond->match($data)) {
-                return false;
+            if ($cond->match($data)) {
+                return true;
             }
         }
 
-        return true;
+        return false;
     }
 
     /**
@@ -54,7 +54,7 @@ class AllOperator implements OperatorInterface
      */
     public function getName(): string
     {
-        return trans('flash_sale.admin.form.rule.operator.is_all_of');
+        return trans('flash_sale.admin.form.rule.operator.is_one_of');
     }
 
     /**

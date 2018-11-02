@@ -37,7 +37,7 @@ class LessThanOperator implements OperatorInterface
      */
     public function getName(): string
     {
-        return 'is less than to';
+        return trans('flash_sale.admin.form.rule.operator.is_less_than_to');
     }
 
     /**
