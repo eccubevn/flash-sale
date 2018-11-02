@@ -17,6 +17,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\QueryBuilder;
 use Eccube\Entity\ProductClass;
 use Plugin\FlashSale\Entity\Condition;
+use Plugin\FlashSale\Exception\ConditionException;
 use Plugin\FlashSale\Service\Operator as Operator;
 use Plugin\FlashSale\Service\Operator\OperatorInterface;
 
@@ -45,17 +46,17 @@ class ProductClassIdCondition extends Condition
     }
 
     /**
-     * @param QueryBuilder &$queryBuilder
+     * @param QueryBuilder $queryBuilder
      * @param OperatorInterface $operatorRule
      * @param OperatorInterface $operatorCondition
-     *
      * @return QueryBuilder
+     * @throws ConditionException
      */
     public function createQueryBuilder(QueryBuilder $queryBuilder, OperatorInterface $operatorRule, OperatorInterface $operatorCondition): QueryBuilder
     {
         // Check is support
         if (!in_array($operatorCondition->getType(), $this->getOperatorTypes())) {
-            return $queryBuilder;
+            throw new ConditionException(trans('flash_sale.condition.exception', ['%operator%' => $operatorCondition->getType()]));
         }
 
         // rule check

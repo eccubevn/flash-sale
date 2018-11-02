@@ -48,9 +48,10 @@ class ConditionRepository extends AbstractRepository
     }
 
     /**
-     * @return mixed
+     * @param int $max
+     * @return array
      */
-    public function getProductList()
+    public function getProductList(int $max = 8)
     {
         $fs = $this->fsRepository->getAvailableFlashSale();
         if (!$fs) {
@@ -58,7 +59,7 @@ class ConditionRepository extends AbstractRepository
         }
         /** @var Rule[] $Rules */
         $Rules = $fs->getRules();
-        $arrayProductTmp = [];
+        $products = [];
 
         $prodRepository = $this->getEntityManager()->getRepository('Eccube\Entity\Product');
         foreach ($Rules as $Rule) {
@@ -68,7 +69,12 @@ class ConditionRepository extends AbstractRepository
             $qbItem = $prodRepository->createQueryBuilder('p');
             $ruleOperatorName = $Rule->getOperator();
             $operatorRule = $this->operatorFactory->createByType($ruleOperatorName);
-            $qbItem = $Rule->createQueryBuilder($qbItem, $operatorRule);
+            try {
+                $qbItem = $Rule->createQueryBuilder($qbItem, $operatorRule);
+            } catch (\Exception $exception) {
+                log_alert($exception->getMessage());
+                continue;
+            }
 
             /** @var Product $Product */
             foreach ($qbItem->getQuery()->getResult() as $Product) {
@@ -80,11 +86,14 @@ class ConditionRepository extends AbstractRepository
                 if (count($tmp) == 0) {
                     continue;
                 }
-                $arrayProductTmp[$Product->getId()]['promotion'] = max($tmp);
-                $arrayProductTmp[$Product->getId()]['product'] = $Product;
+                $products[$Product->getId()]['promotion'] = max($tmp);
+                $products[$Product->getId()]['product'] = $Product;
+                if (count($products) >= $max) {
+                    break 2;
+                }
             }
         }
 
-        return $arrayProductTmp;
+        return $products;
     }
 }
