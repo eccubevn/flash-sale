@@ -45,16 +45,27 @@ var Condition = function () {
                     productsClassData = productsClassCategories;
 
                     var _button = list.find('table tbody tr td button');
-                    $.each(_button, function () {
-                        var dataAttr = $(this).attr('onclick');
-                        var dataIds = dataAttr.split(',');
-                        $(this).attr('data-id', $.trim(dataIds[1]));
-                        $(this).attr('data-type', $.trim(dataIds[2]));
-                        $(this).attr('data-action', 'plus');
-                        $(this).removeAttr('onclick');
-                    });
+                    Condition.searchComplete(_button);
+                }).fail(function () {
+                    alert('Search product failed.');
+                });
+            });
 
-                    Condition.searchComplete();
+            // ページング処理
+            $(addProduct).on('click', '.searchDataModalList ul.pagination li.page-item a.page-link', function (e) {
+                e.preventDefault();
+                var list = $('.searchDataModalList', $(this).closest('.modal-body'));
+                list.children().remove();
+                var url = $(this).attr('href');
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    dataType: 'html'
+                }).done(function (data) {
+                    list.html(data);
+                    productsClassData = productsClassCategories;
+                    var _button = list.find('table tbody tr td button');
+                    Condition.searchComplete(_button);
                 }).fail(function () {
                     alert('Search product failed.');
                 });
@@ -277,7 +288,18 @@ var Condition = function () {
             $('.mdAddCondition.show').find('input.inputConditionId').val(newValue);
             $('#ruleForm').find('div.onFocus input[name="condition[value]"]').val(newValue);
         },
-        searchComplete: function () {
+        searchComplete: function (_button) {
+            if (_button != undefined) {
+                $.each(_button, function () {
+                    var dataAttr = $(this).attr('onclick');
+                    var dataIds = dataAttr.split(',');
+                    $(this).attr('data-id', $.trim(dataIds[1]));
+                    $(this).attr('data-type', $.trim(dataIds[2]));
+                    $(this).attr('data-action', 'plus');
+                    $(this).removeAttr('onclick');
+                });
+            }
+
             var sel1 = mdAddCondition.find('select[name="classcategory_id1"]');
             $.each(sel1, function () {
                 $(this).on('change', function () {

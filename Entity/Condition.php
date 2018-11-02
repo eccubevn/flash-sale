@@ -62,6 +62,13 @@ abstract class Condition extends AbstractEntity implements ConditionInterface
     protected $value;
 
     /**
+     * @var int
+     *
+     * @ORM\Column(name="sort_no", type="integer", nullable=true)
+     */
+    protected $sort_no;
+
+    /**
      * @var Rule
      *
      * @ORM\ManyToOne(targetEntity=Rule::class, inversedBy="Conditions")
@@ -122,6 +129,22 @@ abstract class Condition extends AbstractEntity implements ConditionInterface
     public function setValue(string $value): void
     {
         $this->value = $value;
+    }
+
+    /**
+     * @return int
+     */
+    public function getSortNo(): int
+    {
+        return $this->sort_no;
+    }
+
+    /**
+     * @param int $sort_no
+     */
+    public function setSortNo(int $sort_no)
+    {
+        $this->sort_no = $sort_no;
     }
 
     /**

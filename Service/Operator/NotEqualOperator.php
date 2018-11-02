@@ -27,10 +27,6 @@ class NotEqualOperator implements OperatorInterface
      */
     public function match($condition, $data)
     {
-        if (is_array($data)) {
-            return (bool) !in_array($condition, $data);
-        }
-
         return $condition != $data;
     }
 
@@ -41,7 +37,7 @@ class NotEqualOperator implements OperatorInterface
      */
     public function getName(): string
     {
-        return 'is not equal to';
+        return trans('flash_sale.admin.form.rule.operator.is_not_equal_to');
     }
 
     /**

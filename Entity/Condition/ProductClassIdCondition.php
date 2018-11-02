@@ -60,8 +60,8 @@ class ProductClassIdCondition extends Condition
 
         // rule check
         switch ($operatorRule->getType()) {
-            case Operator\InOperator::TYPE:
-                $this->createInRule($queryBuilder, $operatorCondition);
+            case Operator\OrOperator::TYPE:
+                $this->createOrRule($queryBuilder, $operatorCondition);
                 break;
 
             case Operator\AllOperator::TYPE:
@@ -81,7 +81,7 @@ class ProductClassIdCondition extends Condition
     {
         return [
             Operator\InOperator::TYPE,
-            Operator\NotEqualOperator::TYPE,
+            Operator\NotInOperator::TYPE,
         ];
     }
 
@@ -89,7 +89,7 @@ class ProductClassIdCondition extends Condition
      * @param QueryBuilder $queryBuilder
      * @param OperatorInterface $operatorCondition
      */
-    private function createInRule(QueryBuilder $queryBuilder, OperatorInterface $operatorCondition): void
+    private function createOrRule(QueryBuilder $queryBuilder, OperatorInterface $operatorCondition): void
     {
         // condition
         switch ($operatorCondition->getType()) {
@@ -97,7 +97,7 @@ class ProductClassIdCondition extends Condition
                 $queryBuilder->orWhere($queryBuilder->expr()->in('pc.id', $this->getValue()));
                 break;
 
-            case Operator\NotEqualOperator::TYPE:
+            case Operator\NotInOperator::TYPE:
                 $queryBuilder->orWhere($queryBuilder->expr()->notIn('pc.id', $this->getValue()));
                 break;
         }
@@ -115,7 +115,7 @@ class ProductClassIdCondition extends Condition
                 $queryBuilder->andWhere($queryBuilder->expr()->in('pc.id', $this->getValue()));
                 break;
 
-            case Operator\NotEqualOperator::TYPE:
+            case Operator\NotInOperator::TYPE:
                 $queryBuilder->andWhere($queryBuilder->expr()->notIn('pc.id', $this->getValue()));
                 break;
         }
