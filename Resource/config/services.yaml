@@ -1,16 +1,4 @@
 services:
-    Plugin\FlashSale\Service\FlashSaleService:
-        lazy: true
-        public: true
-        autowire: true
-    Plugin\FlashSale\Service\Condition\ConditionFactory:
-        lazy: true
-        public: true
-        autowire: true
-    Eccube\Service\PurchaseFlow\PurchaseFlow:
-        lazy: true
-        public: true
-        autowire: true
     Plugin\FlashSale\Service\PurchaseFlow\Processor\FSShoppingProcessor:
         lazy: true
         public: true

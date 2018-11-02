@@ -13,13 +13,9 @@
 
 namespace Plugin\FlashSale\Tests\Entity\Promotion;
 
+use Eccube\Entity\Order;
 use Eccube\Entity\Cart;
-use Eccube\Entity\CartItem;
-use Eccube\Entity\Master\OrderItemType;
-use Eccube\Entity\Master\TaxDisplayType;
-use Eccube\Entity\Master\TaxType;
-use Eccube\Entity\Product;
-use Eccube\Entity\ProductClass;
+use Plugin\FlashSale\Entity\Discount;
 use Eccube\Tests\EccubeTestCase;
 use Plugin\FlashSale\Entity\Promotion\CartTotalAmountPromotion;
 
@@ -30,55 +26,75 @@ use Plugin\FlashSale\Entity\Promotion\CartTotalAmountPromotion;
  */
 class CartTotalAmountPromotionTest extends EccubeTestCase
 {
-    /** @var Product */
-    protected $Product;
+    /**
+     * @var CartTotalAmountPromotion
+     */
+    protected $cartTotalAmountPromotion;
 
-    /** @var ProductClass */
-    protected $ProductClass1;
-
+    /**
+     * {@inheritdoc}
+     */
     public function setUp()
     {
         parent::setUp();
 
-        $this->Product = $this->createProduct('テスト商品', 3);
-        $this->ProductClass1 = $this->Product->getProductClasses()[0];
+        $this->cartTotalAmountPromotion = new CartTotalAmountPromotion();
     }
 
-    public function testGetDiscountItems_Invalid_Not_Cart_Order()
+    /**
+     * @param $promotionData
+     * @param $object
+     * @param $expectedData
+     * @dataProvider dataProvider_testGetDiscount
+     */
+    public function testGetDiscount($promotionData, $object, $expectedData)
     {
-        $ProductClassPriceAmountPromotion = new CartTotalAmountPromotion();
-        $ProductClassPriceAmountPromotion->setEntityManager($this->entityManager);
-        $ProductClassPriceAmountPromotion->setValue(150);
+        $this->cartTotalAmountPromotion->setId($promotionData['id']);
+        $this->cartTotalAmountPromotion->setValue($promotionData['value']);
 
-        $OrderItem = $ProductClassPriceAmountPromotion->getDiscountItems(new \stdClass());
+        $result = $this->cartTotalAmountPromotion->getDiscount($object);
 
-        self::assertEmpty($OrderItem);
+        $this->assertEquals(get_class($result), Discount::class);
+        $this->assertEquals($result->getPromotionId(), $expectedData['id']);
+        $this->assertEquals($result->getValue(), $expectedData['value']);
     }
 
-    public function testGetDiscountItems()
+    public function dataProvider_testGetDiscount()
     {
-        $DiscountType = $this->entityManager->find(OrderItemType::class, OrderItemType::DISCOUNT);
-        $TaxInclude = $this->entityManager->find(TaxDisplayType::class, TaxDisplayType::INCLUDED);
-        $Taxation = $this->entityManager->find(TaxType::class, TaxType::NON_TAXABLE);
-
-        $CartTotalAmountPromotion = new CartTotalAmountPromotion();
-        $CartTotalAmountPromotion->setEntityManager($this->entityManager);
-        $CartTotalAmountPromotion->setValue(150);
-
-        $cart = new Cart();
-        $item = new CartItem();
-        $item->setProductClass($this->ProductClass1);
-        $cart->addItem($item);
-        $cart->setTotal(100000);
-
-        $OrderItem = $CartTotalAmountPromotion->getDiscountItems($cart);
-
-        $price = -1 * $CartTotalAmountPromotion->getValue();
-
-        self::assertEquals($price, $OrderItem[0]->getPrice());
-        self::assertEquals(1, $OrderItem[0]->getQuantity());
-        self::assertEquals($DiscountType, $OrderItem[0]->getOrderItemType());
-        self::assertEquals($TaxInclude, $OrderItem[0]->getTaxDisplayType());
-        self::assertEquals($Taxation, $OrderItem[0]->getTaxType());
+        return [
+            [
+                [
+                    'id' => 1,
+                    'value' => 100,
+                ],
+                new \stdClass(),
+                [
+                    'id' => 1,
+                    'value' => 0,
+                ],
+            ],
+            [
+                [
+                    'id' => 2,
+                    'value' => 200,
+                ],
+                new Cart(),
+                [
+                    'id' => 2,
+                    'value' => 200,
+                ],
+            ],
+            [
+                [
+                    'id' => 3,
+                    'value' => 300,
+                ],
+                new Order(),
+                [
+                    'id' => 3,
+                    'value' => 300,
+                ],
+            ]
+        ];
     }
 }

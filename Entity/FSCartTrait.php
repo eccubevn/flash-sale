@@ -50,7 +50,9 @@ trait FSCartTrait
             $totalDiscount += $CartItem->getFlashSaleTotalDiscount();
         }
 
-        return array_sum($this->flashSaleDiscount) + $totalDiscount;
+        $amount = array_sum($this->flashSaleDiscount) + $totalDiscount;
+
+        return $amount > $this->getTotal() ? $this->getTotal() : $amount;
     }
 
     /**
@@ -60,6 +62,6 @@ trait FSCartTrait
      */
     public function getFlashSaleTotalDiscountPrice()
     {
-        return (int) ($this->getTotalPrice() - $this->getFlashSaleTotalDiscount());
+        return (int) ($this->getTotal() - $this->getFlashSaleTotalDiscount());
     }
 }

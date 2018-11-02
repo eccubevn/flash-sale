@@ -45,7 +45,9 @@ trait FSProductClassTrait
      */
     public function getFlashSaleDiscount()
     {
-        return array_sum($this->flashSaleDiscount);
+        $amount = array_sum($this->flashSaleDiscount);
+
+        return $amount > $this->getPrice02IncTax() ? $this->getPrice02IncTax() : $amount;
     }
 
     /**
