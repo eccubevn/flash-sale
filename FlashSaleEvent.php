@@ -154,12 +154,7 @@ EOT;
             $tmp = [];
             /** @var ProductClass $ProductClass */
             foreach ($Product->getProductClasses() as $ProductClass) {
-                $discount = $FlashSale->getDiscount($ProductClass);
-                if ($discount->getValue()) {
-                    $discountPrice = $ProductClass->getPrice02IncTax() - $discount->getValue();
-                    $discountPercent = 100 - floor($discountPrice * 100 / $ProductClass->getPrice02IncTax());
-                    $tmp[$ProductClass->getId()] = $discountPercent;
-                }
+                $tmp[$ProductClass->getId()] = $ProductClass->getFlashSaleDiscountPercent();
             }
             if (count($tmp)) {
                 $data[$Product->getId()] = max($tmp);
