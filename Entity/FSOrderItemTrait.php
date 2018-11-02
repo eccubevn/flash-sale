@@ -16,6 +16,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 trait FSOrderItemTrait
 {
+    use AbstractItemTrait;
+
     /**
      * @var float
      * @ORM\Column(name="fs_price", type="decimal", precision=12, scale=2, nullable=true, options={"default":0})
@@ -43,58 +45,6 @@ trait FSOrderItemTrait
      */
     public function getFsPriceTotal()
     {
-        return (empty($this->getFsPrice()) ? $this->getPriceIncTax() : $this->getFsPrice()) * $this->getQuantity();
-    }
-
-    /**
-     * Get $flashSaleDiscount
-     *
-     * @return int
-     */
-    public function getFlashSaleDiscount()
-    {
-        if (!$this->getProductClass()) {
-            return 0;
-        }
-
-        return $this->getProductClass()->getFlashSaleDiscount();
-    }
-
-    /**
-     * Get flashsale discount * quantity
-     */
-    public function getFlashSaleTotalDiscount()
-    {
-        return $this->getFlashSaleDiscount() * $this->getQuantity();
-    }
-
-    /**
-     * Get discount price
-     *
-     * @return int
-     */
-    public function getFlashSaleDiscountPrice()
-    {
-        return (int) ($this->getPriceIncTax() - $this->getFlashSaleDiscount());
-    }
-
-    /**
-     * Get discount total price
-     *
-     * @return int
-     */
-    public function getFlashSaleTotalDiscountPrice()
-    {
-        return (int) ($this->getFlashSaleDiscountPrice() * $this->getQuantity());
-    }
-
-    /**
-     * Get discount percent
-     *
-     * @return int
-     */
-    public function getFlashSaleDiscountPercent()
-    {
-        return (int) ceil($this->getFlashSaleDiscount() * 100 / $this->getPriceIncTax());
+        return (is_null($this->getFsPrice()) ? $this->getPriceIncTax() : $this->getFsPrice()) * $this->getQuantity();
     }
 }

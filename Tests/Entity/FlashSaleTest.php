@@ -13,6 +13,7 @@
 
 namespace Plugin\FlashSale\Tests\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Eccube\Tests\EccubeTestCase;
 use Plugin\FlashSale\Entity\FlashSale;
 
@@ -33,6 +34,10 @@ class FlashSaleTest extends EccubeTestCase
         $FlashSale = new FlashSale();
         $FlashSale->setStatus(FlashSale::STATUS_ACTIVATED);
 
+        $this->expected = new ArrayCollection();
+        $this->actual = $FlashSale->getRules();
+        $this->verify();
+
         $this->expected = 0;
 
         $this->actual = $FlashSale->getId();
@@ -41,10 +46,12 @@ class FlashSaleTest extends EccubeTestCase
         $this->actual = $FlashSale->getName();
         $this->verify();
 
-        $this->actual = $FlashSale->getFromTime();
+        $this->actual = get_class($FlashSale->getFromTime());
+        $this->expected = \DateTime::class;
         $this->verify();
 
-        $this->actual = $FlashSale->getToTime();
+        $this->actual = get_class($FlashSale->getToTime());
+        $this->expected = \DateTime::class;
         $this->verify();
 
         $this->expected = FlashSale::STATUS_ACTIVATED;
