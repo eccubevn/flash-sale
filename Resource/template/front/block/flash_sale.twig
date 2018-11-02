@@ -1,6 +1,14 @@
 {% set flashSale = repository('Plugin\\FlashSale\\Entity\\FlashSale').getAvailableFlashSale %}
 {% set items = repository('Plugin\\FlashSale\\Entity\\Condition').getProductList %}
 
+<style type="text/css">
+    @media all and (-ms-high-contrast:none) {
+        #flash-sale ul.ec-shelfGrid li.ec-shelfGrid__item {
+            display: inline-block !important;
+        }
+    }
+</style>
+
 {% if flashSale and items %}
     <div class="ec-shelfRole" id="flash-sale">
         <div class="ec-secHeading">
