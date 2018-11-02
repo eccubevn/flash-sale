@@ -15,6 +15,10 @@ namespace Plugin\FlashSale\Form\Type\Admin;
 
 use Eccube\Common\EccubeConfig;
 use Plugin\FlashSale\Entity\FlashSale;
+use Plugin\FlashSale\Entity\Promotion\CartTotalAmountPromotion;
+use Plugin\FlashSale\Entity\Promotion\CartTotalPercentPromotion;
+use Plugin\FlashSale\Entity\Promotion\ProductClassPriceAmountPromotion;
+use Plugin\FlashSale\Entity\Promotion\ProductClassPricePercentPromotion;
 use Plugin\FlashSale\Repository\FlashSaleRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -127,7 +131,28 @@ class FlashSaleType extends AbstractType
 
                     return;
                 }
-                if (!isset($rule['conditions'])) {
+
+                if (($rule['promotion']['type'] == ProductClassPricePercentPromotion::TYPE
+                        || $rule['promotion']['type'] == CartTotalPercentPromotion::TYPE) && ($rule['promotion']['value'] <= 0 || $rule['promotion']['value'] > 100)) {
+                    $form->get('rules')->addError(new FormError('flash_sale.form.promotion.percentage'));
+
+                    return;
+                }
+
+                if (($rule['promotion']['type'] == ProductClassPriceAmountPromotion::TYPE
+                        || $rule['promotion']['type'] == CartTotalAmountPromotion::TYPE) && $rule['promotion']['value'] <= 0) {
+                    $form->get('rules')->addError(new FormError('flash_sale.form.promotion.amount.must.than.zero'));
+
+                    return;
+                }
+
+                if (!filter_var($rule['promotion']['value'], FILTER_VALIDATE_INT)) {
+                    $form->get('rules')->addError(new FormError('flash_sale.form.promotion.value.integer'));
+
+                    return;
+                }
+
+                if (empty($rule['conditions'])) {
                     $form->get('rules')->addError(new FormError('flash_sale.form.condition.require'));
 
                     return;
