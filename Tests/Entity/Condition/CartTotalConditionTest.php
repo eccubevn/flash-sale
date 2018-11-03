@@ -13,11 +13,11 @@
 
 namespace Plugin\FlashSale\Tests\Entity\Condition;
 
+use Eccube\Entity\Order;
 use Eccube\Tests\EccubeTestCase;
 use Plugin\FlashSale\Entity\Condition\CartTotalCondition;
 use Plugin\FlashSale\Service\Operator\OperatorFactory;
 use Plugin\FlashSale\Service\Operator as Operator;
-use Plugin\FlashSale\Tests\DataProvider\Entity\Condition\CartTotalConditionDataProvider;
 
 /**
  * Class ProductClassIdConditionTest
@@ -48,31 +48,43 @@ class CartTotalConditionTest extends EccubeTestCase
         $this->verify();
     }
 
-    /**
-     * @param $dataSet
-     * @dataProvider dataProvider_testMatch
-     */
-    public function testMatch($dataSet)
+    public function testMatch_Scenario0()
     {
-        list($conditionData, $data, $expected) = $dataSet;
-
-        $this->cartTotalCondition->setId($conditionData['id']);
-        $this->cartTotalCondition->setValue($conditionData['value']);
-        $this->cartTotalCondition->setOperator($conditionData['operator']);
-        $result = $this->cartTotalCondition->match($data);
-        $this->assertEquals($expected, $result);
+        $actual = $this->cartTotalCondition->match(new \stdClass());
+        $this->assertEquals(false, $actual);
     }
 
-    public static function dataProvider_testMatch()
+    /**
+     * @param $conditionOperator
+     * @param $conditionValue
+     * @param $orderSubtotal
+     * @param $expected
+     *
+     * @dataProvider dataProvider_testMatch_Scenario1
+     */
+    public function testMatch_Scenario1($conditionOperator, $conditionValue, $orderSubtotal, $expected)
+    {
+        $this->cartTotalCondition->setValue($conditionValue);
+        $this->cartTotalCondition->setOperator($conditionOperator);
+
+        $Order = new Order();
+        $Order->setSubtotal($orderSubtotal);
+
+        $actual = $this->cartTotalCondition->match($Order);
+        $this->assertEquals($expected, $actual);
+    }
+
+    public static function dataProvider_testMatch_Scenario1()
     {
         return [
-            [CartTotalConditionDataProvider::testMatch_False1()],
-            [CartTotalConditionDataProvider::testMatch_EqualOperator_True1()],
-            [CartTotalConditionDataProvider::testMatch_EqualOperator_False1()],
-            [CartTotalConditionDataProvider::testMatch_GreaterThanOperator_True1()],
-            [CartTotalConditionDataProvider::testMatch_GreaterThanOperator_False1()],
-            [CartTotalConditionDataProvider::testMatch_LessThanOperator_True1()],
-            [CartTotalConditionDataProvider::testMatch_LessThanOperator_False1()],
+            ['operator_equal', 1000, 1000, true],
+            ['operator_equal', 1000, 1111, false],
+            ['operator_greater_than', 1000, 1111, true],
+            ['operator_greater_than', 1000, 1000, false],
+            ['operator_greater_than', 1000, 999, false],
+            ['operator_less_than', 1000, 999, true],
+            ['operator_less_than', 1000, 2222, false],
+            ['operator_less_than', 1000, 1000, false],
         ];
     }
 }

@@ -13,6 +13,7 @@
 
 namespace Plugin\FlashSale\Tests\Entity\Condition;
 
+use Eccube\Entity\ProductClass;
 use Eccube\Tests\EccubeTestCase;
 use Plugin\FlashSale\Service\Operator as Operator;
 use Plugin\FlashSale\Entity\Condition\ProductClassIdCondition;
@@ -50,33 +51,42 @@ class ProductClassIdConditionTest extends EccubeTestCase
         $this->verify();
     }
 
-    /**
-     * @param $dataSet
-     * @dataProvider dataProvider_testMatch
-     */
-    public function testMatch($dataSet)
+    public function testMatch_Scenario0()
     {
-        list($conditionData, $data, $expected) = $dataSet;
-
-        $this->productClassIdCondition->setId($conditionData['id']);
-        $this->productClassIdCondition->setValue($conditionData['value']);
-        $this->productClassIdCondition->setOperator($conditionData['operator']);
-        $result = $this->productClassIdCondition->match($data);
-        $this->assertEquals($expected, $result);
+        $actual = $this->productClassIdCondition->match(new \stdClass());
+        $this->assertEquals(false, $actual);
     }
 
-    public static function dataProvider_testMatch()
+    /**
+     * @param $conditionOperator
+     * @param $conditionValue
+     * @param $productClassId
+     * @param $expected
+     *
+     * @dataProvider dataProvider_testMatch_Scenario1
+     */
+    public function testMatch_Scenario1($conditionOperator, $conditionValue, $productClassId, $expected)
+    {
+        $this->productClassIdCondition->setValue($conditionValue);
+        $this->productClassIdCondition->setOperator($conditionOperator);
+
+        $ProductClass = new ProductClass();
+        $ProductClass->setPropertiesFromArray(['id' => $productClassId]);
+
+        $actual = $this->productClassIdCondition->match($ProductClass);
+        $this->assertEquals($expected, $actual);
+    }
+
+    public static function dataProvider_testMatch_Scenario1()
     {
         return [
-            [ProductClassIdConditionDataProvider::testMatch_False1()],
-            [ProductClassIdConditionDataProvider::testMatch_InOperator_True1()],
-            [ProductClassIdConditionDataProvider::testMatch_InOperator_True2()],
-            [ProductClassIdConditionDataProvider::testMatch_InOperator_False1()],
-            [ProductClassIdConditionDataProvider::testMatch_InOperator_False2()],
-            [ProductClassIdConditionDataProvider::testMatch_NotInOperator_True1()],
-            [ProductClassIdConditionDataProvider::testMatch_NotInOperator_True2()],
-            [ProductClassIdConditionDataProvider::testMatch_NotInOperator_False1()],
-            [ProductClassIdConditionDataProvider::testMatch_NotInOperator_False2()],
+            ['operator_in', '1,2,3,4,5', [5], true],
+            ['operator_in', '1,2,3,4,5', [10], false],
+            ['operator_in', '1,2,3,4,5', ['10'], false],
+            ['operator_not_in', '1,2,3,4,5', [5], false],
+            ['operator_not_in', '1,2,3,4,5', ['5'], false],
+            ['operator_not_in', '1,2,3,4,5', [10], true],
+            ['operator_not_in', '1,2,3,4,5', ['10', '7'], true],
         ];
     }
 }

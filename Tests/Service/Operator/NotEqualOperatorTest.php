@@ -36,12 +36,14 @@ class NotEqualOperatorTest extends EccubeTestCase
     }
 
     /**
-     * @param $dataSet
+     * @param $condition
+     * @param $data
+     * @param $expected
+     *
      * @dataProvider dataProvider_testMatch
      */
-    public function testMatch($dataSet)
+    public function testMatch($condition, $data, $expected)
     {
-        list($condition, $data, $expected) = $dataSet;
         $actual = $this->notEqualOperator->match($condition, $data);
         $this->assertEquals($expected, $actual);
     }
@@ -49,10 +51,10 @@ class NotEqualOperatorTest extends EccubeTestCase
     public function dataProvider_testMatch()
     {
         return [
-            [NotEqualOperatorDataProvider::testMatch_True1()],
-            [NotEqualOperatorDataProvider::testMatch_True2()],
-            [NotEqualOperatorDataProvider::testMatch_False1()],
-            [NotEqualOperatorDataProvider::testMatch_False2()],
+            [123, '321', true],
+            [456, 0, true],
+            [789, '789', false],
+            [1011, 1011, false]
         ];
     }
 }

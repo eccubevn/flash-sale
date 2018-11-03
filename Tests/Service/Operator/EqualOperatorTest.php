@@ -35,12 +35,14 @@ class EqualOperatorTest extends EccubeTestCase
     }
 
     /**
-     * @param $dataSet
+     * @param $condition
+     * @param $data
+     * @param $expected
+     *
      * @dataProvider dataProvider_testMatch
      */
-    public function testMatch($dataSet)
+    public function testMatch($condition, $data, $expected)
     {
-        list($condition, $data, $expected) = $dataSet;
         $actual = $this->equalOperator->match($condition, $data);
         $this->assertEquals($expected, $actual);
     }
@@ -48,10 +50,10 @@ class EqualOperatorTest extends EccubeTestCase
     public function dataProvider_testMatch()
     {
         return [
-            [EqualOperatorDataProvider::testMatch_True1()],
-            [EqualOperatorDataProvider::testMatch_True2()],
-            [EqualOperatorDataProvider::testMatch_False1()],
-            [EqualOperatorDataProvider::testMatch_False2()],
+            [5, 10, false],
+            [10, 10, true],
+            [null, null, true],
+            ['abc', '456', false],
         ];
     }
 }

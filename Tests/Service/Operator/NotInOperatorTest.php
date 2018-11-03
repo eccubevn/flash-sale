@@ -35,12 +35,14 @@ class NotInOperatorTest extends EccubeTestCase
     }
 
     /**
-     * @param $dataSet
+     * @param $condition
+     * @param $data
+     * @param $expected
+     *
      * @dataProvider dataProvider_testMatch
      */
-    public function testMatch($dataSet)
+    public function testMatch($condition, $data, $expected)
     {
-        list($condition, $data, $expected) = $dataSet;
         $actual = $this->notInOperator->match($condition, $data);
         $this->assertEquals($expected, $actual);
     }
@@ -48,10 +50,10 @@ class NotInOperatorTest extends EccubeTestCase
     public function dataProvider_testMatch()
     {
         return [
-            [NotInOperatorDataProvider::testMatch_True1()],
-            [NotInOperatorDataProvider::testMatch_True2()],
-            [NotInOperatorDataProvider::testMatch_False1()],
-            [NotInOperatorDataProvider::testMatch_False2()],
+            ['1,2,3,4,5', 6, true],
+            [[7,8,9,10,11], '12', true],
+            [[13,14,15,16,17], 15, false],
+            ['18,19,20,21', '20', false],
         ];
     }
 }

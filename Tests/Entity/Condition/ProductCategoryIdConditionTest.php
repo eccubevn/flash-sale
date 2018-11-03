@@ -13,11 +13,13 @@
 
 namespace Plugin\FlashSale\Tests\Entity\Condition;
 
+use Eccube\Entity\Product;
+use Eccube\Entity\ProductCategory;
+use Eccube\Entity\ProductClass;
 use Eccube\Tests\EccubeTestCase;
 use Plugin\FlashSale\Service\Operator as Operator;
 use Plugin\FlashSale\Entity\Condition\ProductCategoryIdCondition;
 use Plugin\FlashSale\Service\Operator\OperatorFactory;
-use Plugin\FlashSale\Tests\DataProvider\Entity\Condition\ProductCategoryIdConditionDataProvider;
 
 /**
  * Class ProductClassIdConditionTest
@@ -50,33 +52,49 @@ class ProductCategoryIdConditionTest extends EccubeTestCase
         $this->verify();
     }
 
-    /**
-     * @param $dataSet
-     * @dataProvider dataProvider_testMatch
-     */
-    public function testMatch($dataSet)
+    public function testMatch_Scenario0()
     {
-        list($conditionData, $data, $expected) = $dataSet;
-
-        $this->productCategoryIdCondition->setId($conditionData['id']);
-        $this->productCategoryIdCondition->setValue($conditionData['value']);
-        $this->productCategoryIdCondition->setOperator($conditionData['operator']);
-        $result = $this->productCategoryIdCondition->match($data);
-        $this->assertEquals($expected, $result);
+        $actual = $this->productCategoryIdCondition->match(new \stdClass());
+        $this->assertEquals(false, $actual);
     }
 
-    public static function dataProvider_testMatch()
+    /**
+     * @param $conditionOperator
+     * @param $conditionValue
+     * @param $categoryIds
+     * @param $expected
+     *
+     * @dataProvider dataProvider_testMatch_Scenario1
+     */
+    public function testMatch_Scenario1($conditionOperator, $conditionValue, $categoryIds, $expected)
+    {
+        $this->productCategoryIdCondition->setValue($conditionValue);
+        $this->productCategoryIdCondition->setOperator($conditionOperator);
+
+
+        $Product = new Product();
+        foreach ($categoryIds as $categoryId) {
+            $ProductCategory = new ProductCategory();
+            $ProductCategory->setCategoryId($categoryId);
+            $Product->addProductCategory($ProductCategory);
+        }
+        $ProductClass = new ProductClass();
+        $ProductClass->setProduct($Product);
+
+        $actual = $this->productCategoryIdCondition->match($ProductClass);
+        $this->assertEquals($expected, $actual);
+    }
+
+    public static function dataProvider_testMatch_Scenario1()
     {
         return [
-            [ProductCategoryIdConditionDataProvider::testMatch_False1()],
-            [ProductCategoryIdConditionDataProvider::testMatch_InOperator_True1()],
-            [ProductCategoryIdConditionDataProvider::testMatch_InOperator_True2()],
-            [ProductCategoryIdConditionDataProvider::testMatch_InOperator_False1()],
-            [ProductCategoryIdConditionDataProvider::testMatch_InOperator_False2()],
-            [ProductCategoryIdConditionDataProvider::testMatch_NotInOperator_True1()],
-            [ProductCategoryIdConditionDataProvider::testMatch_NotInOperator_True2()],
-            [ProductCategoryIdConditionDataProvider::testMatch_NotInOperator_False1()],
-            [ProductCategoryIdConditionDataProvider::testMatch_NotInOperator_False2()],
+            ['operator_in', '1,2,3,4,5', [5], true],
+            ['operator_in', '1,2,3,4,5', [10], false],
+            ['operator_in', '1,2,3,4,5', ['10'], false],
+            ['operator_not_in', '1,2,3,4,5', [5], false],
+            ['operator_not_in', '1,2,3,4,5', ['5'], false],
+            ['operator_not_in', '1,2,3,4,5', [10], true],
+            ['operator_not_in', '1,2,3,4,5', ['10', '7'], true],
         ];
     }
 }

@@ -35,12 +35,14 @@ class InOperatorTest extends EccubeTestCase
     }
 
     /**
-     * @param $dataSet
+     * @param $condition
+     * @param $data
+     * @param $expected
+     *
      * @dataProvider dataProvider_testMatch
      */
-    public function testMatch($dataSet)
+    public function testMatch($condition, $data, $expected)
     {
-        list($condition, $data, $expected) = $dataSet;
         $actual = $this->inOperator->match($condition, $data);
         $this->assertEquals($expected, $actual);
     }
@@ -48,10 +50,10 @@ class InOperatorTest extends EccubeTestCase
     public function dataProvider_testMatch()
     {
         return [
-            [InOperatorDataProvider::testMatch_True1()],
-            [InOperatorDataProvider::testMatch_True2()],
-            [InOperatorDataProvider::testMatch_False1()],
-            [InOperatorDataProvider::testMatch_False2()],
+            ['1,2,3,4,5', 3, true],
+            [[1,2,3,4,5], 4, true],
+            [[1,2,3,4,5], 40, false],
+            ['1,2,3,4,5', 77, false],
         ];
     }
 }

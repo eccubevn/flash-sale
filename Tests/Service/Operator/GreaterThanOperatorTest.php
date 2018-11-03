@@ -35,12 +35,14 @@ class GreaterThanOperatorTest extends EccubeTestCase
     }
 
     /**
-     * @param $dataSet
+     * @param $condition
+     * @param $data
+     * @param $expected
+     *
      * @dataProvider dataProvider_testMatch
      */
-    public function testMatch($dataSet)
+    public function testMatch($condition, $data, $expected)
     {
-        list($condition, $data, $expected) = $dataSet;
         $actual = $this->greaterThanOperator->match($condition, $data);
         $this->assertEquals($expected, $actual);
     }
@@ -48,10 +50,8 @@ class GreaterThanOperatorTest extends EccubeTestCase
     public function dataProvider_testMatch()
     {
         return [
-            [GreaterThanOperatorDataProvider::testMatch_True1()],
-            [GreaterThanOperatorDataProvider::testMatch_True2()],
-            [GreaterThanOperatorDataProvider::testMatch_False1()],
-            [GreaterThanOperatorDataProvider::testMatch_False2()],
+            [1, 2, true],
+            [100, 2, false],
         ];
     }
 }

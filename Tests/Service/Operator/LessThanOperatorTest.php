@@ -36,12 +36,14 @@ class LessThanOperatorTest extends EccubeTestCase
     }
 
     /**
-     * @param $dataSet
+     * @param $condition
+     * @param $data
+     * @param $expected
+     *
      * @dataProvider dataProvider_testMatch
      */
-    public function testMatch($dataSet)
+    public function testMatch($condition, $data, $expected)
     {
-        list($condition, $data, $expected) = $dataSet;
         $actual = $this->lessThanOperator->match($condition, $data);
         $this->assertEquals($expected, $actual);
     }
@@ -49,10 +51,8 @@ class LessThanOperatorTest extends EccubeTestCase
     public function dataProvider_testMatch()
     {
         return [
-            [LessThanOperatorDataProvider::testMatch_True1()],
-            [LessThanOperatorDataProvider::testMatch_True2()],
-            [LessThanOperatorDataProvider::testMatch_False1()],
-            [LessThanOperatorDataProvider::testMatch_False2()],
+            [1, 5, false],
+            [100, 5, true],
         ];
     }
 }
