@@ -13,22 +13,17 @@
 
 namespace Plugin\FlashSale\Tests\Entity\Promotion;
 
+use Eccube\Entity\Cart;
 use Plugin\FlashSale\Entity\Discount;
-use Eccube\Tests\EccubeTestCase;
 use Plugin\FlashSale\Entity\Promotion\CartTotalAmountPromotion;
-use Plugin\FlashSale\Tests\DataProvider\Entity\Promotion\CartTotalAmountPromotionDataProvider;
+use Plugin\FlashSale\Tests\Entity\PromotionTest;
 
-/**
- * AbstractEntity test cases.
- *
- * @author Kentaro Ohkouchi
- */
-class CartTotalAmountPromotionTest extends EccubeTestCase
+class CartTotalAmountPromotionTest extends PromotionTest
 {
     /**
      * @var CartTotalAmountPromotion
      */
-    protected $cartTotalAmountPromotion;
+    protected $promotion;
 
     /**
      * {@inheritdoc}
@@ -37,32 +32,48 @@ class CartTotalAmountPromotionTest extends EccubeTestCase
     {
         parent::setUp();
 
-        $this->cartTotalAmountPromotion = new CartTotalAmountPromotion();
+        $this->promotion = new CartTotalAmountPromotion();
+    }
+
+    public static function dataProvider_testRawData_Scenario1()
+    {
+        return [
+            [['id' => 1, 'type' => 'promotion_cart_total_amount', 'value' => 1000]],
+        ];
+    }
+
+    public function testGetDiscount_Scenario0()
+    {
+        $this->promotion->setId(rand());
+        /** @var Discount $actual */
+        $actual = $this->promotion->getDiscount(new \stdClass());
+        $this->assertEquals(Discount::class, get_class($actual));
+        $this->assertEquals(0, $actual->getValue());
     }
 
     /**
-     * @param $dataSet
-     * @dataProvider dataProvider_testGetDiscount
+     * @param $promotionValue
+     * @param $expected
+     *
+     * @dataProvider dataProvider_testGetDiscount_Scenario1
      */
-    public function testGetDiscount($dataSet)
+    public function testGetDiscount_Scenario1($promotionValue, $expected)
     {
-        list($promotionData, $object, $expectedData) = $dataSet;
-        $this->cartTotalAmountPromotion->setId($promotionData['id']);
-        $this->cartTotalAmountPromotion->setValue($promotionData['value']);
+        $this->promotion->setId(rand());
+        $this->promotion->setValue($promotionValue);
 
-        $result = $this->cartTotalAmountPromotion->getDiscount($object);
+        $Cart = new Cart();
+        $actual = $this->promotion->getDiscount($Cart);
 
-        $this->assertEquals(get_class($result), Discount::class);
-        $this->assertEquals($result->getPromotionId(), $expectedData['id']);
-        $this->assertEquals($result->getValue(), $expectedData['value']);
+        $this->assertEquals(Discount::class, get_class($actual));
+        $this->assertEquals($expected, $actual->getValue());
     }
 
-    public function dataProvider_testGetDiscount()
+    public static function dataProvider_testGetDiscount_Scenario1()
     {
         return [
-            [CartTotalAmountPromotionDataProvider::testGetDiscount_False1()],
-            [CartTotalAmountPromotionDataProvider::testGetDiscount_Cart_True1()],
-            [CartTotalAmountPromotionDataProvider::testGetDiscount_Order_True1()],
+            [100, 100],
+            [1000, 1000],
         ];
     }
 }

@@ -47,13 +47,13 @@ class NotInOperatorTest extends EccubeTestCase
         $this->assertEquals($expected, $actual);
     }
 
-    public function dataProvider_testMatch()
+    public static function dataProvider_testMatch($data = 1)
     {
         return [
-            ['1,2,3,4,5', 6, true],
-            [[7,8,9,10,11], '12', true],
-            [[13,14,15,16,17], 15, false],
-            ['18,19,20,21', '20', false],
+            [$data.','.((int)$data-1), $data, false],
+            [[$data,(int)$data+1], [$data], false],
+            [[(int)$data-1,(int)$data+1], $data, true],
+            [((int)$data-1).','.((int)$data+1), [$data], true],
         ];
     }
 }

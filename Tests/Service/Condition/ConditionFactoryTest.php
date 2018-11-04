@@ -18,51 +18,69 @@ use Plugin\FlashSale\Entity\Condition\ProductCategoryIdCondition;
 use Plugin\FlashSale\Entity\Condition\ProductClassIdCondition;
 use Plugin\FlashSale\Service\Condition\ConditionFactory;
 use Plugin\FlashSale\Tests\Service\AbstractServiceTestCase;
+use Plugin\FlashSale\Entity\Condition as Condition;
 
 class ConditionFactoryTest extends AbstractServiceTestCase
 {
+    /**
+     * @var ConditionFactory
+     */
+    protected $conditionFactory;
+
     /**
      * {@inheritdoc}
      */
     public function setUp()
     {
         parent::setUp();
+        $this->conditionFactory = new ConditionFactory();
     }
 
-    public function testCreateFromArray()
+    public function testCreateFromArray_Scenario0()
     {
-        $rules = $this->rulesData();
-        $condition = $rules['conditions'];
+        $this->expectExceptionMessage('$data[type] must be required');
+        $this->conditionFactory::createFromArray([]);
 
-        $data = ConditionFactory::createFromArray($condition[0]);
-        self::assertInstanceOf(ProductClassIdCondition::class, $data);
+    }
 
-        $condition[0]['type'] = ProductCategoryIdCondition::TYPE;
-        $data = ConditionFactory::createFromArray($condition[0]);
-        self::assertInstanceOf(ProductCategoryIdCondition::class, $data);
+    public function testCreateFromArray_Scenario1()
+    {
+        $this->expectExceptionMessage('promotion_test_only unsupported');
+        $this->conditionFactory::createFromArray(['type' => 'promotion_test_only']);
+    }
 
-        $condition[0]['type'] = CartTotalCondition::TYPE;
-        $data = ConditionFactory::createFromArray($condition[0]);
-        self::assertInstanceOf(CartTotalCondition::class, $data);
+    /**
+     * @param $type
+     * @param $operator
+     * @param $value
+     * @param $expectedClass
+     * @dataProvider dataProvider_testCreateFromArray
+     */
+    public function testCreateFromArray_Scenario2($type, $operator, $value, $expectedClass)
+    {
+        $actual = $this->conditionFactory::createFromArray(['type' => $type, 'value' => $value, 'operator' => $operator]);
+        $this->assertEquals($expectedClass, get_class($actual));
+        $this->assertEquals($value, $actual->getValue());
+        $this->assertEquals($operator, $actual->getOperator());
+    }
 
-        $condition[0]['type'] = 'condition_product_class_id_test_null';
-        try {
-            $data = ConditionFactory::createFromArray($condition[0]);
-        } catch (\Exception $exception) {
-            $data = 'condition_product_class_id_test_null unsupported';
-        }
 
-        $this->expected = 'condition_product_class_id_test_null unsupported';
-        self::assertEquals($this->expected, $data);
-
-        unset($condition[0]['type']);
-        try {
-            $data = ConditionFactory::createFromArray($condition[0]);
-        } catch (\Exception $exception) {
-            $data = '$data[type] must be required';
-        }
-
-        $this->expected = '$data[type] must be required';
-        self::assertEquals($this->expected, $data);
+    public function dataProvider_testCreateFromArray()
+    {
+        $operators = [
+            'operator_all',
+            'operator_or',
+            'operator_in',
+            'operator_not_in',
+            'operator_equal',
+            'operator_not_equal',
+            'operator_greater_than',
+            'operator_less_than',
+        ];
+        return [
+            [Condition\CartTotalCondition::TYPE, array_rand(array_flip($operators)), rand(), Condition\CartTotalCondition::class],
+            [Condition\ProductCategoryIdCondition::TYPE, array_rand(array_flip($operators)), rand(), Condition\ProductCategoryIdCondition::class],
+            [Condition\ProductClassIdCondition::TYPE, array_rand(array_flip($operators)), rand(), Condition\ProductClassIdCondition::class],
+        ];
     }
 }

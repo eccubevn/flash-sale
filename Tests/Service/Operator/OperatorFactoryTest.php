@@ -19,7 +19,9 @@ use Plugin\FlashSale\Service\Operator as Operator;
 
 class OperatorFactoryTest extends EccubeTestCase
 {
-    /** @var  OperatorFactory */
+    /**
+     * @var  OperatorFactory
+     */
     protected $operatorFactory;
 
     /**

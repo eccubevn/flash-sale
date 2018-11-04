@@ -13,5 +13,20 @@ services:
           - {name: eccube.purchase.processor}
 
     Plugin\FlashSale\Service\FlashSaleService:
-            public: true
-            autowire: true
+        public: true
+        autowire: true
+
+    Plugin\FlashSale\Service\Promotion\PromotionFactory:
+        public: true
+        autowire: true
+        lazy: true
+
+    Plugin\FlashSale\Service\Condition\ConditionFactory:
+        public: true
+        autowire: true
+        lazy: true
+
+    Plugin\FlashSale\Service\Rule\RuleFactory:
+        public: true
+        autowire: true
+        lazy: true

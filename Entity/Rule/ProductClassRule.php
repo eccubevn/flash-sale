@@ -143,7 +143,7 @@ class ProductClassRule extends Rule
         }
 
         if (isset($this->cached[__METHOD__.$ProductClass->getId()])) {
-            return $this->cached[__METHOD__.$ProductClass->getId()];
+            return $this->cached[__METHOD__.$ProductClass->getId()]; // @codeCoverageIgnore
         }
 
         $this->cached[__METHOD__.$ProductClass->getId()] = $this->getOperatorFactory()
@@ -184,7 +184,7 @@ class ProductClassRule extends Rule
         }
 
         if (isset($this->cached[__METHOD__.$ProductClass->getId()])) {
-            return $this->cached[__METHOD__.$ProductClass->getId()];
+            return $this->cached[__METHOD__.$ProductClass->getId()]; // @codeCoverageIgnore
         }
 
         $discount = $this->getPromotion()->getDiscount($ProductClass);

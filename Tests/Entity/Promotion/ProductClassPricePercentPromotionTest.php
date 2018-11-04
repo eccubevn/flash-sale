@@ -13,22 +13,17 @@
 
 namespace Plugin\FlashSale\Tests\Entity\Promotion;
 
-use Eccube\Tests\EccubeTestCase;
+use Eccube\Entity\ProductClass;
 use Plugin\FlashSale\Entity\Discount;
 use Plugin\FlashSale\Entity\Promotion\ProductClassPricePercentPromotion;
-use Plugin\FlashSale\Tests\DataProvider\Entity\Promotion\ProductClassPricePercentPromotionDataProvider;
+use Plugin\FlashSale\Tests\Entity\PromotionTest;
 
-/**
- * AbstractEntity test cases.
- *
- * @author Kentaro Ohkouchi
- */
-class ProductClassPricePercentPromotionTest extends EccubeTestCase
+class ProductClassPricePercentPromotionTest extends PromotionTest
 {
     /**
      * @var ProductClassPricePercentPromotion
      */
-    protected $productClassPricePercentPromotion;
+    protected $promotion;
 
     /**
      * {@inheritdoc}
@@ -37,31 +32,51 @@ class ProductClassPricePercentPromotionTest extends EccubeTestCase
     {
         parent::setUp();
 
-        $this->productClassPricePercentPromotion = new ProductClassPricePercentPromotion();
+        $this->promotion = new ProductClassPricePercentPromotion();
+    }
+
+    public static function dataProvider_testRawData_Scenario1()
+    {
+        return [
+            [['id' => 1, 'type' => 'promotion_product_class_price_percent', 'value' => 1000]],
+        ];
+    }
+
+
+    public function testGetDiscount_Scenario0()
+    {
+        $this->promotion->setId(rand());
+        $actual = $this->promotion->getDiscount(new \stdClass());
+        $this->assertEquals(Discount::class, get_class($actual));
+        $this->assertEquals($this->promotion->getId(), $actual->getPromotionId());
+        $this->assertEquals(0, $actual->getValue());
     }
 
     /**
-     * @param $dataSet
-     * @dataProvider dataProvider_testGetDiscount
+     * @param $promotionValue
+     * @param $productClassPrice
+     * @param $expectedValue
+     * @dataProvider dataProvider_testGetDiscount_Scenario1
      */
-    public function testGetDiscount($dataSet)
+    public function testGetDiscount_Scenario1($promotionValue, $productClassPrice, $expectedValue)
     {
-        list($promotionData, $object, $expectedData) = $dataSet;
-        $this->productClassPricePercentPromotion->setId($promotionData['id']);
-        $this->productClassPricePercentPromotion->setValue($promotionData['value']);
+        $this->promotion->setId(rand());
+        $this->promotion->setValue($promotionValue);
 
-        $result = $this->productClassPricePercentPromotion->getDiscount($object);
-        $this->assertEquals(get_class($result), Discount::class);
-        $this->assertEquals($result->getPromotionId(), $expectedData['id']);
-        $this->assertEquals($result->getValue(), $expectedData['value']);
+        $ProductClass = new ProductClass();
+        $ProductClass->setPrice02IncTax($productClassPrice);
+        $actual = $this->promotion->getDiscount($ProductClass);
+
+        $this->assertEquals(Discount::class, Discount::class);
+        $this->assertEquals($actual->getPromotionId(), $actual->getPromotionId());
+        $this->assertEquals($actual->getValue(), $expectedValue);
     }
 
-    public function dataProvider_testGetDiscount()
+    public static function dataProvider_testGetDiscount_Scenario1($testMethod = null, $productPrice = 32567)
     {
         return [
-            [ProductClassPricePercentPromotionDataProvider::testGetDiscount_True1()],
-            [ProductClassPricePercentPromotionDataProvider::testGetDiscount_False1()],
-            [ProductClassPricePercentPromotionDataProvider::testGetDiscount_False2()],
+            [10, $productPrice, floor($productPrice*10/100)],
+            [23, $productPrice, floor($productPrice*23/100)],
         ];
     }
 }

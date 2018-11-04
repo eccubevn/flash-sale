@@ -113,7 +113,7 @@ class CartRule extends Rule
         }
 
         if (isset($this->cached[__METHOD__.$Order->getId()])) {
-            return $this->cached[__METHOD__.$Order->getId()];
+            return $this->cached[__METHOD__.$Order->getId()]; // @codeCoverageIgnore
         }
 
         $this->cached[__METHOD__.$Order->getId()] = $this->getOperatorFactory()
@@ -153,7 +153,7 @@ class CartRule extends Rule
     protected function getDiscountFromCart(Cart $Cart): DiscountInterface
     {
         $Order = new Order();
-        $Order->offsetSet('id', 'C' . $Cart->getId());
+        $Order->setPropertiesFromArray(['id' => 'C' . $Cart->getId()]);
         $Order->setSubtotal($Cart->getTotal());
 
         return $this->getDiscountFromOrder($Order);
@@ -175,7 +175,7 @@ class CartRule extends Rule
         }
 
         if (isset($this->cached[__METHOD__.$Order->getId()])) {
-            return $this->cached[__METHOD__.$Order->getId()];
+            return $this->cached[__METHOD__.$Order->getId()]; // @codeCoverageIgnore
         }
 
         $discount = $this->getPromotion()->getDiscount($Order);

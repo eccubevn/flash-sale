@@ -47,11 +47,12 @@ class GreaterThanOperatorTest extends EccubeTestCase
         $this->assertEquals($expected, $actual);
     }
 
-    public function dataProvider_testMatch()
+    public static function dataProvider_testMatch($data = 12345)
     {
         return [
-            [1, 2, true],
-            [100, 2, false],
+            [(int)$data - 1, $data, true],
+            [(int)$data + 1, $data, false],
+            [$data, $data, false],
         ];
     }
 }

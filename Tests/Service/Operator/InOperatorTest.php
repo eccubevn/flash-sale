@@ -47,13 +47,13 @@ class InOperatorTest extends EccubeTestCase
         $this->assertEquals($expected, $actual);
     }
 
-    public function dataProvider_testMatch()
+    public static function dataProvider_testMatch($data = 1)
     {
         return [
-            ['1,2,3,4,5', 3, true],
-            [[1,2,3,4,5], 4, true],
-            [[1,2,3,4,5], 40, false],
-            ['1,2,3,4,5', 77, false],
+            [$data.','.((int)$data-1), $data, true],
+            [[$data,(int)$data+1], [$data], true],
+            [[(int)$data-1,(int)$data+1], $data, false],
+            [((int)$data-1).','.((int)$data+1), [$data], false],
         ];
     }
 }

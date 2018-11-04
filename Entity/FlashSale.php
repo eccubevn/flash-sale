@@ -326,9 +326,9 @@ class FlashSale
     {
         $result = [];
         if ($data) {
-            $result = json_decode($data, true);
+            $jsonData = json_decode($data, true);
             if (is_array($result) && !isset($result['id'])) {
-                $result['rules'] = $result;
+                $result['rules'] = $jsonData;
             }
         } else {
             $result['rules'] = [];

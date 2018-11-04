@@ -47,13 +47,12 @@ class EqualOperatorTest extends EccubeTestCase
         $this->assertEquals($expected, $actual);
     }
 
-    public function dataProvider_testMatch()
+    public static function dataProvider_testMatch($data = 12345)
     {
         return [
-            [5, 10, false],
-            [10, 10, true],
-            [null, null, true],
-            ['abc', '456', false],
+            [$data, $data, true],
+            [(int)$data - 1, $data, false],
+            [null, $data, false]
         ];
     }
 }

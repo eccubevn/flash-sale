@@ -14,27 +14,37 @@
 namespace Plugin\FlashSale\Tests\Entity\Condition;
 
 use Eccube\Entity\Order;
-use Eccube\Tests\EccubeTestCase;
 use Plugin\FlashSale\Entity\Condition\CartTotalCondition;
 use Plugin\FlashSale\Service\Operator\OperatorFactory;
 use Plugin\FlashSale\Service\Operator as Operator;
+use Plugin\FlashSale\Tests\Entity\ConditionTest;
+use Plugin\FlashSale\Tests\Service\Operator as OperatorTest;
 
 /**
  * Class ProductClassIdConditionTest
  * @package Plugin\FlashSale\Tests\Entity\Condition
  */
-class CartTotalConditionTest extends EccubeTestCase
+class CartTotalConditionTest extends ConditionTest
 {
     /**
      * @var CartTotalCondition
      */
-    protected $cartTotalCondition;
+    protected $condition;
 
     public function setUp()
     {
         parent::setUp();
-        $this->cartTotalCondition = new CartTotalCondition();
-        $this->cartTotalCondition->setOperatorFactory($this->container->get(OperatorFactory::class));
+        $this->condition = new CartTotalCondition();
+        $this->condition->setOperatorFactory($this->container->get(OperatorFactory::class));
+    }
+
+    public static function dataProvider_testRawData_Scenario1()
+    {
+        return [
+            [['id' => 1, 'type' => 'condition_cart_total', 'operator' => 'operator_equal', 'value' => 10]],
+            [['id' => 2, 'type' => 'condition_cart_total', 'operator' => 'operator_greater_than', 'value' => 20]],
+            [['id' => 3, 'type' => 'condition_cart_total', 'operator' => 'operator_less_than', 'value' => 30]],
+        ];
     }
 
     public function testGetOperatorTypes()
@@ -44,13 +54,13 @@ class CartTotalConditionTest extends EccubeTestCase
             Operator\EqualOperator::TYPE,
             Operator\LessThanOperator::TYPE,
         ];
-        $this->actual = $this->cartTotalCondition->getOperatorTypes();
+        $this->actual = $this->condition->getOperatorTypes();
         $this->verify();
     }
 
     public function testMatch_Scenario0()
     {
-        $actual = $this->cartTotalCondition->match(new \stdClass());
+        $actual = $this->condition->match(new \stdClass());
         $this->assertEquals(false, $actual);
     }
 
@@ -64,27 +74,34 @@ class CartTotalConditionTest extends EccubeTestCase
      */
     public function testMatch_Scenario1($conditionOperator, $conditionValue, $orderSubtotal, $expected)
     {
-        $this->cartTotalCondition->setValue($conditionValue);
-        $this->cartTotalCondition->setOperator($conditionOperator);
+        $this->condition->setValue($conditionValue);
+        $this->condition->setOperator($conditionOperator);
 
         $Order = new Order();
         $Order->setSubtotal($orderSubtotal);
 
-        $actual = $this->cartTotalCondition->match($Order);
+        $actual = $this->condition->match($Order);
         $this->assertEquals($expected, $actual);
     }
 
-    public static function dataProvider_testMatch_Scenario1()
+    public static function dataProvider_testMatch_Scenario1($testMethod = null, $orderSubtotal = 12345)
     {
-        return [
-            ['operator_equal', 1000, 1000, true],
-            ['operator_equal', 1000, 1111, false],
-            ['operator_greater_than', 1000, 1111, true],
-            ['operator_greater_than', 1000, 1000, false],
-            ['operator_greater_than', 1000, 999, false],
-            ['operator_less_than', 1000, 999, true],
-            ['operator_less_than', 1000, 2222, false],
-            ['operator_less_than', 1000, 1000, false],
-        ];
+        $data = [];
+        foreach (OperatorTest\EqualOperatorTest::dataProvider_testMatch($orderSubtotal) as $operatorData) {
+            list($conditionValue, $orderSubtotal, $expected) = $operatorData;
+            $data[] = ['operator_equal', (string)$conditionValue, $orderSubtotal, $expected];
+        }
+
+        foreach (OperatorTest\GreaterThanOperatorTest::dataProvider_testMatch($orderSubtotal) as $operatorData) {
+            list($conditionValue, $orderSubtotal, $expected) = $operatorData;
+            $data[] = ['operator_greater_than', (string)$conditionValue, $orderSubtotal, $expected];
+        }
+
+        foreach (OperatorTest\LessThanOperatorTest::dataProvider_testMatch($orderSubtotal) as $operatorData) {
+            list($conditionValue, $orderSubtotal, $expected) = $operatorData;
+            $data[] = ['operator_less_than', (string)$conditionValue, $orderSubtotal, $expected];
+        }
+
+        return $data;
     }
 }

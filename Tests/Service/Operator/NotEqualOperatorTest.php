@@ -48,13 +48,11 @@ class NotEqualOperatorTest extends EccubeTestCase
         $this->assertEquals($expected, $actual);
     }
 
-    public function dataProvider_testMatch()
+    public function dataProvider_testMatch($data = 12345)
     {
         return [
-            [123, '321', true],
-            [456, 0, true],
-            [789, '789', false],
-            [1011, 1011, false]
+            [(int)$data-1, $data, true],
+            [$data, $data, false],
         ];
     }
 }

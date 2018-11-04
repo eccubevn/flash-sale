@@ -48,11 +48,12 @@ class LessThanOperatorTest extends EccubeTestCase
         $this->assertEquals($expected, $actual);
     }
 
-    public function dataProvider_testMatch()
+    public static function dataProvider_testMatch($data = 12345)
     {
         return [
-            [1, 5, false],
-            [100, 5, true],
+            [(int)$data+1, $data, true],
+            [(int)$data-1, $data, false],
+            [$data, $data, false],
         ];
     }
 }
