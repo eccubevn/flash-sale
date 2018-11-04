@@ -14,47 +14,105 @@
 namespace Plugin\FlashSale\Tests\Entity\Condition;
 
 use Eccube\Entity\Product;
+use Eccube\Entity\ProductCategory;
 use Eccube\Entity\ProductClass;
+use Eccube\Tests\EccubeTestCase;
+use Plugin\FlashSale\Service\Operator as Operator;
 use Plugin\FlashSale\Entity\Condition\ProductCategoryIdCondition;
-use Plugin\FlashSale\Service\Operator\InOperator;
 use Plugin\FlashSale\Service\Operator\OperatorFactory;
-use Plugin\FlashSale\Tests\Entity\AbstractEntityTest;
+use Plugin\FlashSale\Tests\Entity\ConditionTest;
+use Plugin\FlashSale\Tests\Service\Operator as OperatorTest;
 
 /**
  * Class ProductClassIdConditionTest
  * @package Plugin\FlashSale\Tests\Entity\Condition
  */
-class ProductCategoryIdConditionTest extends AbstractEntityTest
+class ProductCategoryIdConditionTest extends ConditionTest
 {
-    /** @var Product */
-    protected $Product;
+    /**
+     * @var ProductCategoryIdCondition
+     */
+    protected $condition;
 
-    /** @var ProductClass */
-    protected $ProductClass1;
-
+    /**
+     * {@inheritdoc}
+     */
     public function setUp()
     {
         parent::setUp();
-
-        $this->Product = $this->createProduct('テスト商品', 3);
-        $this->ProductClass1 = $this->Product->getProductClasses()[0];
+        $this->condition = new ProductCategoryIdCondition();
+        $this->condition->setOperatorFactory($this->container->get(OperatorFactory::class));
     }
 
-    public function testMatch_InOperator_Invalid()
+    public static function dataProvider_testRawData_Scenario1()
     {
-        $productCategoryIdRule = new ProductCategoryIdCondition();
-        $data = $productCategoryIdRule->match(new \stdClass());
-        self::assertFalse($data);
+        return [
+            [['id' => 1, 'type' => 'condition_product_category_id', 'operator' => 'operator_in', 'value' => '1,2']],
+            [['id' => 2, 'type' => 'condition_product_category_id', 'operator' => 'operator_not_in', 'value' => '3,4']],
+        ];
     }
 
-    public function testMatch_InOperator_Valid()
+    public function testGetOperatorTypes()
     {
-        $productCategoryIdRule = new ProductCategoryIdCondition();
-        $productCategoryIdRule->setOperator(InOperator::TYPE);
-        $productCategoryIdRule->setValue(1);
-        $productCategoryIdRule->setOperatorFactory(new OperatorFactory());
-        $data = $productCategoryIdRule->match($this->ProductClass1);
+        $this->expected = [
+            Operator\InOperator::TYPE,
+            Operator\NotInOperator::TYPE,
+        ];
+        $this->actual = $this->condition->getOperatorTypes();
+        $this->verify();
+    }
 
-        self::assertTrue($data);
+    public function testMatch_Scenario0()
+    {
+        $actual = $this->condition->match(new \stdClass());
+        $this->assertEquals(false, $actual);
+    }
+
+    /**
+     * @param $conditionOperator
+     * @param $conditionValue
+     * @param $categoryIds
+     * @param $expected
+     *
+     * @dataProvider dataProvider_testMatch_Scenario1
+     */
+    public function testMatch_Scenario1($conditionOperator, $conditionValue, $categoryIds, $expected)
+    {
+        $this->condition->setValue($conditionValue);
+        $this->condition->setOperator($conditionOperator);
+
+        $Product = new Product();
+        foreach ($categoryIds as $categoryId) {
+            $ProductCategory = new ProductCategory();
+            $ProductCategory->setCategoryId($categoryId);
+            $Product->addProductCategory($ProductCategory);
+        }
+        $ProductClass = new ProductClass();
+        $ProductClass->setProduct($Product);
+
+        $actual = $this->condition->match($ProductClass);
+        $this->assertEquals($expected, $actual);
+    }
+
+    public static function dataProvider_testMatch_Scenario1($testMethod = null, $categoryId = 1)
+    {
+        $data = [];
+        foreach (OperatorTest\InOperatorTest::dataProvider_testMatch($categoryId) as $operatorData) {
+            list($conditionValue,, $expected) = $operatorData;
+            if (is_array($conditionValue)) {
+                continue;
+            }
+            $data[] = ['operator_in', (string)$conditionValue, (array)$categoryId, $expected];
+        }
+
+        foreach (OperatorTest\NotInOperatorTest::dataProvider_testMatch($categoryId) as $operatorData) {
+            list($conditionValue,, $expected) = $operatorData;
+            if (is_array($conditionValue)) {
+                continue;
+            }
+            $data[] = ['operator_not_in', (string)$conditionValue, (array)$categoryId, $expected];
+        }
+
+        return $data;
     }
 }

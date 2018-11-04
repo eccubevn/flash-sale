@@ -11,16 +11,19 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\FlashSale\Service\Operator;
+namespace Plugin\FlashSale\Tests\Service\Operator;
 
-use Plugin\FlashSale\Tests\Service\AbstractServiceTestCase;
+use Eccube\Tests\EccubeTestCase;
+use Plugin\FlashSale\Service\Operator\LessThanOperator;
+use Plugin\FlashSale\Tests\DataProvider\Service\Operator\LessThanOperatorDataProvider;
 
-class LessThanOperatorTest extends AbstractServiceTestCase
+class LessThanOperatorTest extends EccubeTestCase
 {
+
     /**
      * @var LessThanOperator
      */
-    protected $operator;
+    protected $lessThanOperator;
 
     /**
      * {@inheritdoc}
@@ -29,26 +32,28 @@ class LessThanOperatorTest extends AbstractServiceTestCase
     {
         parent::setUp();
 
-        $this->operator = new LessThanOperator();
+        $this->lessThanOperator = new LessThanOperator();
     }
 
-    public function testGetName()
+    /**
+     * @param $condition
+     * @param $data
+     * @param $expected
+     *
+     * @dataProvider dataProvider_testMatch
+     */
+    public function testMatch($condition, $data, $expected)
     {
-        self::assertEquals('is less than to', $this->operator->getName());
+        $actual = $this->lessThanOperator->match($condition, $data);
+        $this->assertEquals($expected, $actual);
     }
 
-    public function testGetType()
+    public static function dataProvider_testMatch($data = 12345)
     {
-        self::assertEquals(LessThanOperator::TYPE, $this->operator->getType());
-    }
-
-    public function testMatchScalarTypeTrue()
-    {
-        self::assertTrue($this->operator->match(6, 5));
-    }
-
-    public function testMatchScalarTypeFalse()
-    {
-        self::assertFalse($this->operator->match(4, 5));
+        return [
+            [(int)$data+1, $data, true],
+            [(int)$data-1, $data, false],
+            [$data, $data, false],
+        ];
     }
 }

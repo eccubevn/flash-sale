@@ -19,17 +19,17 @@ use Eccube\Entity\Product;
 use Eccube\Entity\ProductClass;
 use Eccube\Tests\EccubeTestCase;
 use Plugin\FlashSale\Entity\Condition\CartTotalCondition;
-use Plugin\FlashSale\Entity\Condition\ProductCategoryIdCondition;
 use Plugin\FlashSale\Entity\Condition\ProductClassIdCondition;
+use Plugin\FlashSale\Entity\Condition\ProductCategoryIdCondition;
 use Plugin\FlashSale\Service\Operator as Operator;
 use Plugin\FlashSale\Tests\Entity\Condition as ConditionTest;
 
-class AllOperatorTest extends EccubeTestCase
+class OrOperatorTest extends EccubeTestCase
 {
     /**
-     * @var Operator\AllOperator
+     * @var Operator\OrOperator
      */
-    protected $allOperator;
+    protected $orOperator;
 
     /**
      * {@inheritdoc}
@@ -38,13 +38,14 @@ class AllOperatorTest extends EccubeTestCase
     {
         parent::setUp();
 
-        $this->allOperator = new Operator\AllOperator();
+        $this->orOperator = new Operator\OrOperator();
     }
 
     public function testMatch_Scenario0()
     {
-        $this->assertEquals(false, $this->allOperator->match(null, new \stdClass()));
-        $this->assertEquals(false, $this->allOperator->match([new \stdClass()], new \stdClass()));
+        $this->assertEquals(false, $this->orOperator->match(null, new \stdClass()));
+        $this->assertEquals(false, $this->orOperator->match([new \stdClass()], new \stdClass()));
+
     }
 
     /**
@@ -73,7 +74,7 @@ class AllOperatorTest extends EccubeTestCase
 
         $conditions = [$condition1, $condition2];
 
-        $actual = $this->allOperator->match($conditions, $Order);
+        $actual = $this->orOperator->match($conditions, $Order);
         $this->assertEquals($expected, $actual);
     }
 
@@ -81,18 +82,17 @@ class AllOperatorTest extends EccubeTestCase
     {
         $data = [];
 
-        $conditionDataSet = ConditionTest\CartTotalConditionTest::dataProvider_testMatch_Scenario1(null, $orderSubtotal);
+        $conditionDataSet = ConditionTest\CartTotalConditionTest::dataProvider_testMatch_Scenario1();
         for ($i =0; $i < count($conditionDataSet); $i++) {
             for ($j=0; $j<count($conditionDataSet); $j++) {
                 list($operatorI, $conditionValueI,, $expectedI) = $conditionDataSet[$i];
                 list($operatorJ, $conditionValueJ,, $expectedJ) = $conditionDataSet[$j];
-                $expected = $expectedI && $expectedJ;
+                $expected = $expectedI || $expectedJ;
                 $data[] = [[$operatorI, $conditionValueI], [$operatorJ, $conditionValueJ], $orderSubtotal, $expected];
             }
         }
 
         return $data;
-
     }
 
     /**
@@ -127,7 +127,7 @@ class AllOperatorTest extends EccubeTestCase
 
         $conditions = [$condition1, $condition2];
 
-        $actual = $this->allOperator->match($conditions, $ProductClass);
+        $actual = $this->orOperator->match($conditions, $ProductClass);
         $this->assertEquals($expected, $actual);
     }
 
@@ -141,7 +141,7 @@ class AllOperatorTest extends EccubeTestCase
             for ($j=0; $j<count($conditionDataSetJ); $j++) {
                 list($operatorI, $conditionValueI,, $expectedI) = $conditionDataSetI[$i];
                 list($operatorJ, $conditionValueJ,, $expectedJ) = $conditionDataSetJ[$j];
-                $expected = $expectedI && $expectedJ;
+                $expected = $expectedI || $expectedJ;
                 $data[] = [[$operatorI, $conditionValueI], [$operatorJ, $conditionValueJ], $productClassId , $categoryId, $expected];
             }
         }

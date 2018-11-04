@@ -15,7 +15,18 @@ namespace Plugin\FlashSale\Tests\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Eccube\Tests\EccubeTestCase;
+use Plugin\FlashSale\Entity\Condition\CartTotalCondition;
 use Plugin\FlashSale\Entity\FlashSale;
+use Plugin\FlashSale\Entity\Promotion\CartTotalPercentPromotion;
+use Plugin\FlashSale\Entity\Rule\CartRule;
+use Plugin\FlashSale\Service\Operator as Operator;
+use Plugin\FlashSale\Service\Promotion\PromotionFactory;
+use Plugin\FlashSale\Service\Condition\ConditionFactory;
+use Plugin\FlashSale\Service\Rule\RuleFactory;
+use Plugin\FlashSale\Tests\Entity\Rule\CartRuleTest;
+use Plugin\FlashSale\Tests\Entity\Rule\ProductClassRuleTest;
+use Plugin\FlashSale\Entity\Promotion;
+use Plugin\FlashSale\Entity\Condition;
 
 /**
  * AbstractEntity test cases.
@@ -24,42 +35,73 @@ use Plugin\FlashSale\Entity\FlashSale;
  */
 class FlashSaleTest extends EccubeTestCase
 {
+    /**
+     * @var FlashSale
+     */
+    protected $flashSale;
+
     public function setUp()
     {
         parent::setUp();
+        $this->flashSale = new FlashSale();
     }
 
-    public function testConstructor()
+    /**
+     * @param $expected
+     * @dataProvider dataProvider_testRawData_Scenario1
+     */
+    public function testRawData_Scenario0($expected)
     {
-        $FlashSale = new FlashSale();
-        $FlashSale->setStatus(FlashSale::STATUS_ACTIVATED);
+        $actual = $this->flashSale->rawData(json_encode($expected['rules']));
+        $this->assertEquals($expected, $actual);
+    }
 
-        $this->expected = new ArrayCollection();
-        $this->actual = $FlashSale->getRules();
-        $this->verify();
+    /**
+     * @param $expected
+     * @dataProvider dataProvider_testRawData_Scenario1
+     */
+    public function testRawData_Scenario1($expected)
+    {
+        foreach ($expected['rules'] as $ruleData) {
+            $rule = RuleFactory::createFromArray(['type' => $ruleData['type']]);
 
-        $this->expected = 0;
+            $rule->setId($ruleData['id']);
+            $rule->setOperator($ruleData['operator']);
 
-        $this->actual = $FlashSale->getId();
-        $this->verify();
+            /** @var Promotion $promotion */
+            $promotion = $this->container->get(PromotionFactory::class)->createFromArray(['type' => $ruleData['promotion']['type']]);
+            $promotion->setId($ruleData['promotion']['id']);
+            $promotion->setValue($ruleData['promotion']['value']);
+            $rule->setPromotion($promotion);
 
-        $this->actual = $FlashSale->getName();
-        $this->verify();
+            foreach ($ruleData['conditions'] as $conditionData) {
+                /** @var Condition $condition */
+                $condition = $this->container->get(ConditionFactory::class)->createFromArray(['type' => $conditionData['type']]);
+                $condition->setId($conditionData['id']);
+                $condition->setOperator($conditionData['operator']);
+                $condition->setValue($conditionData['value']);
+                $rule->addConditions($condition);
+            }
 
-        $this->actual = get_class($FlashSale->getFromTime());
-        $this->expected = \DateTime::class;
-        $this->verify();
+            $this->flashSale->addRule($rule);
+        }
 
-        $this->actual = get_class($FlashSale->getToTime());
-        $this->expected = \DateTime::class;
-        $this->verify();
+        $actual = $this->flashSale->rawData();
+        $this->assertEquals($expected, $actual);
+    }
 
-        $this->expected = FlashSale::STATUS_ACTIVATED;
-        $this->actual = $FlashSale->getStatus();
-        $this->verify();
+    public static function dataProvider_testRawData_Scenario1()
+    {
+        $data = [];
+        $dataCase = ['rules' => []];
+        foreach (CartRuleTest::dataProvider_testRawData_Scenario1() as $ruleData) {
+            $dataCase['rules'] = $ruleData;
+        }
+        foreach (ProductClassRuleTest::dataProvider_testRawData_Scenario1() as $ruleData) {
+            $dataCase['rules'] = $ruleData;
+        }
+        $data[] = [$dataCase];
 
-        $this->expected = FlashSale::$statusList[FlashSale::STATUS_ACTIVATED];
-        $this->actual = $FlashSale->getStatusText();
-        $this->verify();
+        return $data;
     }
 }

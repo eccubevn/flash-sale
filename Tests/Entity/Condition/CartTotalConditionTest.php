@@ -13,95 +13,95 @@
 
 namespace Plugin\FlashSale\Tests\Entity\Condition;
 
-use Eccube\Entity\Cart;
-use Eccube\Entity\CartItem;
 use Eccube\Entity\Order;
-use Eccube\Entity\OrderItem;
-use Eccube\Entity\Product;
-use Eccube\Entity\ProductClass;
 use Plugin\FlashSale\Entity\Condition\CartTotalCondition;
-use Plugin\FlashSale\Entity\Condition\ProductClassIdCondition;
-use Plugin\FlashSale\Service\Operator\GreaterThanOperator;
-use Plugin\FlashSale\Service\Operator\InOperator;
-use Plugin\FlashSale\Service\Operator\LessThanOperator;
 use Plugin\FlashSale\Service\Operator\OperatorFactory;
-use Plugin\FlashSale\Tests\Entity\AbstractEntityTest;
+use Plugin\FlashSale\Service\Operator as Operator;
+use Plugin\FlashSale\Tests\Entity\ConditionTest;
+use Plugin\FlashSale\Tests\Service\Operator as OperatorTest;
 
 /**
  * Class ProductClassIdConditionTest
  * @package Plugin\FlashSale\Tests\Entity\Condition
  */
-class CartTotalConditionTest extends AbstractEntityTest
+class CartTotalConditionTest extends ConditionTest
 {
-    /** @var Product */
-    protected $Product;
-
-    /** @var ProductClass */
-    protected $ProductClass1;
+    /**
+     * @var CartTotalCondition
+     */
+    protected $condition;
 
     public function setUp()
     {
         parent::setUp();
-
-        $this->Product = $this->createProduct('テスト商品', 3);
-        $this->ProductClass1 = $this->Product->getProductClasses()[0];
+        $this->condition = new CartTotalCondition();
+        $this->condition->setOperatorFactory($this->container->get(OperatorFactory::class));
     }
 
-    public function testMatch_Invalid()
+    public static function dataProvider_testRawData_Scenario1()
     {
-        $CartTotalCondition = new CartTotalCondition();
-        $data = $CartTotalCondition->match(new \stdClass());
-        self::assertFalse($data);
+        return [
+            [['id' => 1, 'type' => 'condition_cart_total', 'operator' => 'operator_equal', 'value' => 10]],
+            [['id' => 2, 'type' => 'condition_cart_total', 'operator' => 'operator_greater_than', 'value' => 20]],
+            [['id' => 3, 'type' => 'condition_cart_total', 'operator' => 'operator_less_than', 'value' => 30]],
+        ];
     }
 
-    public function testMatch_InOperator_InValid_Cart()
+    public function testGetOperatorTypes()
     {
-        $CartTotalCondition = new CartTotalCondition();
-        $CartTotalCondition->setOperator(GreaterThanOperator::TYPE);
-        $CartTotalCondition->setValue($this->ProductClass1->getPrice02IncTax());
-        $CartTotalCondition->setOperatorFactory(new OperatorFactory());
-
-        $cart = new Cart();
-        $item = new CartItem();
-        $item->setProductClass($this->ProductClass1);
-        $cart->addItem($item);
-        $cart->setTotal(10);
-        $data = $CartTotalCondition->match($cart);
-
-        self::assertFalse($data);
+        $this->expected = [
+            Operator\GreaterThanOperator::TYPE,
+            Operator\EqualOperator::TYPE,
+            Operator\LessThanOperator::TYPE,
+        ];
+        $this->actual = $this->condition->getOperatorTypes();
+        $this->verify();
     }
 
-    public function testMatch_InOperator_Valid_Order()
+    public function testMatch_Scenario0()
     {
-        $CartTotalCondition = new CartTotalCondition();
-        $CartTotalCondition->setOperator(LessThanOperator::TYPE);
-        $CartTotalCondition->setValue($this->ProductClass1->getPrice02IncTax());
-        $CartTotalCondition->setOperatorFactory(new OperatorFactory());
-
-        $order = new Order();
-        $item = new OrderItem();
-        $item->setProductClass($this->ProductClass1);
-        $order->addItem($item);
-        $order->setTotal(100000);
-        $data = $CartTotalCondition->match($order);
-
-        self::assertTrue($data);
+        $actual = $this->condition->match(new \stdClass());
+        $this->assertEquals(false, $actual);
     }
 
-    public function testMatch_InOperator_InValid_Order()
+    /**
+     * @param $conditionOperator
+     * @param $conditionValue
+     * @param $orderSubtotal
+     * @param $expected
+     *
+     * @dataProvider dataProvider_testMatch_Scenario1
+     */
+    public function testMatch_Scenario1($conditionOperator, $conditionValue, $orderSubtotal, $expected)
     {
-        $CartTotalCondition = new CartTotalCondition();
-        $CartTotalCondition->setOperator(GreaterThanOperator::TYPE);
-        $CartTotalCondition->setValue($this->ProductClass1->getPrice02IncTax());
-        $CartTotalCondition->setOperatorFactory(new OperatorFactory());
+        $this->condition->setValue($conditionValue);
+        $this->condition->setOperator($conditionOperator);
 
-        $order = new Order();
-        $item = new OrderItem();
-        $item->setProductClass($this->ProductClass1);
-        $order->addItem($item);
-        $order->setTotal(10);
-        $data = $CartTotalCondition->match($order);
+        $Order = new Order();
+        $Order->setSubtotal($orderSubtotal);
 
-        self::assertFalse($data);
+        $actual = $this->condition->match($Order);
+        $this->assertEquals($expected, $actual);
+    }
+
+    public static function dataProvider_testMatch_Scenario1($testMethod = null, $orderSubtotal = 12345)
+    {
+        $data = [];
+        foreach (OperatorTest\EqualOperatorTest::dataProvider_testMatch($orderSubtotal) as $operatorData) {
+            list($conditionValue, $orderSubtotal, $expected) = $operatorData;
+            $data[] = ['operator_equal', (string)$conditionValue, $orderSubtotal, $expected];
+        }
+
+        foreach (OperatorTest\GreaterThanOperatorTest::dataProvider_testMatch($orderSubtotal) as $operatorData) {
+            list($conditionValue, $orderSubtotal, $expected) = $operatorData;
+            $data[] = ['operator_greater_than', (string)$conditionValue, $orderSubtotal, $expected];
+        }
+
+        foreach (OperatorTest\LessThanOperatorTest::dataProvider_testMatch($orderSubtotal) as $operatorData) {
+            list($conditionValue, $orderSubtotal, $expected) = $operatorData;
+            $data[] = ['operator_less_than', (string)$conditionValue, $orderSubtotal, $expected];
+        }
+
+        return $data;
     }
 }

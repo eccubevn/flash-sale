@@ -40,13 +40,7 @@ class InOperator implements OperatorInterface
             }
         } else {
             foreach ($condition as $cond) {
-                if ($cond instanceof ConditionInterface) {
-                    $result = $cond->match($data);
-                } else {
-                    $result = ($cond == $data);
-                }
-
-                if ($result) {
+                if ($cond == $data) {
                     return true;
                 }
             }

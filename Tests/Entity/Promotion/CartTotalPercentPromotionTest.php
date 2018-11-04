@@ -14,101 +14,94 @@
 namespace Plugin\FlashSale\Tests\Entity\Promotion;
 
 use Eccube\Entity\Cart;
-use Eccube\Entity\CartItem;
-use Eccube\Entity\Master\OrderItemType;
-use Eccube\Entity\Master\TaxDisplayType;
-use Eccube\Entity\Master\TaxType;
 use Eccube\Entity\Order;
-use Eccube\Entity\OrderItem;
-use Eccube\Entity\Product;
-use Eccube\Entity\ProductClass;
-use Eccube\Tests\EccubeTestCase;
-use Plugin\FlashSale\Entity\Promotion\CartTotalAmountPromotion;
+use Plugin\FlashSale\Entity\Discount;
 use Plugin\FlashSale\Entity\Promotion\CartTotalPercentPromotion;
+use Plugin\FlashSale\Tests\Entity\PromotionTest;
 
 /**
  * AbstractEntity test cases.
  *
  * @author Kentaro Ohkouchi
  */
-class CartTotalPercentPromotionTest extends EccubeTestCase
+class CartTotalPercentPromotionTest extends PromotionTest
 {
-    /** @var Product */
-    protected $Product;
+    /**
+     * @var CartTotalPercentPromotion
+     */
+    protected $promotion;
 
-    /** @var ProductClass */
-    protected $ProductClass1;
-
+    /**
+     * {@inheritdoc}
+     */
     public function setUp()
     {
         parent::setUp();
 
-        $this->Product = $this->createProduct('テスト商品', 3);
-        $this->ProductClass1 = $this->Product->getProductClasses()[0];
+        $this->promotion = new CartTotalPercentPromotion();
     }
 
-    public function testGetDiscountItems_Invalid_Not_Cart_Order()
+    public static function dataProvider_testRawData_Scenario1()
     {
-        $CartTotalPercentPromotion = new CartTotalPercentPromotion();
-        $CartTotalPercentPromotion->setEntityManager($this->entityManager);
-        $CartTotalPercentPromotion->setValue(150);
-
-        $OrderItem = $CartTotalPercentPromotion->getDiscountItems(new \stdClass());
-
-        self::assertEmpty($OrderItem);
+        return [
+            [['id' => 1, 'type' => 'promotion_cart_percent_amount', 'value' => 10]],
+        ];
     }
 
-    public function testGetDiscountItems_Invalid_Cart()
+    public function testGetDiscount_Scenario0()
     {
-        $DiscountType = $this->entityManager->find(OrderItemType::class, OrderItemType::DISCOUNT);
-        $TaxInclude = $this->entityManager->find(TaxDisplayType::class, TaxDisplayType::INCLUDED);
-        $Taxation = $this->entityManager->find(TaxType::class, TaxType::NON_TAXABLE);
-
-        $CartTotalPercentPromotion = new CartTotalPercentPromotion();
-        $CartTotalPercentPromotion->setEntityManager($this->entityManager);
-        $CartTotalPercentPromotion->setValue(150);
-
-        $cart = new Cart();
-        $item = new CartItem();
-        $item->setProductClass($this->ProductClass1);
-        $cart->addItem($item);
-        $cart->setTotal(100000);
-
-        $OrderItem = $CartTotalPercentPromotion->getDiscountItems($cart);
-
-        $price = -1 * floor($cart->getTotal() / 100 * $CartTotalPercentPromotion->getValue());
-
-        self::assertEquals($price, $OrderItem[0]->getPrice());
-        self::assertEquals(1, $OrderItem[0]->getQuantity());
-        self::assertEquals($DiscountType, $OrderItem[0]->getOrderItemType());
-        self::assertEquals($TaxInclude, $OrderItem[0]->getTaxDisplayType());
-        self::assertEquals($Taxation, $OrderItem[0]->getTaxType());
+        $this->promotion->setId(rand());
+        $actual = $this->promotion->getDiscount(new \stdClass());
+        $this->assertEquals(Discount::class, get_class($actual));
+        $this->assertEquals($this->promotion->getId(), $actual->getPromotionId());
+        $this->assertEquals(0, $actual->getValue());
     }
 
-    public function testGetDiscountItems_Invalid_Order()
+    /**
+     * @param $promotionValue
+     * @param $cartTotal
+     * @param $expectedValue
+     * @dataProvider dataProvider_testGetDiscount_Scenario1
+     */
+    public function testGetDiscount_Scenario1($promotionValue, $cartTotal, $expectedValue)
     {
-        $DiscountType = $this->entityManager->find(OrderItemType::class, OrderItemType::DISCOUNT);
-        $TaxInclude = $this->entityManager->find(TaxDisplayType::class, TaxDisplayType::INCLUDED);
-        $Taxation = $this->entityManager->find(TaxType::class, TaxType::NON_TAXABLE);
+        $this->promotion->setId(rand());
+        $this->promotion->setValue($promotionValue);
 
-        $CartTotalPercentPromotion = new CartTotalPercentPromotion();
-        $CartTotalPercentPromotion->setEntityManager($this->entityManager);
-        $CartTotalPercentPromotion->setValue(150);
+        $Cart = new Cart();
+        $Cart->setTotal($cartTotal);
 
-        $order = new Order();
-        $item = new OrderItem();
-        $item->setProductClass($this->ProductClass1);
-        $order->addItem($item);
-        $order->setTotal(10);
+        $actual = $this->promotion->getDiscount($Cart);
+        $this->assertEquals(get_class($actual), Discount::class);
+        $this->assertEquals($this->promotion->getId(), $actual->getPromotionId());
+        $this->assertEquals($expectedValue, $actual->getValue());
+    }
 
-        $OrderItem = $CartTotalPercentPromotion->getDiscountItems($order);
+    /**
+     * @param $promotionValue
+     * @param $orderSubTotal
+     * @param $expectedValue
+     * @dataProvider dataProvider_testGetDiscount_Scenario1
+     */
+    public function testGetDiscount_Scenario2($promotionValue, $orderSubTotal, $expectedValue)
+    {
+        $this->promotion->setId(rand());
+        $this->promotion->setValue($promotionValue);
 
-        $price = -1 * floor($order->getSubtotal() / 100 * $CartTotalPercentPromotion->getValue());
+        $Order = new Order();
+        $Order->setSubtotal($orderSubTotal);
 
-        self::assertEquals($price, $OrderItem[0]->getPrice());
-        self::assertEquals(1, $OrderItem[0]->getQuantity());
-        self::assertEquals($DiscountType, $OrderItem[0]->getOrderItemType());
-        self::assertEquals($TaxInclude, $OrderItem[0]->getTaxDisplayType());
-        self::assertEquals($Taxation, $OrderItem[0]->getTaxType());
+        $actual = $this->promotion->getDiscount($Order);
+        $this->assertEquals(get_class($actual), Discount::class);
+        $this->assertEquals($this->promotion->getId(), $actual->getPromotionId());
+        $this->assertEquals($expectedValue, $actual->getValue());
+    }
+
+    public static function dataProvider_testGetDiscount_Scenario1($testMethod = null, $orderSubtotal = 12345)
+    {
+        return [
+            [10, $orderSubtotal, floor(10*$orderSubtotal/100)],
+            [51, $orderSubtotal, floor(51*$orderSubtotal/100)],
+        ];
     }
 }

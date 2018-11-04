@@ -11,19 +11,18 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\FlashSale\Service\Operator;
+namespace Plugin\FlashSale\Tests\Service\Operator;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Plugin\FlashSale\Entity\Condition\ProductClassIdCondition;
-use Plugin\FlashSale\Entity\Rule;
-use Plugin\FlashSale\Tests\Service\AbstractServiceTestCase;
+use Eccube\Tests\EccubeTestCase;
+use Plugin\FlashSale\Service\Operator\InOperator;
+use Plugin\FlashSale\Tests\DataProvider\Service\Operator\InOperatorDataProvider;
 
-class InOperatorTest extends AbstractServiceTestCase
+class InOperatorTest extends EccubeTestCase
 {
     /**
      * @var InOperator
      */
-    protected $operator;
+    protected $inOperator;
 
     /**
      * {@inheritdoc}
@@ -32,57 +31,29 @@ class InOperatorTest extends AbstractServiceTestCase
     {
         parent::setUp();
 
-        $this->operator = new InOperator();
+        $this->inOperator = new InOperator();
     }
 
-    public function testGetName()
+    /**
+     * @param $condition
+     * @param $data
+     * @param $expected
+     *
+     * @dataProvider dataProvider_testMatch
+     */
+    public function testMatch($condition, $data, $expected)
     {
-        self::assertEquals('is one of', $this->operator->getName());
+        $actual = $this->inOperator->match($condition, $data);
+        $this->assertEquals($expected, $actual);
     }
 
-    public function testGetType()
+    public static function dataProvider_testMatch($data = 1)
     {
-        self::assertEquals(InOperator::TYPE, $this->operator->getType());
-    }
-
-    public function testMatchScalarTypeTrue()
-    {
-        self::assertTrue($this->operator->match([1, 2, 3, 5, 6], 5));
-        self::assertTrue($this->operator->match('1,2,3,5,6', 5));
-    }
-
-    public function testMatchScalarTypeFalse()
-    {
-        self::assertFalse($this->operator->match([1, 2, 3, 5, 6], 10));
-    }
-
-    public function testMatchConditionTrue()
-    {
-        $condition1 = $this->getMockBuilder(ProductClassIdCondition::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $condition1->method('match')->willReturn(true);
-        $condition2 = $this->getMockBuilder(ProductClassIdCondition::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $condition2->method('match')->willReturn(true);
-        $conditions = new ArrayCollection([$condition1, $condition2]);
-
-        self::assertTrue($this->operator->match($conditions, 5));
-    }
-
-    public function testMatchConditionFalse()
-    {
-        $condition1 = $this->getMockBuilder(ProductClassIdCondition::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $condition1->method('match')->willReturn(false);
-        $condition2 = $this->getMockBuilder(ProductClassIdCondition::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $condition2->method('match')->willReturn(false);
-        $conditions = new ArrayCollection([$condition1, $condition2]);
-
-        self::assertFalse($this->operator->match($conditions, 5));
+        return [
+            [$data.','.((int)$data-1), $data, true],
+            [[$data,(int)$data+1], [$data], true],
+            [[(int)$data-1,(int)$data+1], $data, false],
+            [((int)$data-1).','.((int)$data+1), [$data], false],
+        ];
     }
 }

@@ -11,13 +11,17 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\FlashSale\Service\Operator;
+namespace Plugin\FlashSale\Tests\Service\Operator;
 
-use Plugin\FlashSale\Tests\Service\AbstractServiceTestCase;
+use Eccube\Tests\EccubeTestCase;
+use Plugin\FlashSale\Service\Operator\OperatorFactory;
+use Plugin\FlashSale\Service\Operator as Operator;
 
-class OperatorFactoryTest extends AbstractServiceTestCase
+class OperatorFactoryTest extends EccubeTestCase
 {
-    /** @var  OperatorFactory */
+    /**
+     * @var  OperatorFactory
+     */
     protected $operatorFactory;
 
     /**
@@ -29,37 +33,34 @@ class OperatorFactoryTest extends AbstractServiceTestCase
         $this->operatorFactory = $this->container->get(OperatorFactory::class);
     }
 
-    public function testCreateByType()
+    public function testCreateByType_Exception()
     {
-        $obj = $this->operatorFactory->createByType(AllOperator::TYPE);
-        $this->expected = true;
-        $this->actual = is_object($obj);
-        $this->verify();
+        $this->expectException(\InvalidArgumentException::class);
+        $this->operatorFactory->createByType('');
+    }
 
-        $obj = $this->operatorFactory->createByType(EqualOperator::TYPE);
-        $this->expected = true;
-        $this->actual = is_object($obj);
-        $this->verify();
+    /**
+     * @param $type
+     * @param $expected
+     * @dataProvider dataProvider_testCreateByType
+     */
+    public function testCreateByType($type, $expected)
+    {
+        $actual = $this->operatorFactory->createByType($type);
+        $this->assertInstanceOf($expected, $actual);
+    }
 
-        $obj = $this->operatorFactory->createByType(InOperator::TYPE);
-        $this->expected = true;
-        $this->actual = is_object($obj);
-        $this->verify();
-
-        $obj = $this->operatorFactory->createByType(NotEqualOperator::TYPE);
-        $this->expected = true;
-        $this->actual = is_object($obj);
-        $this->verify();
-
-        $type = 'type_test_only';
-        try {
-            $obj = $this->operatorFactory->createByType($type);
-        } catch (\Exception $exception) {
-            $obj = 'Not found operator have type '.$type;
-        }
-
-        $this->expected = 'Not found operator have type '.$type;
-        $this->actual = $obj;
-        $this->verify();
+    public static function dataProvider_testCreateByType()
+    {
+        return [
+            [Operator\AllOperator::TYPE, Operator\AllOperator::class],
+            [Operator\OrOperator::TYPE, Operator\OrOperator::class],
+            [Operator\InOperator::TYPE, Operator\InOperator::class],
+            [Operator\NotInOperator::TYPE, Operator\NotInOperator::class],
+            [Operator\EqualOperator::TYPE, Operator\EqualOperator::class],
+            [Operator\NotEqualOperator::TYPE, Operator\NotEqualOperator::class],
+            [Operator\GreaterThanOperator::TYPE, Operator\GreaterThanOperator::class],
+            [Operator\LessThanOperator::TYPE, Operator\LessThanOperator::class],
+        ];
     }
 }

@@ -15,43 +15,80 @@ namespace Plugin\FlashSale\Tests\Service\Metadata;
 
 use Plugin\FlashSale\Service\Metadata\Discriminator;
 use Plugin\FlashSale\Service\Metadata\DiscriminatorManager;
-use Plugin\FlashSale\Service\Operator\EqualOperator;
 use Plugin\FlashSale\Tests\Service\AbstractServiceTestCase;
+use Plugin\FlashSale\Service\Operator as Operator;
+use Plugin\FlashSale\Entity\Condition as Condition;
+use Plugin\FlashSale\Entity\Rule as Rule;
+use Plugin\FlashSale\Entity\Promotion as Promotion;
 
 class DiscriminatorManagerTest extends AbstractServiceTestCase
 {
+    /**
+     * @var DiscriminatorManager
+     */
+    protected $discriminatorManager;
+
     /**
      * {@inheritdoc}
      */
     public function setUp()
     {
         parent::setUp();
-
+        $this->discriminatorManager = new DiscriminatorManager();
     }
 
-    public function testCreate_InvalidArgumentException()
+    public function testCreate_Scenario0()
     {
-        $discriminatorType = 'test only';
-        $DiscriminatorManager = new DiscriminatorManager();
-        try {
-            $data = $DiscriminatorManager->create($discriminatorType);
-        } catch (\Exception $exception) {
-            $data = false;
-        }
-
-        self::assertFalse($data);
+        $this->expectExceptionMessage('Unsupported foo type');
+        $this->discriminatorManager->create('foo');
     }
 
-    public function testCreate_EqualOperator()
+    /**
+     * @param $type
+     * @param $expectedClass
+     * @dataProvider dataProvider_testCreate_Scenario1
+     */
+    public function testCreate_Scenario1($type, $expectedClass)
     {
-        $DiscriminatorManager = new DiscriminatorManager();
-        $data = $DiscriminatorManager->create(EqualOperator::TYPE);
-        $test = (new Discriminator())
-            ->setType(EqualOperator::TYPE)
-            ->setName(trans('flash_sale.admin.form.rule.operator.is_equal_to'))
-            ->setClass(EqualOperator::class)
-            ->setDescription('');
+        $actual = $this->discriminatorManager->create($type);
 
-        self::assertEquals($test, $data);
+        $this->assertEquals(Discriminator::class, get_class($actual));
+        $this->assertEquals($expectedClass, $actual->getClass());
+        $this->assertEquals($type, $actual->getType());
     }
+
+    public function dataProvider_testCreate_Scenario1()
+    {
+        return [
+            [Operator\AllOperator::TYPE, Operator\AllOperator::class],
+            [Operator\OrOperator::TYPE, Operator\OrOperator::class],
+            [Operator\InOperator::TYPE, Operator\InOperator::class],
+            [Operator\NotInOperator::TYPE, Operator\NotInOperator::class],
+            [Operator\EqualOperator::TYPE, Operator\EqualOperator::class],
+            [Operator\NotEqualOperator::TYPE, Operator\NotEqualOperator::class],
+            [Operator\GreaterThanOperator::TYPE, Operator\GreaterThanOperator::class],
+            [Operator\LessThanOperator::TYPE, Operator\LessThanOperator::class],
+            [Promotion\ProductClassPriceAmountPromotion::TYPE, Promotion\ProductClassPriceAmountPromotion::class],
+            [Promotion\ProductClassPricePercentPromotion::TYPE, Promotion\ProductClassPricePercentPromotion::class],
+            [Promotion\CartTotalAmountPromotion::TYPE, Promotion\CartTotalAmountPromotion::class],
+            [Promotion\CartTotalPercentPromotion::TYPE, Promotion\CartTotalPercentPromotion::class],
+            [Condition\CartTotalCondition::TYPE, Condition\CartTotalCondition::class],
+            [Condition\ProductClassIdCondition::TYPE, Condition\ProductClassIdCondition::class],
+            [Condition\ProductCategoryIdCondition::TYPE, Condition\ProductCategoryIdCondition::class],
+            [Rule\CartRule::TYPE, Rule\CartRule::class],
+            [Rule\ProductClassRule::TYPE, Rule\ProductClassRule::class],
+        ];
+    }
+
+    /**
+     * @param $type
+     * @param $expectedClass
+     * @dataProvider dataProvider_testCreate_Scenario1
+     */
+    public function testGet($type, $expectedClass)
+    {
+        $this->discriminatorManager->create($type);
+        $this->assertEquals($this->discriminatorManager->create($type), $this->discriminatorManager->get($type));
+    }
+
 }

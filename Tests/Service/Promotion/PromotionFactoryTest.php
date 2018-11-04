@@ -13,6 +13,8 @@
 
 namespace Plugin\FlashSale\Service\Promotion;
 
+use Plugin\FlashSale\Entity\Promotion as Promotion;
+
 use Plugin\FlashSale\Entity\Promotion\ProductClassPriceAmountPromotion;
 use Plugin\FlashSale\Entity\Promotion\ProductClassPricePercentPromotion;
 use Plugin\FlashSale\Tests\Service\AbstractServiceTestCase;
@@ -20,61 +22,52 @@ use Plugin\FlashSale\Tests\Service\AbstractServiceTestCase;
 class PromotionFactoryTest extends AbstractServiceTestCase
 {
     /**
+     * @var PromotionFactory
+     */
+    protected $promotionFactory;
+
+    /**
      * {@inheritdoc}
      */
     public function setUp()
     {
         parent::setUp();
+        $this->promotionFactory = new PromotionFactory();
     }
 
-    public function testCreateFromArray_Invalid_Type_Not_Isset()
+    public function testCreateFromArray_Scenario0()
     {
-        $rules = $this->rulesData();
-        $promotion = $rules['promotion'];
-        unset($promotion['type']);
-        try {
-            PromotionFactory::createFromArray($promotion);
-        }catch (\Exception $exception){
-            $this->assertEquals($exception->getMessage(), '$data[type] must be required');
-        }
+        $this->expectExceptionMessage('$data[type] must be required');
+        $this->promotionFactory::createFromArray([]);
     }
 
-    public function testCreateFromArray_Invalid_Type()
+    public function testCreateFromArray_Scenario1()
     {
-        $rules = $this->rulesData();
-        $promotion = $rules['promotion'];
-        $promotion['type'] = 'promotion_test_only';
-        try {
-            PromotionFactory::createFromArray($promotion);
-        } catch (\Exception $exception) {
-            $this->assertEquals($exception->getMessage(), 'promotion_test_only unsupported');
-        }
+        $this->expectExceptionMessage('promotion_test_only unsupported');
+        $this->promotionFactory::createFromArray(['type' => 'promotion_test_only']);
     }
 
-    public function testCreateFromArray_Valid_1()
+    /**
+     * @param $type
+     * @param $value
+     * @param $expectedClass
+     * @dataProvider dataProvider_testCreateFromArray
+     */
+    public function testCreateFromArray_Scenario2($type, $value, $expectedClass)
     {
-        $rules = $this->rulesData();
-        $rules['type'] = ProductClassPricePercentPromotion::TYPE;
-        $data = PromotionFactory::createFromArray($rules);
-
-        self::assertInstanceOf(ProductClassPricePercentPromotion::class, $data);
+        $actual = $this->promotionFactory::createFromArray(['type' => $type, 'value' => $value]);
+        $this->assertEquals($expectedClass, get_class($actual));
+        $this->assertEquals($value, $actual->getValue());
     }
 
-    public function testCreateFromArray_Valid_2()
+
+    public function dataProvider_testCreateFromArray()
     {
-        $rules = $this->rulesData();
-        $rules['type'] = ProductClassPriceAmountPromotion::TYPE;
-        $data = PromotionFactory::createFromArray($rules);
-
-        self::assertInstanceOf(ProductClassPriceAmountPromotion::class, $data);
-    }
-
-    public function testCreateFromArray_Valid_33()
-    {
-        $rules = $this->rulesData();
-        $rules['type'] = ProductClassPriceAmountPromotion::TYPE;
-        $data = PromotionFactory::createFromArray($rules);
-
-        self::assertInstanceOf(ProductClassPriceAmountPromotion::class, $data);
+        return [
+            [Promotion\CartTotalPercentPromotion::TYPE, rand(), Promotion\CartTotalPercentPromotion::class],
+            [Promotion\CartTotalAmountPromotion::TYPE, rand(), Promotion\CartTotalAmountPromotion::class],
+            [Promotion\ProductClassPriceAmountPromotion::TYPE, rand(), Promotion\ProductClassPriceAmountPromotion::class],
+            [Promotion\ProductClassPricePercentPromotion::TYPE, rand(), Promotion\ProductClassPricePercentPromotion::class],
+        ];
     }
 }

@@ -14,11 +14,6 @@
 namespace Plugin\FlashSale\Entity\Promotion;
 
 use Doctrine\ORM\Mapping as ORM;
-use Eccube\Entity\ItemInterface;
-use Eccube\Entity\Master\OrderItemType;
-use Eccube\Entity\Master\TaxDisplayType;
-use Eccube\Entity\Master\TaxType;
-use Eccube\Entity\OrderItem;
 use Eccube\Entity\ProductClass;
 use Plugin\FlashSale\Service\Promotion\PromotionInterface;
 use Plugin\FlashSale\Entity\Promotion;

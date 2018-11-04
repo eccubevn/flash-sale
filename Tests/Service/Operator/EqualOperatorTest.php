@@ -11,18 +11,18 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\FlashSale\Service\Operator;
+namespace Plugin\FlashSale\Tests\Service\Operator;
 
-use Plugin\FlashSale\Entity\Condition\ProductClassIdCondition;
-use Plugin\FlashSale\Entity\Rule;
-use Plugin\FlashSale\Tests\Service\AbstractServiceTestCase;
+use Eccube\Tests\EccubeTestCase;
+use Plugin\FlashSale\Tests\DataProvider\Service\Operator\EqualOperatorDataProvider;
+use Plugin\FlashSale\Service\Operator\EqualOperator;
 
-class EqualOperatorTest extends AbstractServiceTestCase
+class EqualOperatorTest extends EccubeTestCase
 {
     /**
-     * @var InOperator
+     * @var EqualOperator
      */
-    protected $operator;
+    protected $equalOperator;
 
     /**
      * {@inheritdoc}
@@ -31,26 +31,28 @@ class EqualOperatorTest extends AbstractServiceTestCase
     {
         parent::setUp();
 
-        $this->operator = new EqualOperator();
+        $this->equalOperator = new EqualOperator();
     }
 
-    public function testGetName()
+    /**
+     * @param $condition
+     * @param $data
+     * @param $expected
+     *
+     * @dataProvider dataProvider_testMatch
+     */
+    public function testMatch($condition, $data, $expected)
     {
-        self::assertEquals('is equal to', $this->operator->getName());
+        $actual = $this->equalOperator->match($condition, $data);
+        $this->assertEquals($expected, $actual);
     }
 
-    public function testGetType()
+    public static function dataProvider_testMatch($data = 12345)
     {
-        self::assertEquals(EqualOperator::TYPE, $this->operator->getType());
-    }
-
-    public function testMatchScalarTypeTrue()
-    {
-        self::assertTrue($this->operator->match(5, 5));
-    }
-
-    public function testMatchScalarTypeFalse()
-    {
-        self::assertFalse($this->operator->match(1, 10));
+        return [
+            [$data, $data, true],
+            [(int)$data - 1, $data, false],
+            [null, $data, false]
+        ];
     }
 }

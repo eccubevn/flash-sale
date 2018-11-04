@@ -11,16 +11,18 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\FlashSale\Service\Operator;
+namespace Plugin\FlashSale\Tests\Service\Operator;
 
-use Plugin\FlashSale\Tests\Service\AbstractServiceTestCase;
+use Eccube\Tests\EccubeTestCase;
+use Plugin\FlashSale\Service\Operator\GreaterThanOperator;
+use Plugin\FlashSale\Tests\DataProvider\Service\Operator\GreaterThanOperatorDataProvider;
 
-class GreaterThanOperatorTest extends AbstractServiceTestCase
+class GreaterThanOperatorTest extends EccubeTestCase
 {
     /**
      * @var GreaterThanOperator
      */
-    protected $operator;
+    protected $greaterThanOperator;
 
     /**
      * {@inheritdoc}
@@ -29,26 +31,28 @@ class GreaterThanOperatorTest extends AbstractServiceTestCase
     {
         parent::setUp();
 
-        $this->operator = new GreaterThanOperator();
+        $this->greaterThanOperator = new GreaterThanOperator();
     }
 
-    public function testGetName()
+    /**
+     * @param $condition
+     * @param $data
+     * @param $expected
+     *
+     * @dataProvider dataProvider_testMatch
+     */
+    public function testMatch($condition, $data, $expected)
     {
-        self::assertEquals('is greater than to', $this->operator->getName());
+        $actual = $this->greaterThanOperator->match($condition, $data);
+        $this->assertEquals($expected, $actual);
     }
 
-    public function testGetType()
+    public static function dataProvider_testMatch($data = 12345)
     {
-        self::assertEquals(GreaterThanOperator::TYPE, $this->operator->getType());
-    }
-
-    public function testMatchScalarTypeTrue()
-    {
-        self::assertTrue($this->operator->match(4, 5));
-    }
-
-    public function testMatchScalarTypeFalse()
-    {
-        self::assertFalse($this->operator->match(6, 5));
+        return [
+            [(int)$data - 1, $data, true],
+            [(int)$data + 1, $data, false],
+            [$data, $data, false],
+        ];
     }
 }
