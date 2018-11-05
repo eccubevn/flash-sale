@@ -429,6 +429,10 @@ class FlashSale
         }
 
         foreach ($Rules as $Rule) {
+            if (!$Rule->match($object)) {
+                continue;
+            }
+
             $discount = $Rule->getDiscount($object);
             if ($discount->getValue()) {
                 return $discount;

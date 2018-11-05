@@ -1,4 +1,10 @@
 services:
+    Plugin\FlashSale\Service\PurchaseFlow\Processor\FSCartRuleShoppingProcessor:
+          lazy: true
+          public: true
+          autowire: true
+          tags:
+            - {name: eccube.item.holder.preprocessor}
     Plugin\FlashSale\Service\PurchaseFlow\Processor\FSShoppingProcessor:
         lazy: true
         public: true
