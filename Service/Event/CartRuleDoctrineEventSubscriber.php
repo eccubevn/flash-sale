@@ -47,6 +47,7 @@ class CartRuleDoctrineEventSubscriber implements EventSubscriber
     {
         return [
             DoctrineEvents::postLoad,
+            DoctrineEvents::preRemove,
         ];
     }
 
@@ -75,5 +76,27 @@ class CartRuleDoctrineEventSubscriber implements EventSubscriber
         }
         
         $entity->cleanFlashSaleDiscount()->addFlashSaleDiscount($discount->getRuleId(), $discount->getValue());
+    }
+
+    /**
+     * Calc flash sale discount & add to entity
+     *
+     * @param LifecycleEventArgs $eventArgs
+     */
+    public function preRemove(LifecycleEventArgs $eventArgs)
+    {
+        // TODO: since core does not config cascade remove for item, we need do manually
+        $entity = $eventArgs->getEntity();
+        if ($entity instanceof Cart) {
+            foreach ($entity->getCartItems() as $cartItem) {
+                $this->entityManager->remove($cartItem);
+            }
+        }
+
+        if ($entity instanceof Order) {
+            foreach ($entity->getOrderItems() as $orderItem) {
+                $this->entityManager->remove($orderItem);
+            }
+        }
     }
 }
