@@ -199,12 +199,12 @@ EOT;
         $source = $event->getSource();
         $source = str_replace(
             '{{ CartItem.price|price }}',
-            '{% if CartItem.getFlashSaleDiscount() %} <del>{{ CartItem.price|price }}</del><span class="ec-color-red">{{ CartItem.getFlashSaleDiscountPrice()|price }} ({{ CartItem.getFlashSaleDiscountPercent() }}%)</span> {% else %} {{ CartItem.price|price }} {% endif %}',
+            '{% if CartItem.getFlashSaleDiscount() %} <del>{{ CartItem.price|price }}</del> <span class="ec-color-red">{{ CartItem.getFlashSaleDiscountPrice()|price }} ({{ CartItem.getFlashSaleDiscountPercent() }}%)</span> {% else %} {{ CartItem.price|price }} {% endif %}',
             $source
         );
         $source = str_replace(
             '{{ totalPrice|price }}',
-            '{% if totalDiscountPrice is defined %}<del>{{ totalPrice|price }}</del><span>{{ (totalPrice - totalDiscountPrice)|price }}</span>{% else %} {{ totalPrice|price }} {% endif %}',
+            '{% if totalDiscountPrice is defined %}<del>{{ totalPrice|price }}</del> <span>{{ (totalPrice - totalDiscountPrice)|price }}</span>{% else %} {{ totalPrice|price }} {% endif %}',
             $source
         );
         $event->setSource($source);
