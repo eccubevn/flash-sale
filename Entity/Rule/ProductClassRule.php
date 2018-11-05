@@ -179,9 +179,6 @@ class ProductClassRule extends Rule
     {
         $discount = new Discount();
         $discount->setRuleId($this->getId());
-        if (!$this->match($ProductClass)) {
-            return $discount;
-        }
 
         if (isset($this->cached[__METHOD__.$ProductClass->getId()])) {
             return $this->cached[__METHOD__.$ProductClass->getId()]; // @codeCoverageIgnore
