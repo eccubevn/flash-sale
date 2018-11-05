@@ -17,9 +17,9 @@ abstract class RuleTest extends EccubeTestCase
 
     /**
      * @param $expected
-     * @dataProvider dataProvider_testRawData_Scenario1
+     * @dataProvider dataProvider_testRawData_Valid
      */
-    public function testRawData_Scenario0($expected)
+    public function testRawData_Valid_Json($expected)
     {
         $actual = $this->rule->rawData(json_encode($expected));
         $this->assertEquals($expected, $actual);
@@ -27,9 +27,9 @@ abstract class RuleTest extends EccubeTestCase
 
     /**
      * @param $expected
-     * @dataProvider dataProvider_testRawData_Scenario1
+     * @dataProvider dataProvider_testRawData_Valid
      */
-    public function testRawData_Scenario1($expected)
+    public function testRawData_Valid($expected)
     {
         $this->rule->setId($expected['id']);
         $this->rule->setOperator($expected['operator']);
@@ -53,7 +53,7 @@ abstract class RuleTest extends EccubeTestCase
         $this->assertEquals($expected, $actual);
     }
 
-    public static function dataProvider_testRawData_Scenario1()
+    public static function dataProvider_testRawData_Valid()
     {
         return [];
     }

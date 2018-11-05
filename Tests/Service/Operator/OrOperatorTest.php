@@ -39,7 +39,7 @@ class OrOperatorTest extends EccubeTestCase
         $this->orOperator = new Operator\OrOperator();
     }
 
-    public function testMatch_S0()
+    public function testMatch_Invalid()
     {
         $this->assertEquals(false, $this->orOperator->match(null, new \stdClass()));
         $this->assertEquals(false, $this->orOperator->match([new \stdClass()], new \stdClass()));
@@ -50,10 +50,10 @@ class OrOperatorTest extends EccubeTestCase
      * @param $Conditions
      * @param $Order
      * @param $expected
-     * @dataProvider dataProvider_testMatch_S1_1
-     * @dataProvider dataProvider_testMatch_S1_2
+     * @dataProvider dataProvider_testMatch_Valid_CartRule
+     * @dataProvider dataProvider_testMatch_Valid_ProductClassRule
      */
-    public function testMatch_S1($Conditions, $Order, $expected)
+    public function testMatch_Valid($Conditions, $Order, $expected)
     {
         /** @var Condition $Condition */
         foreach ($Conditions as $Condition) {
@@ -64,12 +64,12 @@ class OrOperatorTest extends EccubeTestCase
         $this->assertEquals($expected, $actual);
     }
 
-    public static function dataProvider_testMatch_S1_1($testMethod = null, $orderSubtotal = 12345, $productClassId = 1, $categoryId = 2)
+    public static function dataProvider_testMatch_Valid_CartRule($testMethod = null, $orderSubtotal = 12345)
     {
         $data = [];
 
         // Cart
-        $tmp = ConditionTest\CartTotalConditionTest::dataProvider_testMatch_Scenario1(null, $orderSubtotal);
+        $tmp = ConditionTest\CartTotalConditionTest::dataProvider_testMatch_Valid(null, $orderSubtotal);
         $conditionDataSet = [];
         foreach ($tmp as $conditionData) {
             list($operator, $conditionValue,, $expected) = $conditionData;
@@ -92,12 +92,12 @@ class OrOperatorTest extends EccubeTestCase
         return $data;
     }
 
-    public static function dataProvider_testMatch_S1_2($testMethod = null, $orderSubtotal = 12345, $productClassId = 1, $categoryId = 2)
+    public static function dataProvider_testMatch_Valid_ProductClassRule($testMethod = null, $productClassId = 1, $categoryId = 2)
     {
         $data = [];
 
         // Product Class
-        $tmp = ConditionTest\ProductClassIdConditionTest::dataProvider_testMatch_Scenario1(null, $productClassId);
+        $tmp = ConditionTest\ProductClassIdConditionTest::dataProvider_testMatch_Valid(null, $productClassId);
         $conditionDataSet = [];
         foreach ($tmp as $conditionData) {
             list($operator, $conditionValue,, $expected) = $conditionData;
@@ -107,7 +107,7 @@ class OrOperatorTest extends EccubeTestCase
             $condition->setValue($conditionValue);
             $conditionDataSet[] = [$condition, $expected];
         }
-        $tmp = ConditionTest\ProductCategoryIdConditionTest::dataProvider_testMatch_Scenario1(null, $categoryId);
+        $tmp = ConditionTest\ProductCategoryIdConditionTest::dataProvider_testMatch_Valid(null, $categoryId);
         foreach ($tmp as $conditionData) {
             list($operator, $conditionValue,, $expected) = $conditionData;
             $condition = new Condition\ProductCategoryIdCondition();
