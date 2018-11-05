@@ -8,8 +8,8 @@ use Plugin\FlashSale\Entity\Condition\ProductClassIdCondition;
 use Plugin\FlashSale\Entity\FlashSale;
 use Plugin\FlashSale\Entity\Promotion;
 use Plugin\FlashSale\Entity\Rule\ProductClassRule;
-use Plugin\FlashSale\Repository\FlashSaleRepository;
 use Plugin\FlashSale\Service\Operator\InOperator;
+use Plugin\FlashSale\Service\Operator\OrOperator;
 
 /**
  * Class FlashSaleBlockTest
@@ -17,16 +17,12 @@ use Plugin\FlashSale\Service\Operator\InOperator;
  */
 class FlashSaleBlockTest extends AbstractWebTestCase
 {
-    /** @var FlashSaleRepository */
-    protected $flashSaleRepository;
-
     /**
      * test up
      */
     public function setUp()
     {
         parent::setUp();
-        $this->flashSaleRepository = $this->container->get(FlashSaleRepository::class);
 
         for ($i = 1; $i < 5; $i++) {
             $this->createFlashSaleAndRules($i);
@@ -37,7 +33,6 @@ class FlashSaleBlockTest extends AbstractWebTestCase
 
     public function testList()
     {
-        $this->markTestIncomplete();
         $crawler = $this->client->request(
             'GET',
             $this->generateUrl('homepage')
@@ -54,7 +49,7 @@ class FlashSaleBlockTest extends AbstractWebTestCase
         $rules['rules'] = $this->rulesData($i);
 
         $FlashSale = new FlashSale();
-        $FlashSale->setName('SQL-scrip-001');
+        $FlashSale->setName('Flash Sale');
         $FlashSale->setFromTime((new \DateTime())->modify("-{$i} days"));
         $FlashSale->setToTime((new \DateTime())->modify("+{$i} days"));
         $FlashSale->setStatus(FlashSale::STATUS_ACTIVATED);
@@ -104,7 +99,7 @@ class FlashSaleBlockTest extends AbstractWebTestCase
         $rules[] = [
             'id' => '',
             'type' => ProductClassRule::TYPE,
-            'operator' => InOperator::TYPE,
+            'operator' => OrOperator::TYPE,
             'promotion' => [
                 'id' => '',
                 'type' => Promotion\ProductClassPricePercentPromotion::TYPE,
