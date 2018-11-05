@@ -125,8 +125,7 @@
                 {% else %}
                     <div class="card rounded border-0">
                         <div class="card-body p-4">
-                            <div class="text-center text-muted">No data yet, please create a sales event <a
-                                                                                                                     href="{{ url('flash_sale_admin_new') }}">[{{ 'admin.common.create__new'|trans }}]</a></div>
+                            <div class="text-center text-muted">{{ 'flash_sale.admin.list.null'|trans({'%link%' : url('flash_sale_admin_new') })|raw }}</div>
                         </div>
                     </div>
                 {% endif %}

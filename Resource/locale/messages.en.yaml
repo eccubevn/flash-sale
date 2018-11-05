@@ -12,6 +12,7 @@ flash_sale.admin.list.updated.at: Updated At
 flash_sale.admin.list.status: Status
 flash_sale.admin.list.status.draft: Draft
 flash_sale.admin.list.status.activated: Activated
+flash_sale.admin.list.null: No data yet, please click <a href="%link%">[Create new]</a> to create a sales event
 
 flash_sale.admin.edit.setting.rule: Rule
 
