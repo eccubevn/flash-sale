@@ -22,6 +22,7 @@ use Plugin\FlashSale\Entity\Promotion\ProductClassPricePercentPromotion;
 use Plugin\FlashSale\Entity\Rule\ProductClassRule;
 use Plugin\FlashSale\Repository\FlashSaleRepository;
 use Plugin\FlashSale\Service\Operator\InOperator;
+use Plugin\FlashSale\Service\Operator\OrOperator;
 
 /**
  * Class AbstractRepositoryTestCase
@@ -111,7 +112,7 @@ abstract class AbstractRepositoryTestCase extends EccubeTestCase
         $rules[] = [
             'id' => '',
             'type' => ProductClassRule::TYPE,
-            'operator' => InOperator::TYPE,
+            'operator' => OrOperator::TYPE,
             'promotion' => [
                 'id' => '',
                 'type' => ProductClassPricePercentPromotion::TYPE,
