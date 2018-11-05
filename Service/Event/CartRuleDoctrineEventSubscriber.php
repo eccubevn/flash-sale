@@ -47,7 +47,6 @@ class CartRuleDoctrineEventSubscriber implements EventSubscriber
     {
         return [
             DoctrineEvents::postLoad,
-            DoctrineEvents::prePersist
         ];
     }
 
@@ -76,19 +75,5 @@ class CartRuleDoctrineEventSubscriber implements EventSubscriber
         }
         
         $entity->cleanFlashSaleDiscount()->addFlashSaleDiscount($discount->getRuleId(), $discount->getValue());
-    }
-
-    /**
-     * Calc flash sale discount & add to entity
-     *
-     * @param LifecycleEventArgs $eventArgs
-     */
-    public function prePersist(LifecycleEventArgs $eventArgs)
-    {
-        $entity = $eventArgs->getEntity();
-        if (!$entity instanceof Order) {
-            return;
-        }
-        $this->postLoad($eventArgs);
     }
 }

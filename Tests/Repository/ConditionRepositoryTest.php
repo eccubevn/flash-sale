@@ -36,7 +36,6 @@ class ConditionRepositoryTest extends AbstractRepositoryTestCase
 
     public function testProductList()
     {
-        $this->markTestIncomplete();
         $this->entityManager->clear();
 
         $data = $this->conditionRepository->getProductList();

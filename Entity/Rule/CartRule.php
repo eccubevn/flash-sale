@@ -102,24 +102,28 @@ class CartRule extends Rule
     /**
      * Check a product class is matching condition
      *
-     * @param Order $Order
+     * @param $object
      *
      * @return bool
      */
-    public function match($Order): bool
+    public function match($object): bool
     {
-        if (!$Order instanceof Order) {
+        if (!$object instanceof Order && !$object instanceof Cart) {
             return false;
         }
 
-        if (isset($this->cached[__METHOD__.$Order->getId()])) {
-            return $this->cached[__METHOD__.$Order->getId()]; // @codeCoverageIgnore
+        $cachedId = $object instanceof Order
+            ? __METHOD__.'-O-'.$object->getId().'-'.$object->getSubtotal()
+            : __METHOD__.'-C-'.$object->getId().'-'.$object->getTotal();
+
+        if (isset($this->cached[$cachedId])) {
+            return $this->cached[$cachedId]; // @codeCoverageIgnore
         }
 
-        $this->cached[__METHOD__.$Order->getId()] = $this->getOperatorFactory()
-            ->createByType($this->getOperator())->match($this->getConditions(), $Order);
+        $this->cached[$cachedId] = $this->getOperatorFactory()
+            ->createByType($this->getOperator())->match($this->getConditions(), $object);
 
-        return $this->cached[__METHOD__.$Order->getId()];
+        return $this->cached[$cachedId];
     }
 
     /**
@@ -131,56 +135,24 @@ class CartRule extends Rule
      */
     public function getDiscount($object): DiscountInterface
     {
-        if ($object instanceof Order) {
-            return $this->getDiscountFromOrder($object);
-        } elseif ($object instanceof Cart) {
-            return $this->getDiscountFromCart($object);
-        }
-
         $discount = new Discount();
         $discount->setRuleId($this->getId());
 
-        return $discount;
-    }
-
-    /**
-     * Get discount items from cart
-     *
-     * @param Cart $Cart
-     *
-     * @return DiscountInterface
-     */
-    protected function getDiscountFromCart(Cart $Cart): DiscountInterface
-    {
-        $Order = new Order();
-        $Order->setPropertiesFromArray(['id' => 'C' . $Cart->getId()]);
-        $Order->setSubtotal($Cart->getTotal());
-
-        return $this->getDiscountFromOrder($Order);
-    }
-
-    /**
-     * Get discount items from order
-     *
-     * @param Order $Order
-     * @return DiscountInterface
-     */
-    public function getDiscountFromOrder(Order $Order): DiscountInterface
-    {
-        $discount = new Discount();
-        $discount->setRuleId($this->getId());
-
-        if (!$this->match($Order)) {
+        if (!$object instanceof Order && !$object instanceof Cart) {
             return $discount;
         }
 
-        if (isset($this->cached[__METHOD__.$Order->getId()])) {
-            return $this->cached[__METHOD__.$Order->getId()]; // @codeCoverageIgnore
+        $cachedId = $object instanceof Order
+            ? __METHOD__.'-O-'.$object->getId().'-'.$object->getSubtotal()
+            : __METHOD__.'-C-'.$object->getId().'-'.$object->getTotal();
+
+        if (isset($this->cached[$cachedId])) {
+            return $this->cached[$cachedId]; // @codeCoverageIgnore
         }
 
-        $discount = $this->getPromotion()->getDiscount($Order);
+        $discount = $this->getPromotion()->getDiscount($object);
         $discount->setRuleId($this->getId());
-        $this->cached[__METHOD__ . $Order->getId()] = $discount;
+        $this->cached[$cachedId] = $discount;
 
         return $discount;
     }

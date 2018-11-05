@@ -35,7 +35,10 @@
                 $.each(settings.setup.rule_types[value].condition_types, function(key, condition) {
                     $(conditionContainer).find('[name="condition[type]"]').append('<option value="'+key+'">'+ condition.name +'</option>');
                     $.each(condition.operator_types, function(key, operator) {
-                        $(conditionContainer).find('[name="condition[operator]"]').append('<option value="'+key+'">'+ operator.name +'</option>');
+                        // TODO: It's will render duplicate condition operator (temporary fix)
+                        if($(conditionContainer).find('[name="condition[operator]"] option[value="'+key+'"]').length == 0){
+                            $(conditionContainer).find('[name="condition[operator]"]').append('<option value="'+key+'">'+ operator.name +'</option>');
+                        }
                     });
                 });
             });

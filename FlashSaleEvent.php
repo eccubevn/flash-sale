@@ -247,23 +247,23 @@ EOT;
         $source = $event->getSource();
         $source = str_replace(
             '{{ CartItem.price|price }}',
-            '{% if CartItem.getFlashSaleDiscount() %} <del>{{ CartItem.price|price }}</del><span class="ec-color-red">{{ CartItem.getFlashSaleDiscountPrice()|price }} ({{ CartItem.getFlashSaleDiscountPercent() }}%)</span> {% else %} {{ CartItem.price|price }} {% endif %}',
+            '{% if CartItem.getFlashSaleDiscount() %} <del>{{ CartItem.price|price }}</del> <span class="ec-color-red">{{ CartItem.getFlashSaleDiscountPrice()|price }} ({{ CartItem.getFlashSaleDiscountPercent() }}%)</span> {% else %} {{ CartItem.price|price }} {% endif %}',
             $source
         );
         $source = str_replace(
             '{{ CartItem.total_price|price }}',
-            '{% if CartItem.getFlashSaleTotalDiscount() %} <del>{{ CartItem.total_price|price }}</del><span class="ec-color-red">{{ CartItem.getFlashSaleTotalDiscountPrice()|price }}</span> {% else %} {{ CartItem.total_price|price }} {% endif %}',
+            '{% if CartItem.getFlashSaleTotalDiscount() %} <del>{{ CartItem.total_price|price }}</del> <span class="ec-color-red">{{ CartItem.getFlashSaleTotalDiscountPrice()|price }}</span> {% else %} {{ CartItem.total_price|price }} {% endif %}',
             $source
         );
         $source = str_replace(
             '{{ Cart.totalPrice|price }}',
-            '{% if Cart.getFlashSaleTotalDiscount() %} <del>{{ Cart.totalPrice|price }}</del><span class="ec-color-red">{{ Cart.getFlashSaleTotalDiscountPrice()|price }}</span> {% else %} {{ Cart.totalPrice|price }} {% endif %}',
+            '{% if Cart.getFlashSaleTotalDiscount() %} <del>{{ Cart.totalPrice|price }}</del> <span class="ec-color-red">{{ Cart.getFlashSaleTotalDiscountPrice()|price }}</span> {% else %} {{ Cart.totalPrice|price }} {% endif %}',
             $source
         );
 
         $replace = '
         {% if totalDiscountPrice is defined %}
-            {% set totalPriceWithFlashSaleDiscount = "<del>" ~ totalPrice|price ~ "</del><span>" ~ (totalPrice - totalDiscountPrice)|price ~ "</span>" %}
+            {% set totalPriceWithFlashSaleDiscount = "<del>" ~ totalPrice|price ~ "</del> <span>" ~ (totalPrice - totalDiscountPrice)|price ~ "</span>" %}
             {{ \'front.cart.total_price\'|trans({ \'%price%\': totalPriceWithFlashSaleDiscount })|raw }}
         {% else %}
             {{ \'front.cart.total_price\'|trans({ \'%price%\': totalPrice|price })|raw }}

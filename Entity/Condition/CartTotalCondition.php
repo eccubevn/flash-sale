@@ -4,6 +4,7 @@ namespace Plugin\FlashSale\Entity\Condition;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\QueryBuilder;
 use Eccube\Entity\Order;
+use Eccube\Entity\Cart;
 use Plugin\FlashSale\Entity\Condition;
 use Plugin\FlashSale\Exception\ConditionException;
 use Plugin\FlashSale\Service\Operator;
@@ -28,10 +29,17 @@ class CartTotalCondition extends Condition implements ConditionInterface
     {
         if ($data instanceof Order) {
             $subtotal = $data->getSubtotal();
-            foreach ($data->getItems() as $OrderItem) {
+            foreach ($data->getOrderItems() as $OrderItem) {
                 $subtotal -= $OrderItem->getFlashSaleTotalDiscount();
             }
+            return $this->getOperatorFactory()->createByType($this->getOperator())->match($this->value, $subtotal);
+        }
 
+        if ($data instanceof Cart) {
+            $subtotal = $data->getTotal();
+            foreach ($data->getCartItems() as $CartItem) {
+                $subtotal -= $CartItem->getFlashSaleTotalDiscount();
+            }
             return $this->getOperatorFactory()->createByType($this->getOperator())->match($this->value, $subtotal);
         }
 
