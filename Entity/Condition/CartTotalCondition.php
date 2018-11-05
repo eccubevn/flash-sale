@@ -40,6 +40,7 @@ class CartTotalCondition extends Condition implements ConditionInterface
             foreach ($data->getCartItems() as $CartItem) {
                 $subtotal -= $CartItem->getFlashSaleTotalDiscount();
             }
+
             return $this->getOperatorFactory()->createByType($this->getOperator())->match($this->value, $subtotal);
         }
 

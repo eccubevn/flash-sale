@@ -13,9 +13,6 @@
 
 namespace Plugin\FlashSale\Tests\Service\Condition;
 
-use Plugin\FlashSale\Entity\Condition\CartTotalCondition;
-use Plugin\FlashSale\Entity\Condition\ProductCategoryIdCondition;
-use Plugin\FlashSale\Entity\Condition\ProductClassIdCondition;
 use Plugin\FlashSale\Service\Condition\ConditionFactory;
 use Plugin\FlashSale\Tests\Service\AbstractServiceTestCase;
 use Plugin\FlashSale\Entity\Condition as Condition;
