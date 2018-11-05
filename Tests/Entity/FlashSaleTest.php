@@ -13,6 +13,9 @@
 
 namespace Plugin\FlashSale\Tests\Entity;
 
+use Eccube\Entity\ProductClass;
+use Eccube\Entity\Cart;
+use Eccube\Entity\Order;
 use Doctrine\Common\Collections\ArrayCollection;
 use Eccube\Tests\EccubeTestCase;
 use Plugin\FlashSale\Entity\Condition\CartTotalCondition;
@@ -27,6 +30,9 @@ use Plugin\FlashSale\Tests\Entity\Rule\CartRuleTest;
 use Plugin\FlashSale\Tests\Entity\Rule\ProductClassRuleTest;
 use Plugin\FlashSale\Entity\Promotion;
 use Plugin\FlashSale\Entity\Condition;
+use Plugin\FlashSale\Entity\Discount;
+use Plugin\FlashSale\Entity\Rule;
+
 
 /**
  * AbstractEntity test cases.
@@ -104,4 +110,38 @@ class FlashSaleTest extends EccubeTestCase
 
         return $data;
     }
+
+    /**
+     * @param $rules
+     * @param $object
+     * @dataProvider dataProvider_testGetDiscount_S0
+     */
+    public function testGetDiscount_S0($rules, $object)
+    {
+        foreach ($rules as $rule) {
+            $this->flashSale->addRule($rule);
+        }
+        $actual = $this->flashSale->getDiscount($object);
+        $this->assertEquals(Discount::class, get_class($actual));
+        $this->assertEquals(0, $actual->getValue());
+    }
+
+    public static function dataProvider_testGetDiscount_S0()
+    {
+        return [
+            [[], new \stdClass()],
+            [[new Rule\CartRule()], new ProductClass()],
+            [[new Rule\ProductClassRule()], new Cart()],
+            [[new Rule\ProductClassRule()], new Order()],
+        ];
+    }
+
+//    public function testGetDiscount_S1()
+//    {
+//    }
+//
+//    public static function dataProvider_testGetDiscount_S1()
+//    {
+//
+//    }
 }
