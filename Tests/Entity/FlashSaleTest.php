@@ -32,7 +32,8 @@ use Plugin\FlashSale\Entity\Promotion;
 use Plugin\FlashSale\Entity\Condition;
 use Plugin\FlashSale\Entity\Discount;
 use Plugin\FlashSale\Entity\Rule;
-
+use Plugin\FlashSale\Tests\Entity\Rule as RuleTest;
+use Plugin\FlashSale\Tests\Entity\Promotion as PromotionTest;
 
 /**
  * AbstractEntity test cases.
@@ -136,8 +137,201 @@ class FlashSaleTest extends EccubeTestCase
         ];
     }
 
-//    public function testGetDiscount_S1()
+//    /**
+//     * @param $ruleData
+//     * @param $conditionData1
+//     * @param $conditionData2
+//     * @param $orderSubtotal
+//     * @param $promotionValue
+//     * @param $promotionExpected
+//     * @dataProvider dataProvider_testGetDiscount_S1
+//     */
+//    public function testGetDiscount_S1($ruleData, $conditionData1, $conditionData2, $orderSubtotal, $promotionValue, $promotionExpected)
 //    {
+//        // 2 Rule ~> Cart
+//        $CartRule = new Rule\CartRule();
+//        $CartRule->setId(rand());
+//        $CartRule->setOperator($ruleData[0]);
+//        $CartRule->setOperatorFactory($this->container->get(Operator\OperatorFactory::class));
+//
+//        $condition1 = new Condition\CartTotalCondition();
+//        $condition1->setId(rand());
+//        $condition1->setOperatorFactory($this->container->get(Operator\OperatorFactory::class));
+//        $condition1->setOperator($conditionData1[0]);
+//        $condition1->setValue($conditionData1[1]);
+//        $CartRule->addConditions($condition1);
+//
+//        $condition2 = new Condition\CartTotalCondition();
+//        $condition2->setId(rand());
+//        $condition2->setOperatorFactory($this->container->get(Operator\OperatorFactory::class));
+//        $condition2->setOperator($conditionData2[0]);
+//        $condition2->setValue($conditionData2[1]);
+//        $CartRule->addConditions($condition2);
+//
+//        $promotion = new Promotion\CartTotalAmountPromotion();
+//        $promotion->setId(rand());
+//        $promotion->setValue($promotionValue);
+//        $CartRule->setPromotion($promotion);
+//        $this->flashSale->addRule($CartRule);
+//
+//        $ProductClassRule = new Rule\ProductClassRule();
+//        $this->flashSale->addRule($ProductClassRule);
+//
+//        $Cart = new Cart();
+//        $Cart->setTotal($orderSubtotal);
+//
+//        $actual = $this->flashSale->getDiscount($Cart);
+//        $this->assertEquals(Discount::class, get_class($actual));
+//        $this->assertEquals($promotionExpected, $actual->getValue());
+//    }
+
+//    /**
+//     * @param $rules
+//     * @param $object
+//     * @param $promotion
+//     * @dataProvider dataProvider_testGetDiscount_S1
+//     */
+//    public function test($rules, $object, $promotion)
+//    {
+//        foreach ($rules as $rule) {
+//            $rule->setOperatorFactory($this->container->get(Operator\OperatorFactory::class));
+//            foreach ($rule->getConditions() as $condition) {
+//                $condition->setOperatorFactory($this->container->get(Operator\OperatorFactory::class));
+//            }
+//            $this->flashSale->addRule($rule);
+//        }
+//
+//        $actual = $this->flashSale->getDiscount($object);
+//        $this->assertEquals(Discount::class, get_class($actual));
+//        $this->assertEquals($promotion->getValue(), $actual->getValue());
+//    }
+//
+//    public static function data($testMethod = null, $orderSubtotal = 12345)
+//    {
+//        $ruleTypes = [Rule\CartRule::TYPE, Rule\ProductClassRule::TYPE];
+//
+//
+//        $data = [];
+//        $matchDataSet = RuleTest\CartRuleTest::dataProvider_testMatch_Scenario1($orderSubtotal);
+//        foreach ($matchDataSet as $matchData) {
+//            list($ruleData, $conditionData1, $conditionData2,,$expected) = $matchData;
+//            if (!$expected) {
+//                continue;
+//            }
+//
+//            $CartRule = new Rule\CartRule();
+//            $CartRule->setId(rand());
+//            $CartRule->setOperator($ruleData[0]);
+//
+//            $condition1 = new Condition\CartTotalCondition();
+//            $condition1->setId(rand());
+//            $condition1->setOperator($conditionData1[0]);
+//            $condition1->setValue($conditionData1[1]);
+//            $CartRule->addConditions($condition1);
+//
+//            $condition2 = new Condition\CartTotalCondition();
+//            $condition2->setId(rand());
+//            $condition2->setOperator($conditionData2[0]);
+//            $condition2->setValue($conditionData2[1]);
+//            $CartRule->addConditions($condition2);
+//
+//            $getDiscountDataSet = PromotionTest\CartTotalAmountPromotionTest::dataProvider_testGetDiscount_Scenario1();
+//            foreach ($getDiscountDataSet as $getDiscountData) {
+//                list($promotionValue, $promotionExpected) = $getDiscountData;
+//                $Promotion = new Promotion\CartTotalAmountPromotion();
+//                $Promotion->setId(rand());
+//                $Promotion->setValue($promotionValue);
+//            }
+//        }
+//        return $data;
+//    }
+
+//    public static function dataProvider_testGetDiscount_S1($testMethod = null, $orderSubtotal = 12345)
+//    {
+//        $data = [];
+//        $matchDataSet = RuleTest\CartRuleTest::dataProvider_testMatch_Scenario1($orderSubtotal);
+//        foreach ($matchDataSet as $matchData) {
+//            list($ruleData, $conditionData1, $conditionData2,,$expected) = $matchData;
+//            $getDiscountDataSet = PromotionTest\CartTotalAmountPromotionTest::dataProvider_testGetDiscount_Scenario1();
+//            foreach ($getDiscountDataSet as $getDiscountData) {
+//                list($promotionValue, $promotionExpected) = $getDiscountData;
+//                $data[] = [$ruleData, $conditionData1, $conditionData2, $orderSubtotal, $promotionValue, $expected ? $promotionExpected : 0];
+//            }
+//        }
+//        return $data;
+//    }
+
+//    /**
+//     * @param $ruleData
+//     * @param $conditionData1
+//     * @param $conditionData2
+//     * @param $orderSubtotal
+//     * @param $promotionValue
+//     * @param $promotionExpected
+//     * @dataProvider dataProvider_testGetDiscount_S2
+//     */
+//    public function testGetDiscount_S2($ruleData, $conditionData1, $conditionData2, $orderSubtotal, $promotionValue, $promotionExpected)
+//    {
+//        // 2 Rule ~> Order
+//        $CartRule = new Rule\CartRule();
+//        $CartRule->setId(rand());
+//        $CartRule->setOperator($ruleData[0]);
+//        $CartRule->setOperatorFactory($this->container->get(Operator\OperatorFactory::class));
+//
+//        $condition1 = new Condition\CartTotalCondition();
+//        $condition1->setId(rand());
+//        $condition1->setOperatorFactory($this->container->get(Operator\OperatorFactory::class));
+//        $condition1->setOperator($conditionData1[0]);
+//        $condition1->setValue($conditionData1[1]);
+//        $CartRule->addConditions($condition1);
+//
+//        $condition2 = new Condition\CartTotalCondition();
+//        $condition2->setId(rand());
+//        $condition2->setOperatorFactory($this->container->get(Operator\OperatorFactory::class));
+//        $condition2->setOperator($conditionData2[0]);
+//        $condition2->setValue($conditionData2[1]);
+//        $CartRule->addConditions($condition2);
+//
+//        $promotion = new Promotion\CartTotalPercentPromotion();
+//        $promotion->setId(rand());
+//        $promotion->setValue($promotionValue);
+//        $CartRule->setPromotion($promotion);
+//        $this->flashSale->addRule($CartRule);
+//
+//        $ProductClassRule = new Rule\ProductClassRule();
+//        $this->flashSale->addRule($ProductClassRule);
+//
+//        $Cart = new Cart();
+//        $Cart->setTotal($orderSubtotal);
+//
+//        $actual = $this->flashSale->getDiscount($Cart);
+//        $this->assertEquals(Discount::class, get_class($actual));
+//        $this->assertEquals($promotionExpected, $actual->getValue());
+//    }
+//
+//    public static function dataProvider_testGetDiscount_S2($testMethod = null, $orderSubtotal = 12345)
+//    {
+//        $data = [];
+//        $matchDataSet = RuleTest\CartRuleTest::dataProvider_testMatch_Scenario1($orderSubtotal);
+//        foreach ($matchDataSet as $matchData) {
+//            list($ruleData, $conditionData1, $conditionData2,,$expected) = $matchData;
+//            $getDiscountDataSet = PromotionTest\CartTotalPercentPromotionTest::dataProvider_testGetDiscount_Scenario1();
+//            foreach ($getDiscountDataSet as $getDiscountData) {
+//                list($promotionValue, $promotionExpected) = $getDiscountData;
+//                $data[] = [$ruleData, $conditionData1, $conditionData2, $orderSubtotal, $promotionValue, $expected ? $promotionExpected : 0];
+//            }
+//        }
+//        return $data;
+//    }
+
+//    public function testGetDiscount_S2()
+//    {
+//        // 2 Rule ~> Order
+//    }
+//
+//    public function testGetDiscount_S3()
+//    {
+//        // 2 Rule ~> ProductClass
 //    }
 //
 //    public static function dataProvider_testGetDiscount_S1()

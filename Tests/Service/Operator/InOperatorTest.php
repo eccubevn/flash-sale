@@ -15,7 +15,6 @@ namespace Plugin\FlashSale\Tests\Service\Operator;
 
 use Eccube\Tests\EccubeTestCase;
 use Plugin\FlashSale\Service\Operator\InOperator;
-use Plugin\FlashSale\Tests\DataProvider\Service\Operator\InOperatorDataProvider;
 
 class InOperatorTest extends EccubeTestCase
 {

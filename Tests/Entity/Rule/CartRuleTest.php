@@ -105,59 +105,45 @@ class CartRuleTest extends RuleTest
 
     /**
      * @param $ruleData
-     * @param $conditionData1
-     * @param $conditionData2
-     * @param $orderSubTotal
+     * @param $Conditions
+     * @param $object
      * @param $expected
-     * @dataProvider dataProvider_testMatch_Scenario1
+     * @dataProvider dataProvider_testMatch_S1
      */
-    public function testMatch_Scenario1($ruleData, $conditionData1, $conditionData2, $orderSubTotal, $expected)
+    public function testMatch_S1($ruleData, $Conditions, $object, $expected)
     {
         $this->rule->setId(rand());
         $this->rule->setOperator($ruleData[0]);
         $this->rule->setOperatorFactory($this->container->get(Operator\OperatorFactory::class));
 
-        $condition1 = new Condition\CartTotalCondition();
-        $condition1->setId(rand());
-        $condition1->setOperatorFactory($this->container->get(Operator\OperatorFactory::class));
-        $condition1->setOperator($conditionData1[0]);
-        $condition1->setValue($conditionData1[1]);
-        $this->rule->addConditions($condition1);
+        foreach ($Conditions as $Condition) {
+            $Condition->setOperatorFactory($this->container->get(Operator\OperatorFactory::class));
+            $this->rule->addConditions($Condition);
+        }
 
-        $condition2 = new Condition\CartTotalCondition();
-        $condition2->setId(rand());
-        $condition2->setOperatorFactory($this->container->get(Operator\OperatorFactory::class));
-        $condition2->setOperator($conditionData2[0]);
-        $condition2->setValue($conditionData2[1]);
-
-        $this->rule->addConditions($condition2);
-
-        $Order = new Order();
-        $Order->setSubtotal($orderSubTotal);
-
-        $actual = $this->rule->match($Order);
+        $actual = $this->rule->match($object);
         $this->assertEquals($expected, $actual);
     }
 
-    public static function dataProvider_testMatch_Scenario1($testMethod = null, $orderSubtotal = 12345)
+    public static function dataProvider_testMatch_S1($testMethod = null, $orderSubtotal = 12345, $productClassId = 1, $categoryId = 2)
     {
         $data = [];
-        $operatorDataSet = OperatorTest\AllOperatorTest::dataProvider_testMatch_Scenario1(null, $orderSubtotal);
+        $operatorDataSet = OperatorTest\AllOperatorTest::dataProvider_testMatch_S1_1(null, $orderSubtotal, $productClassId, $categoryId);
         foreach ($operatorDataSet as $operatorData) {
-            list($conditionData1, $conditionData2,, $expected) = $operatorData;
-            $data[] = [['operator_all'], $conditionData1, $conditionData2, $orderSubtotal, $expected];
+            list($Conditions, $object, $expected) = $operatorData;
+            $data[] = [['operator_all'], $Conditions, $object, $expected];
         }
 
-        $operatorDataSet = OperatorTest\OrOperatorTest::dataProvider_testMatch_Scenario1();
+        $operatorDataSet = OperatorTest\OrOperatorTest::dataProvider_testMatch_S1_1(null, $orderSubtotal, $productClassId, $categoryId);
         foreach ($operatorDataSet as $operatorData) {
-            list($conditionData1, $conditionData2,, $expected) = $operatorData;
-            $data[] = [['operator_or'], $conditionData1, $conditionData2, $orderSubtotal, $expected];
+            list($Conditions, $object, $expected) = $operatorData;
+            $data[] = [['operator_or'], $Conditions, $object, $expected];
         }
 
         return $data;
     }
 
-    public function testGetDiscount_Scenario0()
+    public function testGetDiscount_S0()
     {
         $this->rule->setId(rand());
         $actual = $this->rule->getDiscount(new \stdClass());
@@ -170,9 +156,9 @@ class CartRuleTest extends RuleTest
      * @param $promotionValue
      * @param $orderSubTotal
      * @param $expectedValue
-     * @dataProvider dataProvider_testGetDiscount_Scenario1
+     * @dataProvider dataProvider_testGetDiscount_S1
      */
-    public function testGetDiscount_Scenario1($orderSubTotal, $promotionValue, $expectedValue)
+    public function testGetDiscount_S1($orderSubTotal, $promotionValue, $expectedValue)
     {
         $this->rule->setId(rand());
 
@@ -191,7 +177,7 @@ class CartRuleTest extends RuleTest
         $this->assertEquals($this->rule->getId(), $actual->getRuleId());
     }
 
-    public function dataProvider_testGetDiscount_Scenario1($testMethod = null, $orderSubtotal = 12345)
+    public function dataProvider_testGetDiscount_S1($testMethod = null, $orderSubtotal = 12345)
     {
         $data = [];
         foreach (PromotionTest\CartTotalAmountPromotionTest::dataProvider_testGetDiscount_Scenario1() as $promotionData) {

@@ -15,7 +15,6 @@ namespace Plugin\FlashSale\Tests\Service\Operator;
 
 use Eccube\Tests\EccubeTestCase;
 use Plugin\FlashSale\Service\Operator\NotEqualOperator;
-use Plugin\FlashSale\Tests\DataProvider\Service\Operator\NotEqualOperatorDataProvider;
 
 class NotEqualOperatorTest extends EccubeTestCase
 {
