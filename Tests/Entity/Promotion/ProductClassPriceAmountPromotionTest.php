@@ -35,14 +35,14 @@ class ProductClassPriceAmountPromotionTest extends PromotionTest
         $this->promotion = new ProductClassPriceAmountPromotion();
     }
 
-    public static function dataProvider_testRawData_Scenario1()
+    public static function dataProvider_testRawData_Valid()
     {
         return [
             [['id' => 1, 'type' => 'promotion_product_class_price_amount', 'value' => 1000]],
         ];
     }
 
-    public function testGetDiscount_Scenario0()
+    public function testGetDiscount_Invalid()
     {
         $this->promotion->setId(rand());
         $actual = $this->promotion->getDiscount(new \stdClass());
@@ -53,15 +53,15 @@ class ProductClassPriceAmountPromotionTest extends PromotionTest
 
     /**
      * @param $promotionValue
+     * @param $ProductClass
      * @param $expectedValue
-     * @dataProvider dataProvider_testGetDiscount_Scenario1
+     * @dataProvider dataProvider_testGetDiscount_Valid
      */
-    public function testGetDiscount_Scenario1($promotionValue, $expectedValue)
+    public function testGetDiscount_Valid($promotionValue, $ProductClass, $expectedValue)
     {
         $this->promotion->setId(rand());
         $this->promotion->setValue($promotionValue);
 
-        $ProductClass = new ProductClass();
         $actual = $this->promotion->getDiscount($ProductClass);
 
         $this->assertEquals(Discount::class, Discount::class);
@@ -69,11 +69,11 @@ class ProductClassPriceAmountPromotionTest extends PromotionTest
         $this->assertEquals($actual->getValue(), $expectedValue);
     }
 
-    public static function dataProvider_testGetDiscount_Scenario1()
+    public static function dataProvider_testGetDiscount_Valid()
     {
         return [
-            [10, 10],
-            [222, 222],
+            [10, new ProductClass(), 10],
+            [222, new ProductClass(), 222],
         ];
     }
 }

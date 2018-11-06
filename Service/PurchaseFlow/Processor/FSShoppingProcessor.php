@@ -11,11 +11,7 @@ use Eccube\Service\PurchaseFlow\ProcessResult;
 use Eccube\Entity\Master\OrderItemType;
 use Eccube\Entity\Master\TaxDisplayType;
 use Eccube\Entity\Master\TaxType;
-use Plugin\FlashSale\Repository\FlashSaleRepository;
 
-/**
- * @Annotation\ShoppingFlow()
- */
 class FSShoppingProcessor implements DiscountProcessor
 {
     /**
@@ -24,22 +20,14 @@ class FSShoppingProcessor implements DiscountProcessor
     protected $entityManager;
 
     /**
-     * @var FlashSaleRepository
-     */
-    protected $flashSaleRepository;
-
-    /**
      * FlashSaleShoppingProcessor constructor.
      *
      * @param EntityManagerInterface $entityManager
-     * @param FlashSaleRepository $flashSaleRepository
      */
     public function __construct(
-        EntityManagerInterface $entityManager,
-        FlashSaleRepository $flashSaleRepository
+        EntityManagerInterface $entityManager
     ) {
         $this->entityManager = $entityManager;
-        $this->flashSaleRepository = $flashSaleRepository;
     }
 
     /**

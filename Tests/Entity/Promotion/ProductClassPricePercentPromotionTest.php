@@ -35,7 +35,7 @@ class ProductClassPricePercentPromotionTest extends PromotionTest
         $this->promotion = new ProductClassPricePercentPromotion();
     }
 
-    public static function dataProvider_testRawData_Scenario1()
+    public static function dataProvider_testRawData_Valid()
     {
         return [
             [['id' => 1, 'type' => 'promotion_product_class_price_percent', 'value' => 1000]],
@@ -43,7 +43,7 @@ class ProductClassPricePercentPromotionTest extends PromotionTest
     }
 
 
-    public function testGetDiscount_Scenario0()
+    public function testGetDiscount_Invalid()
     {
         $this->promotion->setId(rand());
         $actual = $this->promotion->getDiscount(new \stdClass());
@@ -54,17 +54,15 @@ class ProductClassPricePercentPromotionTest extends PromotionTest
 
     /**
      * @param $promotionValue
-     * @param $productClassPrice
+     * @param $ProductClass
      * @param $expectedValue
-     * @dataProvider dataProvider_testGetDiscount_Scenario1
+     * @dataProvider dataProvider_testGetDiscount_Valid
      */
-    public function testGetDiscount_Scenario1($promotionValue, $productClassPrice, $expectedValue)
+    public function testGetDiscount_Valid($promotionValue, $ProductClass, $expectedValue)
     {
         $this->promotion->setId(rand());
         $this->promotion->setValue($promotionValue);
 
-        $ProductClass = new ProductClass();
-        $ProductClass->setPrice02IncTax($productClassPrice);
         $actual = $this->promotion->getDiscount($ProductClass);
 
         $this->assertEquals(Discount::class, Discount::class);
@@ -72,11 +70,14 @@ class ProductClassPricePercentPromotionTest extends PromotionTest
         $this->assertEquals($actual->getValue(), $expectedValue);
     }
 
-    public static function dataProvider_testGetDiscount_Scenario1($testMethod = null, $productPrice = 32567)
+    public static function dataProvider_testGetDiscount_Valid($testMethod = null, $productClassPrice = 32567)
     {
+        $ProductClass = new ProductClass();
+        $ProductClass->setPrice02IncTax($productClassPrice);
+
         return [
-            [10, $productPrice, floor($productPrice*10/100)],
-            [23, $productPrice, floor($productPrice*23/100)],
+            [10, $ProductClass, floor($productClassPrice*10/100)],
+            [23, $ProductClass, floor($productClassPrice*23/100)],
         ];
     }
 }

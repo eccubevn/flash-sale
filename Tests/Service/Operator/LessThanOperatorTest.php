@@ -13,17 +13,16 @@
 
 namespace Plugin\FlashSale\Tests\Service\Operator;
 
-use Eccube\Tests\EccubeTestCase;
+use Plugin\FlashSale\Tests\Service\AbstractOperatorTest;
 use Plugin\FlashSale\Service\Operator\LessThanOperator;
-use Plugin\FlashSale\Tests\DataProvider\Service\Operator\LessThanOperatorDataProvider;
 
-class LessThanOperatorTest extends EccubeTestCase
+class LessThanOperatorTest extends AbstractOperatorTest
 {
 
     /**
      * @var LessThanOperator
      */
-    protected $lessThanOperator;
+    protected $operator;
 
     /**
      * {@inheritdoc}
@@ -32,7 +31,7 @@ class LessThanOperatorTest extends EccubeTestCase
     {
         parent::setUp();
 
-        $this->lessThanOperator = new LessThanOperator();
+        $this->operator = new LessThanOperator();
     }
 
     /**
@@ -44,7 +43,7 @@ class LessThanOperatorTest extends EccubeTestCase
      */
     public function testMatch($condition, $data, $expected)
     {
-        $actual = $this->lessThanOperator->match($condition, $data);
+        $actual = $this->operator->match($condition, $data);
         $this->assertEquals($expected, $actual);
     }
 

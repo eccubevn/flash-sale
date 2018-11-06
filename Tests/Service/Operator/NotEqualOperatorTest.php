@@ -13,17 +13,16 @@
 
 namespace Plugin\FlashSale\Tests\Service\Operator;
 
-use Eccube\Tests\EccubeTestCase;
+use Plugin\FlashSale\Tests\Service\AbstractOperatorTest;
 use Plugin\FlashSale\Service\Operator\NotEqualOperator;
-use Plugin\FlashSale\Tests\DataProvider\Service\Operator\NotEqualOperatorDataProvider;
 
-class NotEqualOperatorTest extends EccubeTestCase
+class NotEqualOperatorTest extends AbstractOperatorTest
 {
 
     /**
      * @var NotEqualOperator
      */
-    protected $notEqualOperator;
+    protected $operator;
 
     /**
      * {@inheritdoc}
@@ -32,7 +31,7 @@ class NotEqualOperatorTest extends EccubeTestCase
     {
         parent::setUp();
 
-        $this->notEqualOperator = new NotEqualOperator();
+        $this->operator = new NotEqualOperator();
     }
 
     /**
@@ -44,7 +43,7 @@ class NotEqualOperatorTest extends EccubeTestCase
      */
     public function testMatch($condition, $data, $expected)
     {
-        $actual = $this->notEqualOperator->match($condition, $data);
+        $actual = $this->operator->match($condition, $data);
         $this->assertEquals($expected, $actual);
     }
 

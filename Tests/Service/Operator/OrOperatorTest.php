@@ -17,19 +17,17 @@ use Eccube\Entity\Order;
 use Eccube\Entity\ProductCategory;
 use Eccube\Entity\Product;
 use Eccube\Entity\ProductClass;
-use Eccube\Tests\EccubeTestCase;
-use Plugin\FlashSale\Entity\Condition\CartTotalCondition;
-use Plugin\FlashSale\Entity\Condition\ProductClassIdCondition;
-use Plugin\FlashSale\Entity\Condition\ProductCategoryIdCondition;
+use Plugin\FlashSale\Tests\Service\AbstractOperatorTest;
+use Plugin\FlashSale\Entity\Condition;
 use Plugin\FlashSale\Service\Operator as Operator;
 use Plugin\FlashSale\Tests\Entity\Condition as ConditionTest;
 
-class OrOperatorTest extends EccubeTestCase
+class OrOperatorTest extends AbstractOperatorTest
 {
     /**
      * @var Operator\OrOperator
      */
-    protected $orOperator;
+    protected $operator;
 
     /**
      * {@inheritdoc}
@@ -38,85 +36,86 @@ class OrOperatorTest extends EccubeTestCase
     {
         parent::setUp();
 
-        $this->orOperator = new Operator\OrOperator();
+        $this->operator = new Operator\OrOperator();
     }
 
-    public function testMatch_Scenario0()
+    public function testMatch_Invalid()
     {
-        $this->assertEquals(false, $this->orOperator->match(null, new \stdClass()));
-        $this->assertEquals(false, $this->orOperator->match([new \stdClass()], new \stdClass()));
+        $this->assertEquals(false, $this->operator->match(null, new \stdClass()));
+        $this->assertEquals(false, $this->operator->match([new \stdClass()], new \stdClass()));
 
     }
 
     /**
-     * @param $condition1Data
-     * @param $condition2Data
-     * @param $orderSubTotal
+     * @param $Conditions
+     * @param $Order
      * @param $expected
-     * @dataProvider dataProvider_testMatch_Scenario1
+     * @dataProvider dataProvider_testMatch_Valid_CartRule
+     * @dataProvider dataProvider_testMatch_Valid_ProductClassRule
      */
-    public function testMatch_Scenario1($condition1Data, $condition2Data, $orderSubTotal, $expected)
+    public function testMatch_Valid($Conditions, $Order, $expected)
     {
-        $condition1 = new CartTotalCondition();
-        $condition1->setOperatorFactory($this->container->get(Operator\OperatorFactory::class));
-        $condition1->setId(rand());
-        $condition1->setOperator($condition1Data[0]);
-        $condition1->setValue($condition1Data[1]);
+        /** @var Condition $Condition */
+        foreach ($Conditions as $Condition) {
+            $Condition->setOperatorFactory($this->container->get(Operator\OperatorFactory::class));
+        }
 
-        $condition2 = new CartTotalCondition();
-        $condition2->setOperatorFactory($this->container->get(Operator\OperatorFactory::class));
-        $condition2->setId(rand());
-        $condition2->setOperator($condition2Data[0]);
-        $condition2->setValue($condition2Data[1]);
-
-        $Order = new Order();
-        $Order->setSubtotal($orderSubTotal);
-
-        $conditions = [$condition1, $condition2];
-
-        $actual = $this->orOperator->match($conditions, $Order);
+        $actual = $this->operator->match($Conditions, $Order);
         $this->assertEquals($expected, $actual);
     }
 
-    public static function dataProvider_testMatch_Scenario1($testMethod = null, $orderSubtotal = 12345)
+    public static function dataProvider_testMatch_Valid_CartRule($testMethod = null, $orderSubtotal = 12345)
     {
         $data = [];
 
-        $conditionDataSet = ConditionTest\CartTotalConditionTest::dataProvider_testMatch_Scenario1();
-        for ($i =0; $i < count($conditionDataSet); $i++) {
-            for ($j=0; $j<count($conditionDataSet); $j++) {
-                list($operatorI, $conditionValueI,, $expectedI) = $conditionDataSet[$i];
-                list($operatorJ, $conditionValueJ,, $expectedJ) = $conditionDataSet[$j];
-                $expected = $expectedI || $expectedJ;
-                $data[] = [[$operatorI, $conditionValueI], [$operatorJ, $conditionValueJ], $orderSubtotal, $expected];
+        // Cart
+        $tmp = ConditionTest\CartTotalConditionTest::dataProvider_testMatch_Valid(null, $orderSubtotal, 0);
+        $conditionDataSet = [];
+        foreach ($tmp as $tmpData) {
+            list($conditionData,, $expected) = $tmpData;
+            $condition = new Condition\CartTotalCondition();
+            $condition->setId(rand());
+            $condition->setOperator($conditionData[0]);
+            $condition->setValue($conditionData[1]);
+            $conditionDataSet[] = [$condition, $expected];
+        }
+        $Order = new Order();
+        $Order->setSubtotal($orderSubtotal);
+        for ($i=0; $i<count($conditionDataSet); $i++) {
+            for ($j=$i; $j<count($conditionDataSet); $j++) {
+                list($conditionI, $expectedI) = $conditionDataSet[$i];
+                list($conditionJ, $expectedJ) = $conditionDataSet[$j];
+                $data[] = [[$conditionI, $conditionJ], $Order, $expectedI || $expectedJ];
             }
         }
 
         return $data;
     }
 
-    /**
-     * @param $condition1Data
-     * @param $condition2Data
-     * @param $productClassId
-     * @param $categoryId
-     * @param $expected
-     * @dataProvider dataProvider_testMatch_Scenario2
-     */
-    public function testMatch_Scenario2($condition1Data, $condition2Data, $productClassId, $categoryId, $expected)
+    public static function dataProvider_testMatch_Valid_ProductClassRule($testMethod = null, $productClassId = 1, $categoryId = 2)
     {
-        $condition1 = new ProductClassIdCondition();
-        $condition1->setOperatorFactory($this->container->get(Operator\OperatorFactory::class));
-        $condition1->setId(rand());
-        $condition1->setOperator($condition1Data[0]);
-        $condition1->setValue($condition1Data[1]);
+        $data = [];
 
-        $condition2 = new ProductCategoryIdCondition();
-        $condition2->setOperatorFactory($this->container->get(Operator\OperatorFactory::class));
-        $condition2->setId(rand());
-        $condition2->setOperator($condition2Data[0]);
-        $condition2->setValue($condition2Data[1]);
-
+        // Product Class
+        $tmp = ConditionTest\ProductClassIdConditionTest::dataProvider_testMatch_Valid(null, $productClassId);
+        $conditionDataSet = [];
+        foreach ($tmp as $tmpData) {
+            list($conditionData,, $expected) = $tmpData;
+            $condition = new Condition\ProductClassIdCondition();
+            $condition->setId(rand());
+            $condition->setOperator($conditionData[0]);
+            $condition->setValue($conditionData[1]);
+            $conditionDataSet[] = [$condition, $expected];
+        }
+        $tmp = ConditionTest\ProductCategoryIdConditionTest::dataProvider_testMatch_Valid(null, $categoryId);
+        foreach ($tmp as $tmpData) {
+            list($conditionData,, $expected) = $tmpData;
+            $condition = new Condition\ProductCategoryIdCondition();
+            $condition->setId(rand());
+            $condition->setOperator($conditionData[0]);
+            $condition->setValue($conditionData[1]);
+            $conditionDataSet[] = [$condition, $expected];
+        }
         $ProductCategory = new ProductCategory();
         $ProductCategory->setCategoryId($categoryId);
         $Product = new Product();
@@ -124,25 +123,11 @@ class OrOperatorTest extends EccubeTestCase
         $ProductClass = new ProductClass();
         $ProductClass->setPropertiesFromArray(['id' => $productClassId]);
         $ProductClass->setProduct($Product);
-
-        $conditions = [$condition1, $condition2];
-
-        $actual = $this->orOperator->match($conditions, $ProductClass);
-        $this->assertEquals($expected, $actual);
-    }
-
-    public static function dataProvider_testMatch_Scenario2($testMethod = null, $productClassId = 1, $categoryId = 2)
-    {
-        $data = [];
-
-        $conditionDataSetI = ConditionTest\ProductClassIdConditionTest::dataProvider_testMatch_Scenario1(null, $productClassId);
-        for ($i =0; $i < count($conditionDataSetI); $i++) {
-            $conditionDataSetJ = ConditionTest\ProductCategoryIdConditionTest::dataProvider_testMatch_Scenario1(null, $categoryId);
-            for ($j=0; $j<count($conditionDataSetJ); $j++) {
-                list($operatorI, $conditionValueI,, $expectedI) = $conditionDataSetI[$i];
-                list($operatorJ, $conditionValueJ,, $expectedJ) = $conditionDataSetJ[$j];
-                $expected = $expectedI || $expectedJ;
-                $data[] = [[$operatorI, $conditionValueI], [$operatorJ, $conditionValueJ], $productClassId , $categoryId, $expected];
+        for ($i=0; $i<count($conditionDataSet); $i++) {
+            for ($j=$i; $j<count($conditionDataSet); $j++) {
+                list($conditionI, $expectedI) = $conditionDataSet[$i];
+                list($conditionJ, $expectedJ) = $conditionDataSet[$j];
+                $data[] = [[$conditionI, $conditionJ], $ProductClass, $expectedI || $expectedJ];
             }
         }
 

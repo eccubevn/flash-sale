@@ -44,7 +44,7 @@ class ProductCategoryIdConditionTest extends ConditionTest
         $this->condition->setOperatorFactory($this->container->get(OperatorFactory::class));
     }
 
-    public static function dataProvider_testRawData_Scenario1()
+    public static function dataProvider_testRawData_Valid()
     {
         return [
             [['id' => 1, 'type' => 'condition_product_category_id', 'operator' => 'operator_in', 'value' => '1,2']],
@@ -62,39 +62,30 @@ class ProductCategoryIdConditionTest extends ConditionTest
         $this->verify();
     }
 
-    public function testMatch_Scenario0()
+    public function testMatch_Invalid()
     {
         $actual = $this->condition->match(new \stdClass());
         $this->assertEquals(false, $actual);
     }
 
     /**
-     * @param $conditionOperator
-     * @param $conditionValue
-     * @param $categoryIds
+     * @param $conditionData
+     * @param $ProductClass
      * @param $expected
-     *
-     * @dataProvider dataProvider_testMatch_Scenario1
+     * @dataProvider dataProvider_testMatch_Valid
      */
-    public function testMatch_Scenario1($conditionOperator, $conditionValue, $categoryIds, $expected)
+    public function testMatch_Valid($conditionData, $ProductClass, $expected)
     {
+        list($conditionOperator, $conditionValue) = $conditionData;
+        $this->condition->setId(rand());
         $this->condition->setValue($conditionValue);
         $this->condition->setOperator($conditionOperator);
-
-        $Product = new Product();
-        foreach ($categoryIds as $categoryId) {
-            $ProductCategory = new ProductCategory();
-            $ProductCategory->setCategoryId($categoryId);
-            $Product->addProductCategory($ProductCategory);
-        }
-        $ProductClass = new ProductClass();
-        $ProductClass->setProduct($Product);
 
         $actual = $this->condition->match($ProductClass);
         $this->assertEquals($expected, $actual);
     }
 
-    public static function dataProvider_testMatch_Scenario1($testMethod = null, $categoryId = 1)
+    public static function dataProvider_testMatch_Valid($testMethod = null, $categoryId = 1)
     {
         $data = [];
         foreach (OperatorTest\InOperatorTest::dataProvider_testMatch($categoryId) as $operatorData) {
@@ -102,7 +93,15 @@ class ProductCategoryIdConditionTest extends ConditionTest
             if (is_array($conditionValue)) {
                 continue;
             }
-            $data[] = ['operator_in', (string)$conditionValue, (array)$categoryId, $expected];
+
+            $Product = new Product();
+            $ProductCategory = new ProductCategory();
+            $ProductCategory->setCategoryId($categoryId);
+            $Product->addProductCategory($ProductCategory);
+            $ProductClass = new ProductClass();
+            $ProductClass->setProduct($Product);
+
+            $data[] = [['operator_in', (string)$conditionValue], $ProductClass, $expected];
         }
 
         foreach (OperatorTest\NotInOperatorTest::dataProvider_testMatch($categoryId) as $operatorData) {
@@ -110,7 +109,15 @@ class ProductCategoryIdConditionTest extends ConditionTest
             if (is_array($conditionValue)) {
                 continue;
             }
-            $data[] = ['operator_not_in', (string)$conditionValue, (array)$categoryId, $expected];
+
+            $Product = new Product();
+            $ProductCategory = new ProductCategory();
+            $ProductCategory->setCategoryId($categoryId);
+            $Product->addProductCategory($ProductCategory);
+            $ProductClass = new ProductClass();
+            $ProductClass->setProduct($Product);
+
+            $data[] = [['operator_not_in', (string)$conditionValue], $ProductClass, $expected];
         }
 
         return $data;

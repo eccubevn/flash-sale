@@ -41,14 +41,14 @@ class CartTotalPercentPromotionTest extends PromotionTest
         $this->promotion = new CartTotalPercentPromotion();
     }
 
-    public static function dataProvider_testRawData_Scenario1()
+    public static function dataProvider_testRawData_Valid()
     {
         return [
             [['id' => 1, 'type' => 'promotion_cart_percent_amount', 'value' => 10]],
         ];
     }
 
-    public function testGetDiscount_Scenario0()
+    public function testGetDiscount_Invalid()
     {
         $this->promotion->setId(rand());
         $actual = $this->promotion->getDiscount(new \stdClass());
@@ -58,50 +58,34 @@ class CartTotalPercentPromotionTest extends PromotionTest
     }
 
     /**
+     * /**
      * @param $promotionValue
-     * @param $cartTotal
+     * @param $object
      * @param $expectedValue
-     * @dataProvider dataProvider_testGetDiscount_Scenario1
+     * @dataProvider dataProvider_testGetDiscount_Valid
      */
-    public function testGetDiscount_Scenario1($promotionValue, $cartTotal, $expectedValue)
+    public function testGetDiscount_Valid($promotionValue, $object, $expectedValue)
     {
         $this->promotion->setId(rand());
         $this->promotion->setValue($promotionValue);
+
+        $actual = $this->promotion->getDiscount($object);
+        $this->assertEquals(get_class($actual), Discount::class);
+        $this->assertEquals($this->promotion->getId(), $actual->getPromotionId());
+        $this->assertEquals($expectedValue, $actual->getValue());
+    }
+
+    public static function dataProvider_testGetDiscount_Valid($testMethod = null, $orderSubtotal = 12345)
+    {
+        $Order = new Order();
+        $Order->setSubtotal($orderSubtotal);
 
         $Cart = new Cart();
-        $Cart->setTotal($cartTotal);
+        $Cart->setTotal($orderSubtotal);
 
-        $actual = $this->promotion->getDiscount($Cart);
-        $this->assertEquals(get_class($actual), Discount::class);
-        $this->assertEquals($this->promotion->getId(), $actual->getPromotionId());
-        $this->assertEquals($expectedValue, $actual->getValue());
-    }
-
-    /**
-     * @param $promotionValue
-     * @param $orderSubTotal
-     * @param $expectedValue
-     * @dataProvider dataProvider_testGetDiscount_Scenario1
-     */
-    public function testGetDiscount_Scenario2($promotionValue, $orderSubTotal, $expectedValue)
-    {
-        $this->promotion->setId(rand());
-        $this->promotion->setValue($promotionValue);
-
-        $Order = new Order();
-        $Order->setSubtotal($orderSubTotal);
-
-        $actual = $this->promotion->getDiscount($Order);
-        $this->assertEquals(get_class($actual), Discount::class);
-        $this->assertEquals($this->promotion->getId(), $actual->getPromotionId());
-        $this->assertEquals($expectedValue, $actual->getValue());
-    }
-
-    public static function dataProvider_testGetDiscount_Scenario1($testMethod = null, $orderSubtotal = 12345)
-    {
         return [
-            [10, $orderSubtotal, floor(10*$orderSubtotal/100)],
-            [51, $orderSubtotal, floor(51*$orderSubtotal/100)],
+            [10, $Order, floor(10*$orderSubtotal/100)],
+            [51, $Cart, floor(51*$orderSubtotal/100)],
         ];
     }
 }
