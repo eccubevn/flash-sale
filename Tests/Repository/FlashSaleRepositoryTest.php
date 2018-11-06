@@ -14,7 +14,6 @@
 namespace Plugin\FlashSale\Tests\Repository;
 
 use Plugin\FlashSale\Entity\FlashSale;
-use Plugin\FlashSale\Repository\FlashSaleRepository;
 
 /**
  * Class FlashSaleRepositoryTest
@@ -22,23 +21,18 @@ use Plugin\FlashSale\Repository\FlashSaleRepository;
 class FlashSaleRepositoryTest extends AbstractRepositoryTestCase
 {
     /**
-     * @var FlashSaleRepository
-     */
-    protected $flashSaleRepository;
-
-    /**
      * {@inheritdoc}
      */
     public function setUp()
     {
         parent::setUp();
-        $this->flashSaleRepository = $this->container->get(FlashSaleRepository::class);
     }
 
     public function testAvailableFlashSale()
     {
+        $this->createFS('Test');
         $FlashSale = $this->flashSaleRepository->getAvailableFlashSale();
-        $this->expected = $this->eventName;
+        $this->expected = 'Test';
         $this->actual = $FlashSale->getName();
         $this->verify();
     }
@@ -46,17 +40,17 @@ class FlashSaleRepositoryTest extends AbstractRepositoryTestCase
     public function testDelete()
     {
         // make sure created success
-        $FlashSale = $this->createFlashSaleAndRules('Create to delete - test only');
+        $FlashSale = $this->createFS('Create to delete - test only');
         $countAll = $this->flashSaleRepository->count(['status' => FlashSale::STATUS_ACTIVATED]);
 
-        $this->expected = 2;
+        $this->expected = 1;
         $this->actual = $countAll;
         $this->verify();
 
         // Test delete
         $this->flashSaleRepository->delete($FlashSale);
         $countActivated = $this->flashSaleRepository->count(['status' => FlashSale::STATUS_ACTIVATED]);
-        $this->expected = 1;
+        $this->expected = 0;
         $this->actual = $countActivated;
         $this->verify();
     }
