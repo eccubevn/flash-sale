@@ -17,17 +17,17 @@ use Eccube\Entity\Order;
 use Eccube\Entity\ProductCategory;
 use Eccube\Entity\Product;
 use Eccube\Entity\ProductClass;
-use Eccube\Tests\EccubeTestCase;
+use Plugin\FlashSale\Tests\Service\AbstractOperatorTest;
 use Plugin\FlashSale\Entity\Condition;
 use Plugin\FlashSale\Service\Operator as Operator;
 use Plugin\FlashSale\Tests\Entity\Condition as ConditionTest;
 
-class OrOperatorTest extends EccubeTestCase
+class OrOperatorTest extends AbstractOperatorTest
 {
     /**
      * @var Operator\OrOperator
      */
-    protected $orOperator;
+    protected $operator;
 
     /**
      * {@inheritdoc}
@@ -36,13 +36,13 @@ class OrOperatorTest extends EccubeTestCase
     {
         parent::setUp();
 
-        $this->orOperator = new Operator\OrOperator();
+        $this->operator = new Operator\OrOperator();
     }
 
     public function testMatch_Invalid()
     {
-        $this->assertEquals(false, $this->orOperator->match(null, new \stdClass()));
-        $this->assertEquals(false, $this->orOperator->match([new \stdClass()], new \stdClass()));
+        $this->assertEquals(false, $this->operator->match(null, new \stdClass()));
+        $this->assertEquals(false, $this->operator->match([new \stdClass()], new \stdClass()));
 
     }
 
@@ -60,7 +60,7 @@ class OrOperatorTest extends EccubeTestCase
             $Condition->setOperatorFactory($this->container->get(Operator\OperatorFactory::class));
         }
 
-        $actual = $this->orOperator->match($Conditions, $Order);
+        $actual = $this->operator->match($Conditions, $Order);
         $this->assertEquals($expected, $actual);
     }
 
@@ -69,14 +69,14 @@ class OrOperatorTest extends EccubeTestCase
         $data = [];
 
         // Cart
-        $tmp = ConditionTest\CartTotalConditionTest::dataProvider_testMatch_Valid(null, $orderSubtotal);
+        $tmp = ConditionTest\CartTotalConditionTest::dataProvider_testMatch_Valid(null, $orderSubtotal, 0);
         $conditionDataSet = [];
-        foreach ($tmp as $conditionData) {
-            list($operator, $conditionValue,, $expected) = $conditionData;
+        foreach ($tmp as $tmpData) {
+            list($conditionData,, $expected) = $tmpData;
             $condition = new Condition\CartTotalCondition();
             $condition->setId(rand());
-            $condition->setOperator($operator);
-            $condition->setValue($conditionValue);
+            $condition->setOperator($conditionData[0]);
+            $condition->setValue($conditionData[1]);
             $conditionDataSet[] = [$condition, $expected];
         }
         $Order = new Order();
@@ -99,21 +99,21 @@ class OrOperatorTest extends EccubeTestCase
         // Product Class
         $tmp = ConditionTest\ProductClassIdConditionTest::dataProvider_testMatch_Valid(null, $productClassId);
         $conditionDataSet = [];
-        foreach ($tmp as $conditionData) {
-            list($operator, $conditionValue,, $expected) = $conditionData;
+        foreach ($tmp as $tmpData) {
+            list($conditionData,, $expected) = $tmpData;
             $condition = new Condition\ProductClassIdCondition();
             $condition->setId(rand());
-            $condition->setOperator($operator);
-            $condition->setValue($conditionValue);
+            $condition->setOperator($conditionData[0]);
+            $condition->setValue($conditionData[1]);
             $conditionDataSet[] = [$condition, $expected];
         }
         $tmp = ConditionTest\ProductCategoryIdConditionTest::dataProvider_testMatch_Valid(null, $categoryId);
-        foreach ($tmp as $conditionData) {
-            list($operator, $conditionValue,, $expected) = $conditionData;
+        foreach ($tmp as $tmpData) {
+            list($conditionData,, $expected) = $tmpData;
             $condition = new Condition\ProductCategoryIdCondition();
             $condition->setId(rand());
-            $condition->setOperator($operator);
-            $condition->setValue($conditionValue);
+            $condition->setOperator($conditionData[0]);
+            $condition->setValue($conditionData[1]);
             $conditionDataSet[] = [$condition, $expected];
         }
         $ProductCategory = new ProductCategory();

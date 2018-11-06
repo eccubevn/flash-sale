@@ -13,15 +13,15 @@
 
 namespace Plugin\FlashSale\Tests\Service\Operator;
 
-use Eccube\Tests\EccubeTestCase;
+use Plugin\FlashSale\Tests\Service\AbstractOperatorTest;
 use Plugin\FlashSale\Service\Operator\NotInOperator;
 
-class NotInOperatorTest extends EccubeTestCase
+class NotInOperatorTest extends AbstractOperatorTest
 {
     /**
      * @var NotInOperator
      */
-    protected $notInOperator;
+    protected $operator;
 
     /**
      * {@inheritdoc}
@@ -30,7 +30,7 @@ class NotInOperatorTest extends EccubeTestCase
     {
         parent::setUp();
 
-        $this->notInOperator = new NotInOperator();
+        $this->operator = new NotInOperator();
     }
 
     /**
@@ -42,7 +42,7 @@ class NotInOperatorTest extends EccubeTestCase
      */
     public function testMatch($condition, $data, $expected)
     {
-        $actual = $this->notInOperator->match($condition, $data);
+        $actual = $this->operator->match($condition, $data);
         $this->assertEquals($expected, $actual);
     }
 

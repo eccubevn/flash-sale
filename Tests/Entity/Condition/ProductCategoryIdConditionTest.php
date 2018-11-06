@@ -69,26 +69,17 @@ class ProductCategoryIdConditionTest extends ConditionTest
     }
 
     /**
-     * @param $conditionOperator
-     * @param $conditionValue
-     * @param $categoryIds
+     * @param $conditionData
+     * @param $ProductClass
      * @param $expected
-     *
      * @dataProvider dataProvider_testMatch_Valid
      */
-    public function testMatch_Valid($conditionOperator, $conditionValue, $categoryIds, $expected)
+    public function testMatch_Valid($conditionData, $ProductClass, $expected)
     {
+        list($conditionOperator, $conditionValue) = $conditionData;
+        $this->condition->setId(rand());
         $this->condition->setValue($conditionValue);
         $this->condition->setOperator($conditionOperator);
-
-        $Product = new Product();
-        foreach ($categoryIds as $categoryId) {
-            $ProductCategory = new ProductCategory();
-            $ProductCategory->setCategoryId($categoryId);
-            $Product->addProductCategory($ProductCategory);
-        }
-        $ProductClass = new ProductClass();
-        $ProductClass->setProduct($Product);
 
         $actual = $this->condition->match($ProductClass);
         $this->assertEquals($expected, $actual);
@@ -102,7 +93,15 @@ class ProductCategoryIdConditionTest extends ConditionTest
             if (is_array($conditionValue)) {
                 continue;
             }
-            $data[] = ['operator_in', (string)$conditionValue, (array)$categoryId, $expected];
+
+            $Product = new Product();
+            $ProductCategory = new ProductCategory();
+            $ProductCategory->setCategoryId($categoryId);
+            $Product->addProductCategory($ProductCategory);
+            $ProductClass = new ProductClass();
+            $ProductClass->setProduct($Product);
+
+            $data[] = [['operator_in', (string)$conditionValue], $ProductClass, $expected];
         }
 
         foreach (OperatorTest\NotInOperatorTest::dataProvider_testMatch($categoryId) as $operatorData) {
@@ -110,7 +109,15 @@ class ProductCategoryIdConditionTest extends ConditionTest
             if (is_array($conditionValue)) {
                 continue;
             }
-            $data[] = ['operator_not_in', (string)$conditionValue, (array)$categoryId, $expected];
+
+            $Product = new Product();
+            $ProductCategory = new ProductCategory();
+            $ProductCategory->setCategoryId($categoryId);
+            $Product->addProductCategory($ProductCategory);
+            $ProductClass = new ProductClass();
+            $ProductClass->setProduct($Product);
+
+            $data[] = [['operator_not_in', (string)$conditionValue], $ProductClass, $expected];
         }
 
         return $data;

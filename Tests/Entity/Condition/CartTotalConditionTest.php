@@ -14,6 +14,10 @@
 namespace Plugin\FlashSale\Tests\Entity\Condition;
 
 use Eccube\Entity\Order;
+use Eccube\Entity\OrderItem;
+use Eccube\Entity\Cart;
+use Eccube\Entity\CartItem;
+use Eccube\Entity\ProductClass;
 use Plugin\FlashSale\Entity\Condition\CartTotalCondition;
 use Plugin\FlashSale\Service\Operator\OperatorFactory;
 use Plugin\FlashSale\Service\Operator as Operator;
@@ -65,41 +69,55 @@ class CartTotalConditionTest extends ConditionTest
     }
 
     /**
-     * @param $conditionOperator
-     * @param $conditionValue
-     * @param $orderSubtotal
+     * @param $conditionData
+     * @param $object
      * @param $expected
-     *
-     * @dataProvider dataProvider_testMatch_Valid
+     *  @dataProvider dataProvider_testMatch_Valid
      */
-    public function testMatch_Valid($conditionOperator, $conditionValue, $orderSubtotal, $expected)
+    public function testMatch_Valid($conditionData, $object, $expected)
     {
+        list($conditionOperator, $conditionValue) = $conditionData;
+        $this->condition->setId(rand());
         $this->condition->setValue($conditionValue);
         $this->condition->setOperator($conditionOperator);
 
-        $Order = new Order();
-        $Order->setSubtotal($orderSubtotal);
-
-        $actual = $this->condition->match($Order);
+        $actual = $this->condition->match($object);
         $this->assertEquals($expected, $actual);
     }
 
-    public static function dataProvider_testMatch_Valid($testMethod = null, $orderSubtotal = 12345)
+    public static function dataProvider_testMatch_Valid($testMethod = null, $orderSubtotal = 12345, $itemFlashSaleDiscount = 2)
     {
         $data = [];
         foreach (OperatorTest\EqualOperatorTest::dataProvider_testMatch($orderSubtotal) as $operatorData) {
             list($conditionValue, $orderSubtotal, $expected) = $operatorData;
-            $data[] = ['operator_equal', (string)$conditionValue, $orderSubtotal, $expected];
+            $Order = new Order();
+            $Order->setSubtotal($orderSubtotal);
+
+            $data[] = [['operator_equal', (string)$conditionValue], $Order, $expected];
         }
 
-        foreach (OperatorTest\GreaterThanOperatorTest::dataProvider_testMatch($orderSubtotal) as $operatorData) {
+        foreach (OperatorTest\GreaterThanOperatorTest::dataProvider_testMatch($orderSubtotal - $itemFlashSaleDiscount) as $operatorData) {
             list($conditionValue, $orderSubtotal, $expected) = $operatorData;
-            $data[] = ['operator_greater_than', (string)$conditionValue, $orderSubtotal, $expected];
+            $Cart = new Cart();
+            $Cart->setTotal($orderSubtotal);
+            $ProductClass = new ProductClass();
+            $ProductClass->addFlashSaleDiscount(rand(), $itemFlashSaleDiscount);
+            $CartItem = new CartItem();
+            $CartItem->setProductClass($ProductClass);
+
+            $data[] = [['operator_greater_than', (string)$conditionValue], $Cart, $expected];
         }
 
-        foreach (OperatorTest\LessThanOperatorTest::dataProvider_testMatch($orderSubtotal) as $operatorData) {
+        foreach (OperatorTest\LessThanOperatorTest::dataProvider_testMatch($orderSubtotal - ($itemFlashSaleDiscount*2)) as $operatorData) {
             list($conditionValue, $orderSubtotal, $expected) = $operatorData;
-            $data[] = ['operator_less_than', (string)$conditionValue, $orderSubtotal, $expected];
+            $Order = new Order();
+            $Order->setSubtotal($orderSubtotal);
+            $ProductClass = new ProductClass();
+            $ProductClass->addFlashSaleDiscount(rand(), $itemFlashSaleDiscount);
+            $OrderItem = new OrderItem();
+            $OrderItem->setQuantity(2);
+            $OrderItem->setProductClass($ProductClass);
+            $data[] = [['operator_less_than', (string)$conditionValue], $Order, $expected];
         }
 
         return $data;

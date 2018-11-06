@@ -13,15 +13,15 @@
 
 namespace Plugin\FlashSale\Tests\Service\Operator;
 
-use Eccube\Tests\EccubeTestCase;
+use Plugin\FlashSale\Tests\Service\AbstractOperatorTest;
 use Plugin\FlashSale\Service\Operator\GreaterThanOperator;
 
-class GreaterThanOperatorTest extends EccubeTestCase
+class GreaterThanOperatorTest extends AbstractOperatorTest
 {
     /**
      * @var GreaterThanOperator
      */
-    protected $greaterThanOperator;
+    protected $operator;
 
     /**
      * {@inheritdoc}
@@ -30,7 +30,7 @@ class GreaterThanOperatorTest extends EccubeTestCase
     {
         parent::setUp();
 
-        $this->greaterThanOperator = new GreaterThanOperator();
+        $this->operator = new GreaterThanOperator();
     }
 
     /**
@@ -42,7 +42,7 @@ class GreaterThanOperatorTest extends EccubeTestCase
      */
     public function testMatch($condition, $data, $expected)
     {
-        $actual = $this->greaterThanOperator->match($condition, $data);
+        $actual = $this->operator->match($condition, $data);
         $this->assertEquals($expected, $actual);
     }
 

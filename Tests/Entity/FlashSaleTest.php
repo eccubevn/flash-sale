@@ -266,41 +266,4 @@ class FlashSaleTest extends EccubeTestCase
 
         return $data;
     }
-
-//    /**
-//     * @param $data
-//     * @param $expected
-//     * @dataProvider dataProvider_testUpdateFromArray
-//     */
-//    public function testUpdateFromArray($data, $expected)
-//    {
-//        $this->flashSale->updateFromArray($expected);
-//
-//        $this->assertEquals($expected, $this->flashSale->rawData());
-//    }
-//
-//    public function dataProvider_testUpdateFromArray()
-//    {
-//        return [
-//            [
-//                [
-//                    'rules' => [
-//                        [
-//                            'id' => 1,
-//                            'type' => 'rule_cart',
-//                            'operator' => 'operator_all',
-//                        ]
-//                    ]
-//                ],
-//                [
-//                    'rules' => [
-//                        [
-//                            'type' => 'rule_product_class',
-//                            'operator' => 'operator_all',
-//                        ]
-//                    ]
-//                ]
-//            ],
-//        ];
-//    }
 }

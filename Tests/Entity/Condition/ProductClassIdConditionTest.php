@@ -66,20 +66,17 @@ class ProductClassIdConditionTest extends ConditionTest
     }
 
     /**
-     * @param $conditionOperator
-     * @param $conditionValue
-     * @param $productClassId
+     * @param $conditionData
+     * @param $ProductClass
      * @param $expected
-     *
      * @dataProvider dataProvider_testMatch_Valid
      */
-    public function testMatch_Valid($conditionOperator, $conditionValue, $productClassId, $expected)
+    public function testMatch_Valid($conditionData, $ProductClass, $expected)
     {
+        list($conditionOperator, $conditionValue) = $conditionData;
+        $this->condition->setId(rand());
         $this->condition->setValue($conditionValue);
         $this->condition->setOperator($conditionOperator);
-
-        $ProductClass = new ProductClass();
-        $ProductClass->setPropertiesFromArray(['id' => $productClassId]);
 
         $actual = $this->condition->match($ProductClass);
         $this->assertEquals($expected, $actual);
@@ -93,7 +90,11 @@ class ProductClassIdConditionTest extends ConditionTest
             if (is_array($conditionValue) || is_array($productClassId)) {
                 continue;
             }
-            $data[] = ['operator_in', (string)$conditionValue, $productClassId, $expected];
+
+            $ProductClass = new ProductClass();
+            $ProductClass->setPropertiesFromArray(['id' => $productClassId]);
+
+            $data[] = [['operator_in', (string)$conditionValue], $ProductClass, $expected];
         }
 
         foreach (OperatorTest\NotInOperatorTest::dataProvider_testMatch($productClassId) as $operatorData) {
@@ -101,7 +102,11 @@ class ProductClassIdConditionTest extends ConditionTest
             if (is_array($conditionValue) || is_array($productClassId)) {
                 continue;
             }
-            $data[] = ['operator_not_in', (string)$conditionValue, $productClassId, $expected];
+
+            $ProductClass = new ProductClass();
+            $ProductClass->setPropertiesFromArray(['id' => $productClassId]);
+
+            $data[] = [['operator_not_in', (string)$conditionValue], $ProductClass, $expected];
         }
 
         return $data;
