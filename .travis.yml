@@ -89,4 +89,4 @@ jobs:
       script:
         - ./bin/phpunit -c app/Plugin/${PLUGIN_CODE}/phpunit.xml.dist --coverage-clover=coverage.clover
       after_success:
-        - php vendor/bin/php-coveralls -v -x coverage.clover
+        - php vendor/bin/php-coveralls -v -x app/Plugin/${PLUGIN_CODE}/coverage.clover
