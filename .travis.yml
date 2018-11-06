@@ -62,7 +62,7 @@ jobs:
         # mail catcher
         - mailcatcher
       script:
-        - ./bin/phpunit app/Plugin/${PLUGIN_CODE}/Tests
+        - ./bin/phpunit app/Plugin/${PLUGIN_CODE}/Tests --config app/Plugin/${PLUGIN_CODE}/phpunit.xml.dist
       after_script:
         # disable plugin
         - bin/console eccube:plugin:disable --code=${PLUGIN_CODE}
