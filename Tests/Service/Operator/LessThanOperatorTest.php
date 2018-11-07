@@ -1,11 +1,11 @@
 <?php
 
 /*
- * This file is part of EC-CUBE
+ * This file is part of the Flash Sale plugin
  *
- * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) ECCUBE VN LAB. All Rights Reserved.
  *
- * http://www.lockon.co.jp/
+ * https://www.facebook.com/groups/eccube.vn
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -18,7 +18,6 @@ use Plugin\FlashSale\Service\Operator\LessThanOperator;
 
 class LessThanOperatorTest extends AbstractOperatorTest
 {
-
     /**
      * @var LessThanOperator
      */
@@ -50,8 +49,8 @@ class LessThanOperatorTest extends AbstractOperatorTest
     public static function dataProvider_testMatch($data = 12345)
     {
         return [
-            [(int)$data+1, $data, true],
-            [(int)$data-1, $data, false],
+            [(int) $data + 1, $data, true],
+            [(int) $data - 1, $data, false],
             [$data, $data, false],
         ];
     }

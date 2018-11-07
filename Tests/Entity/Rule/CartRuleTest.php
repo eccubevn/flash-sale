@@ -1,11 +1,11 @@
 <?php
 
 /*
- * This file is part of EC-CUBE
+ * This file is part of the Flash Sale plugin
  *
- * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) ECCUBE VN LAB. All Rights Reserved.
  *
- * http://www.lockon.co.jp/
+ * https://www.facebook.com/groups/eccube.vn
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -13,8 +13,6 @@
 
 namespace Plugin\FlashSale\Tests\Entity\Rule;
 
-use Eccube\Entity\Cart;
-use Eccube\Entity\Order;
 use Plugin\FlashSale\Entity\Discount;
 use Plugin\FlashSale\Entity\Rule\CartRule;
 use Plugin\FlashSale\Service\Operator as Operator;
@@ -25,10 +23,8 @@ use Plugin\FlashSale\Tests\Service\Operator as OperatorTest;
 use Plugin\FlashSale\Tests\Entity\Promotion as PromotionTest;
 use Plugin\FlashSale\Tests\Entity\RuleTest;
 
-
 /**
  * Class ProductClassRuleTest
- * @package Plugin\FlashSale\Tests\Entity\Rule
  */
 class CartRuleTest extends RuleTest
 {
@@ -56,7 +52,7 @@ class CartRuleTest extends RuleTest
                 'type' => 'rule_cart',
                 'operator' => array_rand(['operator_all' => 1, 'operator_or' => 1]),
                 'promotion' => $promotionData[0],
-                'conditions' => []
+                'conditions' => [],
             ];
             $conditionDataSet = ConditionTest\CartTotalConditionTest::dataProvider_testRawData_Valid();
             foreach ($conditionDataSet as $conditionData) {
@@ -85,7 +81,6 @@ class CartRuleTest extends RuleTest
         ];
         $this->actual = $this->rule->getConditionTypes();
         $this->verify();
-
     }
 
     public function testGetPromotionTypes()

@@ -1,8 +1,17 @@
 <?php
 
-namespace Plugin\FlashSale\Tests;
+/*
+ * This file is part of the Flash Sale plugin
+ *
+ * Copyright(c) ECCUBE VN LAB. All Rights Reserved.
+ *
+ * https://www.facebook.com/groups/eccube.vn
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
-use Plugin\FlashSale\Tests\Service\Operator\GreaterThanOperatorTest as GreaterThanOperator;
+namespace Plugin\FlashSale\Tests;
 
 class DataProvider
 {
@@ -11,9 +20,9 @@ class DataProvider
             'true#1' => [
                 'data' => 10,
                 'args' => [200],
-                'expected' => true
-            ]
-        ]
+                'expected' => true,
+            ],
+        ],
     ];
 
     protected $cartTotalConditionTest = [
@@ -22,12 +31,12 @@ class DataProvider
                 'data' => [
                     'id' => 1,
                     'operator' => 'operator_greater_than',
-                    'value' => '$greaterThanOperatorTest[testMatch][true#1][data]'
+                    'value' => '$greaterThanOperatorTest[testMatch][true#1][data]',
                 ],
                 'args' => '$greaterThanOperatorTest[testMatch][true#1][args]',
-                'expected' => '$greaterThanOperatorTest[testMatch][true#1][expected]'
-            ]
-        ]
+                'expected' => '$greaterThanOperatorTest[testMatch][true#1][expected]',
+            ],
+        ],
     ];
 
     protected $dataSet = [
@@ -37,27 +46,27 @@ class DataProvider
                     'data' => [
                         'id' => 1,
                         'operator' => 'operator_greater_than',
-                        'value' => '#GreaterThanOperator[testMatch][true#1][data]'
+                        'value' => '#GreaterThanOperator[testMatch][true#1][data]',
                     ],
                     'args' => '#GreaterThanOperator[testMatch][true#1][args]',
-                    'expected' => '#GreaterThanOperator[testMatch][true#1][expected]'
-                ]
-            ]
+                    'expected' => '#GreaterThanOperator[testMatch][true#1][expected]',
+                ],
+            ],
         ],
         'GreaterThanOperator' => [
             'testMatch' => [
                 'true#1' => [
                     '$conditionData' => 10,
                     '$data' => [10, 16],
-                    '$expected' => true
+                    '$expected' => true,
                 ],
                 'true#2' => [
                     'data' => 10,
                     'args' => [20, 100],
-                    'expected' => true
-                ]
-            ]
-        ]
+                    'expected' => true,
+                ],
+            ],
+        ],
     ];
 
     public function parse($id, $case)

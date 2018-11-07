@@ -1,11 +1,11 @@
 <?php
 
 /*
- * This file is part of EC-CUBE
+ * This file is part of the Flash Sale plugin
  *
- * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) ECCUBE VN LAB. All Rights Reserved.
  *
- * http://www.lockon.co.jp/
+ * https://www.facebook.com/groups/eccube.vn
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -26,6 +26,7 @@ abstract class AbstractServiceTestCase extends EccubeTestCase
 {
     /**
      * @param $evenName
+     *
      * @return array
      */
     public function createFlashSaleAndRules($evenName)
@@ -74,7 +75,7 @@ abstract class AbstractServiceTestCase extends EccubeTestCase
 
     public function rulesData($Product = null)
     {
-        if ($Product === null){
+        if ($Product === null) {
             $Product = $this->createProduct();
         }
 

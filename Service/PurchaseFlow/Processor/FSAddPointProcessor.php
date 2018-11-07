@@ -1,4 +1,16 @@
 <?php
+
+/*
+ * This file is part of the Flash Sale plugin
+ *
+ * Copyright(c) ECCUBE VN LAB. All Rights Reserved.
+ *
+ * https://www.facebook.com/groups/eccube.vn
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Plugin\FlashSale\Service\PurchaseFlow\Processor;
 
 use Eccube\Entity\Order;
@@ -45,7 +57,7 @@ class FSAddPointProcessor extends AddPointProcessor
                 $point = 0;
                 if ($item->isPoint()) {
                     $point = round($item->getPrice() * ($pointRate / 100)) * $item->getQuantity();
-                    // Only calc point on product
+                // Only calc point on product
                 } elseif ($item->isProduct()) {
                     // ポイント = 単価 * ポイント付与率 * 数量
                     $point = round($item->getFlashSaleDiscountPrice() * ($pointRate / 100)) * $item->getQuantity();

@@ -1,18 +1,23 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: lqdung
- * Date: 11/2/2018
- * Time: 10:27 AM
+
+/*
+ * This file is part of the Flash Sale plugin
+ *
+ * Copyright(c) ECCUBE VN LAB. All Rights Reserved.
+ *
+ * https://www.facebook.com/groups/eccube.vn
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 namespace Plugin\FlashSale\Entity;
 
 /**
  * Trait AbstractShoppingTrait
- * @uses FSCartTrait
- * @uses FSOrderTrait
- * @package Plugin\FlashSale\Entity
+ *
+ * @uses \FSCartTrait
+ * @uses \FSOrderTrait
  */
 trait AbstractShoppingTrait
 {
@@ -29,6 +34,7 @@ trait AbstractShoppingTrait
     public function cleanFlashSaleDiscount()
     {
         $this->flashSaleDiscount = [];
+
         return $this;
     }
 
@@ -37,6 +43,7 @@ trait AbstractShoppingTrait
      *
      * @param int $ruleId
      * @param int $discountValue
+     *
      * @return $this
      */
     public function addFlashSaleDiscount(int $ruleId, int $discountValue)

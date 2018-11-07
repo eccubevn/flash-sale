@@ -1,11 +1,11 @@
 <?php
 
 /*
- * This file is part of EC-CUBE
+ * This file is part of the Flash Sale plugin
  *
- * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) ECCUBE VN LAB. All Rights Reserved.
  *
- * http://www.lockon.co.jp/
+ * https://www.facebook.com/groups/eccube.vn
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -27,7 +27,6 @@ use Plugin\FlashSale\Tests\Service\Operator as OperatorTest;
 
 /**
  * Class ProductClassIdConditionTest
- * @package Plugin\FlashSale\Tests\Entity\Condition
  */
 class ProductCategoryIdConditionTest extends ConditionTest
 {
@@ -98,7 +97,7 @@ class ProductCategoryIdConditionTest extends ConditionTest
     {
         $data = [];
         foreach (OperatorTest\InOperatorTest::dataProvider_testMatch($categoryId) as $operatorData) {
-            list($conditionValue,, $expected) = $operatorData;
+            list($conditionValue, , $expected) = $operatorData;
             if (is_array($conditionValue)) {
                 continue;
             }
@@ -110,11 +109,11 @@ class ProductCategoryIdConditionTest extends ConditionTest
             $ProductClass = new ProductClass();
             $ProductClass->setProduct($Product);
 
-            $data[] = [['operator_in', (string)$conditionValue], $ProductClass, $expected];
+            $data[] = [['operator_in', (string) $conditionValue], $ProductClass, $expected];
         }
 
         foreach (OperatorTest\NotInOperatorTest::dataProvider_testMatch($categoryId) as $operatorData) {
-            list($conditionValue,, $expected) = $operatorData;
+            list($conditionValue, , $expected) = $operatorData;
             if (is_array($conditionValue)) {
                 continue;
             }
@@ -126,7 +125,7 @@ class ProductCategoryIdConditionTest extends ConditionTest
             $ProductClass = new ProductClass();
             $ProductClass->setProduct($Product);
 
-            $data[] = [['operator_not_in', (string)$conditionValue], $ProductClass, $expected];
+            $data[] = [['operator_not_in', (string) $conditionValue], $ProductClass, $expected];
         }
 
         return $data;

@@ -1,11 +1,11 @@
 <?php
 
 /*
- * This file is part of EC-CUBE
+ * This file is part of the Flash Sale plugin
  *
- * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) ECCUBE VN LAB. All Rights Reserved.
  *
- * http://www.lockon.co.jp/
+ * https://www.facebook.com/groups/eccube.vn
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -17,8 +17,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Events as DoctrineEvents;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\Common\EventSubscriber;
-use Eccube\Entity\CartItem;
-use Eccube\Entity\OrderItem;
 use Eccube\Entity\ProductClass;
 use Plugin\FlashSale\Entity\FlashSale;
 
@@ -31,6 +29,7 @@ class ProductClassRuleDoctrineEventSubscriber implements EventSubscriber
 
     /**
      * CartRuleEventSubscriber constructor.
+     *
      * @param \Doctrine\ORM\EntityManagerInterface $entityManager
      */
     public function __construct(
@@ -47,7 +46,7 @@ class ProductClassRuleDoctrineEventSubscriber implements EventSubscriber
     public function getSubscribedEvents()
     {
         return [
-            DoctrineEvents::postLoad
+            DoctrineEvents::postLoad,
         ];
     }
 

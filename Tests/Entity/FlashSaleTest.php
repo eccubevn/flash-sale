@@ -1,11 +1,11 @@
 <?php
 
 /*
- * This file is part of EC-CUBE
+ * This file is part of the Flash Sale plugin
  *
- * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) ECCUBE VN LAB. All Rights Reserved.
  *
- * http://www.lockon.co.jp/
+ * https://www.facebook.com/groups/eccube.vn
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -31,7 +31,6 @@ use Plugin\FlashSale\Entity\Discount;
 use Plugin\FlashSale\Entity\Rule;
 use Plugin\FlashSale\Tests\Entity\Rule as RuleTest;
 use Plugin\FlashSale\Tests\Entity\Promotion as PromotionTest;
-
 
 class FlashSaleTest extends EccubeTestCase
 {
@@ -179,9 +178,9 @@ class FlashSaleTest extends EccubeTestCase
                 $Rules[] = $Rule;
             }
 
-            if ($count%2==0) {
+            if ($count % 2 == 0) {
                 $i = array_rand($promotionAmountDataSet, 1);
-                list($promotionValue,, $promotionExpected) = $promotionAmountDataSet[$i];
+                list($promotionValue, , $promotionExpected) = $promotionAmountDataSet[$i];
                 $Promotion = new Promotion\CartTotalAmountPromotion();
                 $Promotion->setId(rand());
                 $Promotion->setValue($promotionValue);
@@ -189,7 +188,7 @@ class FlashSaleTest extends EccubeTestCase
                 $data[] = [[$Rule], $Order, $ruleExpected ? $promotionExpected : 0];
             } else {
                 $i = array_rand($promotionPercentDataSet, 1);
-                list($promotionValue,, $promotionExpected) = $promotionPercentDataSet[$i];
+                list($promotionValue, , $promotionExpected) = $promotionPercentDataSet[$i];
                 $Promotion = new Promotion\CartTotalPercentPromotion();
                 $Promotion->setId(rand());
                 $Promotion->setValue($promotionValue);
@@ -199,7 +198,7 @@ class FlashSaleTest extends EccubeTestCase
         }
 
         foreach (array_reverse($data) as $dataSet) {
-            list(,$Order,$expectedValue) = $dataSet;
+            list(, $Order, $expectedValue) = $dataSet;
             if ($expectedValue) {
                 $data[] = [$Rules, $Order, $expectedValue];
                 break;
@@ -231,9 +230,9 @@ class FlashSaleTest extends EccubeTestCase
                 $Rules[] = $Rule;
             }
 
-            if ($count%2==0) {
+            if ($count % 2 == 0) {
                 $i = array_rand($priceAmountDataSet, 1);
-                list($promotionValue,, $promotionExpected) = $priceAmountDataSet[$i];
+                list($promotionValue, , $promotionExpected) = $priceAmountDataSet[$i];
 
                 $Promotion = new Promotion\ProductClassPriceAmountPromotion();
                 $Promotion->setId(rand());
@@ -243,7 +242,7 @@ class FlashSaleTest extends EccubeTestCase
                 $data[] = [[$Rule], $ProductClass, $ruleExpected ? $promotionExpected : 0];
             } else {
                 $i = array_rand($pricePercentDataSet, 1);
-                list($promotionValue,$promoProductClass, $promotionExpected) = $pricePercentDataSet[$i];
+                list($promotionValue, $promoProductClass, $promotionExpected) = $pricePercentDataSet[$i];
 
                 $Promotion = new Promotion\ProductClassPricePercentPromotion();
                 $Promotion->setId(rand());
@@ -257,7 +256,7 @@ class FlashSaleTest extends EccubeTestCase
         }
 
         foreach (array_reverse($data) as $dataSet) {
-            list(,$Order,$expectedValue) = $dataSet;
+            list(, $Order, $expectedValue) = $dataSet;
             if ($expectedValue) {
                 $data[] = [$Rules, $Order, $expectedValue];
                 break;

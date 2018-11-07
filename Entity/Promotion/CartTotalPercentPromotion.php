@@ -1,11 +1,11 @@
 <?php
 
 /*
- * This file is part of EC-CUBE
+ * This file is part of the Flash Sale plugin
  *
- * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) ECCUBE VN LAB. All Rights Reserved.
  *
- * http://www.lockon.co.jp/
+ * https://www.facebook.com/groups/eccube.vn
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -14,11 +14,6 @@
 namespace Plugin\FlashSale\Entity\Promotion;
 
 use Doctrine\ORM\Mapping as ORM;
-use Eccube\Entity\ItemInterface;
-use Eccube\Entity\Master\OrderItemType;
-use Eccube\Entity\Master\TaxDisplayType;
-use Eccube\Entity\Master\TaxType;
-use Eccube\Entity\OrderItem;
 use Eccube\Entity\Cart;
 use Eccube\Entity\Order;
 use Plugin\FlashSale\Service\Promotion\PromotionInterface;
@@ -37,6 +32,7 @@ class CartTotalPercentPromotion extends Promotion implements PromotionInterface
      * {@inheritdoc}
      *
      * @param $object
+     *
      * @return DiscountInterface
      */
     public function getDiscount($object)
@@ -46,7 +42,7 @@ class CartTotalPercentPromotion extends Promotion implements PromotionInterface
 
         if ($object instanceof Cart) {
             $price = $object->getTotal();
-        } else if ($object instanceof Order) {
+        } elseif ($object instanceof Order) {
             $price = $object->getSubtotal();
         }
 

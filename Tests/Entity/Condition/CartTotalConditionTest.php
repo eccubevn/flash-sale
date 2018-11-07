@@ -1,11 +1,11 @@
 <?php
 
 /*
- * This file is part of EC-CUBE
+ * This file is part of the Flash Sale plugin
  *
- * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) ECCUBE VN LAB. All Rights Reserved.
  *
- * http://www.lockon.co.jp/
+ * https://www.facebook.com/groups/eccube.vn
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -28,7 +28,6 @@ use Plugin\FlashSale\Tests\Service\Operator as OperatorTest;
 
 /**
  * Class ProductClassIdConditionTest
- * @package Plugin\FlashSale\Tests\Entity\Condition
  */
 class CartTotalConditionTest extends ConditionTest
 {
@@ -98,7 +97,7 @@ class CartTotalConditionTest extends ConditionTest
             $Order = new Order();
             $Order->setSubtotal($orderSubtotal);
 
-            $data[] = [['operator_equal', (string)$conditionValue], $Order, $expected];
+            $data[] = [['operator_equal', (string) $conditionValue], $Order, $expected];
         }
 
         foreach (OperatorTest\GreaterThanOperatorTest::dataProvider_testMatch($orderSubtotal - $itemFlashSaleDiscount) as $operatorData) {
@@ -111,10 +110,10 @@ class CartTotalConditionTest extends ConditionTest
             $CartItem->setProductClass($ProductClass);
             $Cart->getCartItems()->add($CartItem);
 
-            $data[] = [['operator_greater_than', (string)$conditionValue], $Cart, $expected];
+            $data[] = [['operator_greater_than', (string) $conditionValue], $Cart, $expected];
         }
 
-        foreach (OperatorTest\LessThanOperatorTest::dataProvider_testMatch($orderSubtotal - ($itemFlashSaleDiscount*2)) as $operatorData) {
+        foreach (OperatorTest\LessThanOperatorTest::dataProvider_testMatch($orderSubtotal - ($itemFlashSaleDiscount * 2)) as $operatorData) {
             list($conditionValue, $orderSubtotal, $expected) = $operatorData;
             $Order = new Order();
             $Order->setSubtotal($orderSubtotal);
@@ -124,7 +123,7 @@ class CartTotalConditionTest extends ConditionTest
             $OrderItem->setQuantity(2);
             $OrderItem->setProductClass($ProductClass);
             $Order->getOrderItems()->add($OrderItem);
-            $data[] = [['operator_less_than', (string)$conditionValue], $Order, $expected];
+            $data[] = [['operator_less_than', (string) $conditionValue], $Order, $expected];
         }
 
         return $data;

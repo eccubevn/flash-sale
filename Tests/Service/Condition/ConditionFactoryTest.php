@@ -1,11 +1,11 @@
 <?php
 
 /*
- * This file is part of EC-CUBE
+ * This file is part of the Flash Sale plugin
  *
- * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) ECCUBE VN LAB. All Rights Reserved.
  *
- * http://www.lockon.co.jp/
+ * https://www.facebook.com/groups/eccube.vn
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -37,7 +37,6 @@ class ConditionFactoryTest extends AbstractServiceTestCase
     {
         $this->expectExceptionMessage('$data[type] must be required');
         $this->conditionFactory::createFromArray([]);
-
     }
 
     public function testCreateFromArray_Scenario1()
@@ -61,7 +60,6 @@ class ConditionFactoryTest extends AbstractServiceTestCase
         $this->assertEquals($operator, $actual->getOperator());
     }
 
-
     public function dataProvider_testCreateFromArray()
     {
         $operators = [
@@ -74,6 +72,7 @@ class ConditionFactoryTest extends AbstractServiceTestCase
             'operator_greater_than',
             'operator_less_than',
         ];
+
         return [
             [Condition\CartTotalCondition::TYPE, array_rand(array_flip($operators)), rand(), Condition\CartTotalCondition::class],
             [Condition\ProductCategoryIdCondition::TYPE, array_rand(array_flip($operators)), rand(), Condition\ProductCategoryIdCondition::class],

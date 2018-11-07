@@ -1,11 +1,11 @@
 <?php
 
 /*
- * This file is part of EC-CUBE
+ * This file is part of the Flash Sale plugin
  *
- * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) ECCUBE VN LAB. All Rights Reserved.
  *
- * http://www.lockon.co.jp/
+ * https://www.facebook.com/groups/eccube.vn
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -46,9 +46,11 @@ class FlashSaleEvent implements EventSubscriberInterface
 
     /**
      * FlashSaleEvent constructor.
+     *
      * @param \Twig_Environment $twig
      * @param FlashSaleRepository $flashSaleRepository
      * @param BaseInfoRepository $baseInfoRepository
+     *
      * @throws \Exception
      */
     public function __construct(
@@ -73,11 +75,11 @@ class FlashSaleEvent implements EventSubscriberInterface
             'Block/header.twig' => ['onTemplateBlockHeader', 0],
             'Block/cart.twig' => [
                 ['onTemplateBlockCart', 0],
-                ['onTemplateTotalPrice', 100]
+                ['onTemplateTotalPrice', 100],
             ],
             'Cart/index.twig' => [
                 ['onTemplateCartIndex', 0],
-                ['onTemplateTotalPrice', 100]
+                ['onTemplateTotalPrice', 100],
             ],
             'Shopping/index.twig' => ['onTemplateShoppingIndex', 0],
             'Shopping/shipping_multiple.twig' => ['onTemplateShoppingIndex', 0],

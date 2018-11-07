@@ -1,4 +1,16 @@
 <?php
+
+/*
+ * This file is part of the Flash Sale plugin
+ *
+ * Copyright(c) ECCUBE VN LAB. All Rights Reserved.
+ *
+ * https://www.facebook.com/groups/eccube.vn
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Plugin\FlashSale\Tests\Service\PurchaseFlow\Processor;
 
 use Eccube\Entity\Order;
@@ -44,7 +56,7 @@ class FSCartRuleShoppingProcessorTest extends EccubeTestCase
     public function testProcess($FlashSale, $Order, $expected)
     {
         if ($FlashSale) {
-            /** @var FlashSale $FlashSale*/
+            /** @var FlashSale $FlashSale */
             foreach ($FlashSale->getRules() as $Rule) {
                 $Rule->setOperatorFactory($this->container->get(OperatorFactory::class));
                 foreach ($Rule->getConditions() as $Condition) {

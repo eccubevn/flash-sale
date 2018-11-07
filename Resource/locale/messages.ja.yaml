@@ -19,6 +19,7 @@ flash_sale.admin.edit.setting.rule: ルール
 flash_sale.admin.form.title: FlashSale
 flash_sale.admin.form.title.sub: FlashSale編集
 
+flash_sale.admin.form.add_product_category: カテゴリを追加
 flash_sale.admin.form.information: Flash sale情報登録
 flash_sale.admin.form.name: イベント名
 flash_sale.admin.form.note: 備考
@@ -46,6 +47,7 @@ flash_sale.admin.form.rule.operator.is_greater_than_to: より大きい
 flash_sale.admin.form.rule.operator.is_less_than_to: より小さい
 flash_sale.admin.form.rule.condition.product_class_id_condition: 商品規格ID
 flash_sale.admin.form.rule.condition.product_category_id_condition: 商品カテゴリID
+flash_sale.admin.form.rule.condition.operator.is_one_of: 含む
 flash_sale.admin.form.rule.cart_total_percent_promotion: 割合
 flash_sale.admin.form.rule.cart_total_amount_promotion: 金額
 flash_sale.admin.form.rule.condition.cart_total_condition: 合計金額
