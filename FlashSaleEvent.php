@@ -13,12 +13,14 @@
 
 namespace Plugin\FlashSale;
 
+use Eccube\Entity\BaseInfo;
+use Eccube\Entity\Cart;
 use Eccube\Entity\CustomerFavoriteProduct;
 use Eccube\Entity\ProductClass;
 use Eccube\Event\TemplateEvent;
+use Eccube\Repository\BaseInfoRepository;
 use Plugin\FlashSale\Entity\FlashSale;
 use Plugin\FlashSale\Repository\FlashSaleRepository;
-use Plugin\FlashSale\Service\Rule\RuleInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Eccube\Twig\Extension\CartServiceExtension;
 
@@ -38,17 +40,25 @@ class FlashSaleEvent implements EventSubscriberInterface
     protected $flashSaleRepository;
 
     /**
+     * @var BaseInfo
+     */
+    protected $baseInfo;
+
+    /**
      * FlashSaleEvent constructor.
-     *
      * @param \Twig_Environment $twig
      * @param FlashSaleRepository $flashSaleRepository
+     * @param BaseInfoRepository $baseInfoRepository
+     * @throws \Exception
      */
     public function __construct(
         \Twig_Environment $twig,
-        FlashSaleRepository $flashSaleRepository
+        FlashSaleRepository $flashSaleRepository,
+        BaseInfoRepository $baseInfoRepository
     ) {
         $this->twig = $twig;
         $this->flashSaleRepository = $flashSaleRepository;
+        $this->baseInfo = $baseInfoRepository->get();
     }
 
     /**
@@ -57,9 +67,9 @@ class FlashSaleEvent implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            'Mypage/history.twig' => 'mypageHistory',
-            'Mypage/index.twig' => 'mypageIndex',
-            'Mypage/favorite.twig' => 'mypageFavorite',
+            'Mypage/history.twig' => ['mypageHistory', 0],
+            'Mypage/index.twig' => ['mypageIndex', 0],
+            'Mypage/favorite.twig' => ['mypageFavorite', 0],
             'Block/header.twig' => ['onTemplateBlockHeader', 0],
             'Block/cart.twig' => [
                 ['onTemplateBlockCart', 0],
@@ -243,6 +253,33 @@ EOT;
         if (!$FlashSale instanceof FlashSale) {
             return;
         }
+
+        // clone from CartController:index
+        $Carts = $event->getParameter('Carts');
+        // TODO itemHolderから取得できるように
+        $least = [];
+        $isDeliveryFree = [];
+
+        /** @var Cart $Cart */
+        foreach ($Carts as $Cart) {
+            $isDeliveryFree[$Cart->getCartKey()] = false;
+
+            if ($this->baseInfo->getDeliveryFreeQuantity() && $this->baseInfo->getDeliveryFreeQuantity() <= $Cart->getQuantity()) {
+                $isDeliveryFree[$Cart->getCartKey()] = true;
+            }
+
+            if ($this->baseInfo->getDeliveryFreeAmount()) {
+                if (!$isDeliveryFree[$Cart->getCartKey()] && $this->baseInfo->getDeliveryFreeAmount() <= $Cart->getFlashSaleTotalDiscountPrice()) {
+                    $isDeliveryFree[$Cart->getCartKey()] = true;
+                } else {
+                    $least[$Cart->getCartKey()] = $this->baseInfo->getDeliveryFreeAmount() - $Cart->getFlashSaleTotalDiscountPrice();
+                }
+            }
+        }
+        $parameters = $event->getParameters();
+        $parameters['least'] = $least;
+        $parameters['is_delivery_free'] = $isDeliveryFree;
+        $event->setParameters($parameters);
 
         $source = $event->getSource();
         $source = str_replace(
