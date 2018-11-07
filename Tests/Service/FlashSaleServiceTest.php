@@ -13,6 +13,8 @@
 
 namespace Plugin\FlashSale\Tests\Service;
 
+use Eccube\Entity\ProductCategory;
+use Eccube\Entity\ProductClass;
 use Plugin\FlashSale\Service\FlashSaleService;
 
 class FlashSaleServiceTest extends AbstractServiceTestCase
@@ -79,5 +81,35 @@ class FlashSaleServiceTest extends AbstractServiceTestCase
         $data = $this->flashSaleService->getMetadata();
 
         self::assertTrue(array_key_exists('promotion_types', $data['rule_types']['rule_product_class']));
+    }
+
+    public function testGetCategoryName()
+    {
+        $Product = $this->createProduct('FlashSaleProductTest' . time());
+        $categoryNames = [];
+        /** @var ProductCategory $productCategory */
+        foreach ($Product->getProductCategories() as $productCategory) {
+            $categoryNames[$productCategory->getCategoryId()] = $productCategory->getCategory()->getName();
+        }
+        $actual = $this->flashSaleService->getCategoryName(array_keys($categoryNames));
+        $this->assertEquals(array_keys($categoryNames), array_column($actual, 'id'));
+        $this->assertEquals(array_values($categoryNames), array_column($actual, 'name'));
+    }
+
+    public function testGetProductClassName()
+    {
+        $Product = $this->createProduct('FlashSaleProductTest' . time());
+        $productClasses = [];
+        /** @var ProductClass $ProductClass */
+        foreach ($Product->getProductClasses() as $ProductClass) {
+            $productClasses[] = [
+                'id' => $ProductClass->getId(),
+                'name' => $ProductClass->getProduct()->getName(),
+                'class_name1' => $ProductClass->getClassCategory1() ? $ProductClass->getClassCategory1()->getName() : null,
+                'class_name2' => $ProductClass->getClassCategory2() ? $ProductClass->getClassCategory2()->getName() : null,
+            ];
+        }
+        $actual = $this->flashSaleService->getProductClassName(array_column($productClasses, 'id'));
+        $this->assertEquals($productClasses, $actual);
     }
 }
