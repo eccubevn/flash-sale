@@ -15,7 +15,7 @@ env:
   # plugin code
   global:
     PLUGIN_CODE=FlashSale
-    BRANCH=4.0
+    TAG=4.0.0
 
 before_install: &php_setup |
   phpenv config-rm xdebug.ini || true
@@ -27,7 +27,7 @@ install_eccube: &install_eccube |
   tar cvzf ${HOME}/${PLUGIN_CODE}.tar.gz ./*
   git clone https://github.com/EC-CUBE/ec-cube.git
   cd ec-cube
-  git checkout -b ${BRANCH} origin/${BRANCH}
+  git checkout ${TAG}
   composer selfupdate
   composer install --dev --no-interaction -o --apcu-autoloader
 
