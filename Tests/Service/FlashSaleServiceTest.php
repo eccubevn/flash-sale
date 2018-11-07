@@ -110,6 +110,13 @@ class FlashSaleServiceTest extends AbstractServiceTestCase
             ];
         }
         $actual = $this->flashSaleService->getProductClassName(array_column($productClasses, 'id'));
-        $this->assertEquals($productClasses, $actual);
+
+        foreach (['id', 'name', 'class_name1', 'class_name2'] as $k) {
+            $ex = array_column($productClasses, $k);
+            $ac = array_column($actual, $k);
+            sort($ex);
+            sort($ac);
+            $this->assertEquals($ex, $ac);
+        }
     }
 }
