@@ -1,11 +1,11 @@
 <?php
 
 /*
- * This file is part of EC-CUBE
+ * This file is part of the Flash Sale plugin
  *
- * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) ECCUBE VN LAB. All Rights Reserved.
  *
- * http://www.lockon.co.jp/
+ * https://www.facebook.com/groups/eccube.vn
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -17,15 +17,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Eccube\Event\TemplateEvent;
 use Eccube\Entity\Product;
 use Eccube\Entity\ProductClass;
-use Eccube\Entity\Cart;
-use Eccube\Entity\Order;
-use Eccube\Entity\OrderItem;
-use Eccube\Entity\CartItem;
 use Eccube\Common\EccubeConfig;
-use Eccube\Twig\Extension\CartServiceExtension;
-use Plugin\FlashSale\Repository\FlashSaleRepository;
-use Plugin\FlashSale\Entity\FlashSale;
-use Plugin\FlashSale\Service\Rule\RuleInterface;
 
 class ProductClassRuleEventSubscriber implements EventSubscriberInterface
 {
@@ -60,7 +52,7 @@ class ProductClassRuleEventSubscriber implements EventSubscriberInterface
     {
         return [
             'Product/detail.twig' => 'onTemplateProductDetail',
-            'Product/list.twig' => 'onTemplateProductList'
+            'Product/list.twig' => 'onTemplateProductList',
         ];
     }
 

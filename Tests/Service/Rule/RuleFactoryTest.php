@@ -1,11 +1,11 @@
 <?php
 
 /*
- * This file is part of EC-CUBE
+ * This file is part of the Flash Sale plugin
  *
- * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) ECCUBE VN LAB. All Rights Reserved.
  *
- * http://www.lockon.co.jp/
+ * https://www.facebook.com/groups/eccube.vn
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -13,8 +13,6 @@
 
 namespace Plugin\FlashSale\Service\Rule;
 
-use Plugin\FlashSale\Entity\Rule\CartRule;
-use Plugin\FlashSale\Entity\Rule\ProductClassRule;
 use Plugin\FlashSale\Tests\Service\AbstractServiceTestCase;
 use Plugin\FlashSale\Entity\Rule as Rule;
 
@@ -59,7 +57,6 @@ class RuleFactoryTest extends AbstractServiceTestCase
         $this->assertEquals($operator, $actual->getOperator());
     }
 
-
     public function dataProvider_testCreateFromArray()
     {
         $operators = [
@@ -72,6 +69,7 @@ class RuleFactoryTest extends AbstractServiceTestCase
             'operator_greater_than',
             'operator_less_than',
         ];
+
         return [
             [Rule\CartRule::TYPE, array_rand(array_flip($operators)), Rule\CartRule::class],
             [Rule\ProductClassRule::TYPE, array_rand(array_flip($operators)), Rule\ProductClassRule::class],

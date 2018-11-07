@@ -1,11 +1,11 @@
 <?php
 
 /*
- * This file is part of EC-CUBE
+ * This file is part of the Flash Sale plugin
  *
- * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) ECCUBE VN LAB. All Rights Reserved.
  *
- * http://www.lockon.co.jp/
+ * https://www.facebook.com/groups/eccube.vn
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -25,9 +25,6 @@ use Plugin\FlashSale\Service\Rule\RuleFactory;
 use Plugin\FlashSale\Service\Promotion\PromotionFactory;
 use Plugin\FlashSale\Service\Condition\ConditionFactory;
 use Plugin\FlashSale\Service\Rule\RuleInterface;
-use Plugin\FlashSale\Entity\DiscountInterface;
-use Plugin\FlashSale\Entity\Discount;
-
 
 /**
  * FlashSale
@@ -137,6 +134,7 @@ class FlashSale
 
     /**
      * @param array $criteria
+     *
      * @return DoctrineCollection
      */
     public function getRules(array $criteria = []): DoctrineCollection
@@ -414,6 +412,7 @@ class FlashSale
      * Get discount items of flashsale
      *
      * @param $object
+     *
      * @return DiscountInterface
      */
     public function getDiscount($object)
@@ -421,7 +420,7 @@ class FlashSale
         $discount = new Discount();
         $Rules = [];
 
-        /** @var $Rules RuleInterface[] */
+        /* @var $Rules RuleInterface[] */
         if ($object instanceof ProductClass) {
             $Rules = array_reverse($this->getRules(['type' => ProductClassRule::TYPE])->toArray());
         } elseif ($object instanceof Cart || $object instanceof Order) {
@@ -438,6 +437,7 @@ class FlashSale
                 return $discount;
             }
         }
+
         return $discount;
     }
 }

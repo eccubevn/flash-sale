@@ -1,11 +1,11 @@
 <?php
 
 /*
- * This file is part of EC-CUBE
+ * This file is part of the Flash Sale plugin
  *
- * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) ECCUBE VN LAB. All Rights Reserved.
  *
- * http://www.lockon.co.jp/
+ * https://www.facebook.com/groups/eccube.vn
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -30,6 +30,7 @@ class CartRuleDoctrineEventSubscriber implements EventSubscriber
 
     /**
      * CartRuleEventSubscriber constructor.
+     *
      * @param \Doctrine\ORM\EntityManagerInterface $entityManager
      */
     public function __construct(
@@ -58,12 +59,11 @@ class CartRuleDoctrineEventSubscriber implements EventSubscriber
      */
     public function postLoad(LifecycleEventArgs $eventArgs)
     {
-
         $entity = $eventArgs->getEntity();
         if (!$entity instanceof Cart && !$entity instanceof Order) {
             return;
         }
-        
+
         $repository = $this->entityManager->getRepository(FlashSale::class);
         $FlashSale = $repository->getAvailableFlashSale();
         if (!$FlashSale instanceof FlashSale) {
@@ -74,7 +74,7 @@ class CartRuleDoctrineEventSubscriber implements EventSubscriber
         if (!$discount->getValue()) {
             return;
         }
-        
+
         $entity->cleanFlashSaleDiscount()->addFlashSaleDiscount($discount->getRuleId(), $discount->getValue());
     }
 

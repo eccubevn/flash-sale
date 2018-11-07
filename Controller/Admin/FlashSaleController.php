@@ -1,11 +1,11 @@
 <?php
 
 /*
- * This file is part of EC-CUBE
+ * This file is part of the Flash Sale plugin
  *
- * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) ECCUBE VN LAB. All Rights Reserved.
  *
- * http://www.lockon.co.jp/
+ * https://www.facebook.com/groups/eccube.vn
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -70,7 +70,6 @@ class FlashSaleController extends AbstractController
         $this->flashSaleService = $flashSaleService;
         $this->categoryRepository = $categoryRepository;
     }
-
 
     /**
      * @Route("/%eccube_admin_route%/flash_sale/list", name="flash_sale_admin_list")
@@ -201,9 +200,9 @@ class FlashSaleController extends AbstractController
 
         $conditionProductClassData = $this->flashSaleService->getProductClassName($productClassIds);
         $conditionData['condition_product_class_id'] = [];
-        foreach ($conditionProductClassData as $row){
+        foreach ($conditionProductClassData as $row) {
             $class_name2 = $row['class_name2'] ? ' - '.$row['class_name2'] : '';
-            $row['name'] = $row['name'].(($row['class_name1'] || $row['class_name2']) ? ('('. $row['class_name1'].$class_name2) .')' : '');
+            $row['name'] = $row['name'].(($row['class_name1'] || $row['class_name2']) ? ('('.$row['class_name1'].$class_name2).')' : '');
             $conditionData['condition_product_class_id'][] = $row;
         }
         $conditionData['condition_product_category_id'] = $CategoryName = $this->flashSaleService->getCategoryName($categoryIds);
@@ -227,7 +226,7 @@ class FlashSaleController extends AbstractController
             $Categories = $this->categoryRepository->getList();
 
             return [
-                'Categories' => $Categories
+                'Categories' => $Categories,
             ];
         }
     }

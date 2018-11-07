@@ -1,4 +1,16 @@
 <?php
+
+/*
+ * This file is part of the Flash Sale plugin
+ *
+ * Copyright(c) ECCUBE VN LAB. All Rights Reserved.
+ *
+ * https://www.facebook.com/groups/eccube.vn
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Plugin\FlashSale\Tests\Service\PurchaseFlow\Processor;
 
 use Eccube\Entity\Order;
@@ -44,7 +56,7 @@ class FSCartRuleShoppingProcessorTest extends EccubeTestCase
     public function testProcess($FlashSale, $Order, $expected)
     {
         if ($FlashSale) {
-            /** @var FlashSale $FlashSale*/
+            /** @var FlashSale $FlashSale */
             foreach ($FlashSale->getRules() as $Rule) {
                 $Rule->setOperatorFactory($this->container->get(OperatorFactory::class));
                 foreach ($Rule->getConditions() as $Condition) {
@@ -60,29 +72,30 @@ class FSCartRuleShoppingProcessorTest extends EccubeTestCase
         $this->assertEquals($expected, $Order->getFlashSaleTotalDiscount());
     }
 
-    public function dataProvider_testProcess($testMethod = null, $orderSubtotal = 12345)
+    public static function dataProvider_testProcess($testMethod = null, $orderSubtotal = 12345)
     {
         $data = [];
 
         $data[] = [null, new Order(), 0];
 
-//        $tmp = FlashSaleTest::dataProvider_testGetDiscount_Valid_CartRule(null, $orderSubtotal);
-//        foreach ($tmp as $tmpData) {
-//            list($Rules, $Order, $expected) = $tmpData;
-//
-//            $FlashSale = new FlashSale();
-//            $FlashSale->setId(rand());
-//
-//            /** @var Rule $Rule */
-//            foreach ($Rules as $Rule) {
-//                $FlashSale->addRule($Rule);
-//            }
-//            $data[] = [$FlashSale, $Order, $expected];
-//
-//            if (count($data) > 1) {
-//                return $data;
-//            }
-//        }
+        $tmp = FlashSaleTest::dataProvider_testGetDiscount_Valid_CartRule(null, $orderSubtotal);
+        foreach ($tmp as $tmpData) {
+            list($Rules, $tmpOrder, $expected) = $tmpData;
+
+            $FlashSale = new FlashSale();
+            $FlashSale->setId(rand());
+
+            /** @var Rule $Rule */
+            foreach ($Rules as $Rule) {
+                $FlashSale->addRule($Rule);
+            }
+            $Order = new Order();
+            $Order->setPropertiesFromArray(['id' => $tmpOrder->getId()]);
+            $Order->setSubtotal($tmpOrder->getSubtotal());
+            $Order->setTotal($tmpOrder->getSubtotal());
+
+            $data[] = [$FlashSale, $Order, $expected];
+        }
 
         return $data;
     }
