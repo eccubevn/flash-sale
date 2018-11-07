@@ -19,6 +19,7 @@ flash_sale.admin.edit.setting.rule: Rule
 flash_sale.admin.form.title: Flash Sale
 flash_sale.admin.form.title.sub: Flash Sale Edit
 
+flash_sale.admin.form.add_product_category: Add product category
 flash_sale.admin.form.information: Flash Sale information registration
 flash_sale.admin.form.name: Name
 flash_sale.admin.form.note: Note

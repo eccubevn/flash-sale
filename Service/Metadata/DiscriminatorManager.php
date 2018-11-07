@@ -62,7 +62,7 @@ class DiscriminatorManager
             case Operator\InOperator::TYPE:
                 $this->container[Operator\InOperator::TYPE] = (new Discriminator())
                     ->setType(Operator\InOperator::TYPE)
-                    ->setName(trans('flash_sale.admin.form.rule.operator.is_one_of'))
+                    ->setName(trans('flash_sale.admin.form.rule.condition.operator.is_one_of'))
                     ->setClass(Operator\InOperator::class)
                     ->setDescription('');
 
