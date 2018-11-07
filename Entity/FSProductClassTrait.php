@@ -65,14 +65,6 @@ trait FSProductClassTrait
     }
 
     /**
-     * Get flashsale discount * quantity
-     */
-    public function getFlashSaleTotalDiscount()
-    {
-        return $this->getFlashSaleDiscount() * $this->getQuantity();
-    }
-
-    /**
      * Get discount price
      *
      * @return int
@@ -80,16 +72,6 @@ trait FSProductClassTrait
     public function getFlashSaleDiscountPrice()
     {
         return (int) ($this->getPrice02IncTax() - $this->getFlashSaleDiscount());
-    }
-
-    /**
-     * Get discount total price
-     *
-     * @return int
-     */
-    public function getFlashSaleTotalDiscountPrice()
-    {
-        return (int) ($this->getFlashSaleDiscountPrice() * $this->getQuantity());
     }
 
     /**
