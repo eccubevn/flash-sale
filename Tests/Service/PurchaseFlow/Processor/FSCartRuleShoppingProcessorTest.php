@@ -60,29 +60,30 @@ class FSCartRuleShoppingProcessorTest extends EccubeTestCase
         $this->assertEquals($expected, $Order->getFlashSaleTotalDiscount());
     }
 
-    public function dataProvider_testProcess($testMethod = null, $orderSubtotal = 12345)
+    public static function dataProvider_testProcess($testMethod = null, $orderSubtotal = 12345)
     {
         $data = [];
 
         $data[] = [null, new Order(), 0];
 
-//        $tmp = FlashSaleTest::dataProvider_testGetDiscount_Valid_CartRule(null, $orderSubtotal);
-//        foreach ($tmp as $tmpData) {
-//            list($Rules, $Order, $expected) = $tmpData;
-//
-//            $FlashSale = new FlashSale();
-//            $FlashSale->setId(rand());
-//
-//            /** @var Rule $Rule */
-//            foreach ($Rules as $Rule) {
-//                $FlashSale->addRule($Rule);
-//            }
-//            $data[] = [$FlashSale, $Order, $expected];
-//
-//            if (count($data) > 1) {
-//                return $data;
-//            }
-//        }
+        $tmp = FlashSaleTest::dataProvider_testGetDiscount_Valid_CartRule(null, $orderSubtotal);
+        foreach ($tmp as $tmpData) {
+            list($Rules, $tmpOrder, $expected) = $tmpData;
+
+            $FlashSale = new FlashSale();
+            $FlashSale->setId(rand());
+
+            /** @var Rule $Rule */
+            foreach ($Rules as $Rule) {
+                $FlashSale->addRule($Rule);
+            }
+            $Order = new Order();
+            $Order->setPropertiesFromArray(['id' => $tmpOrder->getId()]);
+            $Order->setSubtotal($tmpOrder->getSubtotal());
+            $Order->setTotal($tmpOrder->getSubtotal());
+
+            $data[] = [$FlashSale, $Order, $expected];
+        }
 
         return $data;
     }
