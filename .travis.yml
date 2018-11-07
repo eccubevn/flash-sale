@@ -18,7 +18,6 @@ env:
     TAG=4.0.0
 
 before_install: &php_setup |
-  phpenv config-rm xdebug.ini || true
   echo "opcache.enable_cli=1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   echo "apc.enable_cli=1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   echo "memory_limit=-1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
@@ -54,6 +53,7 @@ jobs:
       env: DATABASE_URL=mysql://root:@localhost/cube4_dev DATABASE_SERVER_VERSION=5
       before_install:
         - *php_setup
+        - phpenv config-rm xdebug.ini
         - gem install mime-types -v 2.99.1
         - gem install mailcatcher
       install:
@@ -89,4 +89,4 @@ jobs:
       script:
         - ./bin/phpunit -c app/Plugin/${PLUGIN_CODE}/phpunit.xml.dist --coverage-clover=coverage.clover
       after_success:
-        - php vendor/bin/php-coveralls -v -x app/Plugin/${PLUGIN_CODE}/coverage.clover
+        - php vendor/bin/php-coveralls -v -x coverage.clover
