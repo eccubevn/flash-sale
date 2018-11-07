@@ -18,7 +18,6 @@ env:
     TAG=4.0.0
 
 before_install: &php_setup |
-  phpenv config-rm xdebug.ini || true
   echo "opcache.enable_cli=1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   echo "apc.enable_cli=1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   echo "memory_limit=-1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
@@ -27,7 +26,7 @@ install_eccube: &install_eccube |
   tar cvzf ${HOME}/${PLUGIN_CODE}.tar.gz ./*
   git clone https://github.com/EC-CUBE/ec-cube.git
   cd ec-cube
-  git checkout ${TAG}
+  git checkout -b ${PLUGIN_CODE} tags/${TAG}
   composer selfupdate
   composer install --dev --no-interaction -o --apcu-autoloader
 
@@ -54,6 +53,7 @@ jobs:
       env: DATABASE_URL=mysql://root:@localhost/cube4_dev DATABASE_SERVER_VERSION=5
       before_install:
         - *php_setup
+        - phpenv config-rm xdebug.ini
         - gem install mime-types -v 2.99.1
         - gem install mailcatcher
       install:
