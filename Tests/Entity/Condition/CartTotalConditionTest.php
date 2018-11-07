@@ -13,11 +13,13 @@
 
 namespace Plugin\FlashSale\Tests\Entity\Condition;
 
+use Doctrine\ORM\QueryBuilder;
 use Eccube\Entity\Order;
 use Eccube\Entity\OrderItem;
 use Eccube\Entity\Cart;
 use Eccube\Entity\CartItem;
 use Eccube\Entity\ProductClass;
+use Plugin\FlashSale\Exception\ConditionException;
 use Plugin\FlashSale\Entity\Condition\CartTotalCondition;
 use Plugin\FlashSale\Service\Operator\OperatorFactory;
 use Plugin\FlashSale\Service\Operator as Operator;
@@ -35,11 +37,14 @@ class CartTotalConditionTest extends ConditionTest
      */
     protected $condition;
 
+    protected $qb;
+
     public function setUp()
     {
         parent::setUp();
         $this->condition = new CartTotalCondition();
         $this->condition->setOperatorFactory($this->container->get(OperatorFactory::class));
+        $this->qb = $this->getMockBuilder(QueryBuilder::class)->disableOriginalConstructor()->getMock();
     }
 
     public static function dataProvider_testRawData_Valid()
@@ -104,6 +109,7 @@ class CartTotalConditionTest extends ConditionTest
             $ProductClass->addFlashSaleDiscount(rand(), $itemFlashSaleDiscount);
             $CartItem = new CartItem();
             $CartItem->setProductClass($ProductClass);
+            $Cart->getCartItems()->add($CartItem);
 
             $data[] = [['operator_greater_than', (string)$conditionValue], $Cart, $expected];
         }
@@ -117,9 +123,51 @@ class CartTotalConditionTest extends ConditionTest
             $OrderItem = new OrderItem();
             $OrderItem->setQuantity(2);
             $OrderItem->setProductClass($ProductClass);
+            $Order->getOrderItems()->add($OrderItem);
             $data[] = [['operator_less_than', (string)$conditionValue], $Order, $expected];
         }
 
         return $data;
+    }
+
+    /**
+     * @param $operatorRule
+     * @param $operatorCondition
+     * @throws ConditionException
+     * @dataProvider dataProvider_testCreateQueryBuilder_Exception
+     */
+    public function testCreateQueryBuilder_Exception($operatorRule, $operatorCondition)
+    {
+        $this->expectException(ConditionException::class);
+        $this->condition->createQueryBuilder($this->qb, $operatorRule, $operatorCondition);
+    }
+
+    public function dataProvider_testCreateQueryBuilder_Exception()
+    {
+        return [
+            [new Operator\AllOperator(), new Operator\InOperator()],
+            [new Operator\AllOperator(), new Operator\NotInOperator()],
+        ];
+    }
+
+    /**
+     * @param $operatorRule
+     * @param $operatorCondition
+     * @throws ConditionException
+     * @dataProvider dataProvider_testCreateQueryBuilder_Valid
+     */
+    public function testCreateQueryBuilder_Valid($operatorRule, $operatorCondition)
+    {
+        $qb = $this->condition->createQueryBuilder($this->qb, $operatorRule, $operatorCondition);
+        $this->assertEquals($this->qb, $qb);
+    }
+
+    public function dataProvider_testCreateQueryBuilder_Valid()
+    {
+        return [
+            [new Operator\AllOperator(), new Operator\EqualOperator()],
+            [new Operator\AllOperator(), new Operator\GreaterThanOperator()],
+            [new Operator\AllOperator(), new Operator\LessThanOperator()],
+        ];
     }
 }

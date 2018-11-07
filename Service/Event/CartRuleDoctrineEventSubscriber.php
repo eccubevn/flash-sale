@@ -82,6 +82,7 @@ class CartRuleDoctrineEventSubscriber implements EventSubscriber
      * Calc flash sale discount & add to entity
      *
      * @param LifecycleEventArgs $eventArgs
+     * @codeCoverageIgnore
      */
     public function preRemove(LifecycleEventArgs $eventArgs)
     {
