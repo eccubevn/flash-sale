@@ -13,10 +13,12 @@
 
 namespace Plugin\FlashSale\Tests\Entity\Condition;
 
+use Doctrine\ORM\QueryBuilder;
 use Eccube\Entity\Product;
 use Eccube\Entity\ProductCategory;
 use Eccube\Entity\ProductClass;
-use Eccube\Tests\EccubeTestCase;
+use Eccube\Repository\ProductRepository;
+use Plugin\FlashSale\Exception\ConditionException;
 use Plugin\FlashSale\Service\Operator as Operator;
 use Plugin\FlashSale\Entity\Condition\ProductCategoryIdCondition;
 use Plugin\FlashSale\Service\Operator\OperatorFactory;
@@ -35,6 +37,11 @@ class ProductCategoryIdConditionTest extends ConditionTest
     protected $condition;
 
     /**
+     * @var QueryBuilder
+     */
+    protected $qb;
+
+    /**
      * {@inheritdoc}
      */
     public function setUp()
@@ -42,6 +49,8 @@ class ProductCategoryIdConditionTest extends ConditionTest
         parent::setUp();
         $this->condition = new ProductCategoryIdCondition();
         $this->condition->setOperatorFactory($this->container->get(OperatorFactory::class));
+        $this->condition->setEntityManager($this->entityManager);
+        $this->qb = $this->container->get(ProductRepository::class)->createQueryBuilder('p');
     }
 
     public static function dataProvider_testRawData_Valid()
@@ -121,5 +130,80 @@ class ProductCategoryIdConditionTest extends ConditionTest
         }
 
         return $data;
+    }
+
+    /**
+     * @param $operatorRule
+     * @param $operatorCondition
+     * @throws ConditionException
+     * @dataProvider dataProvider_testCreateQueryBuilder_Exception
+     */
+    public function testCreateQueryBuilder_Exception($operatorRule, $operatorCondition)
+    {
+        $this->expectException(ConditionException::class);
+        $this->condition->createQueryBuilder($this->qb, $operatorRule, $operatorCondition);
+    }
+
+    public static function dataProvider_testCreateQueryBuilder_Exception()
+    {
+        return [
+            [new Operator\AllOperator(), new Operator\EqualOperator()],
+            [new Operator\AllOperator(), new Operator\NotEqualOperator()],
+            [new Operator\AllOperator(), new Operator\GreaterThanOperator()],
+            [new Operator\AllOperator(), new Operator\LessThanOperator()],
+            [new Operator\AllOperator(), new Operator\AllOperator()],
+            [new Operator\AllOperator(), new Operator\OrOperator()],
+        ];
+    }
+
+    /**
+     * @param $conditionValue
+     * @param $operatorRule
+     * @param $operatorCondition
+     * @param $expectedWhere
+     * @param $expectedDQL
+     * @throws ConditionException
+     * @dataProvider dataProvider_testCreateQueryBuilder_Valid
+     */
+    public function testCreateQueryBuilder_Valid($conditionValue, $operatorRule, $operatorCondition, $expectedWhere, $expectedDQL)
+    {
+        $this->condition->setValue($conditionValue);
+        $qb  = $this->condition->createQueryBuilder($this->qb, $operatorRule, $operatorCondition);
+        $this->assertTrue((bool)strstr($qb->getDQL(), $expectedDQL));
+        $this->assertEquals(get_class($qb->getDQLPart('where')), $expectedWhere);
+    }
+
+    public static function dataProvider_testCreateQueryBuilder_Valid()
+    {
+        return [
+            [
+                $i = rand(),
+                new Operator\AllOperator(),
+                new Operator\InOperator(),
+                'Doctrine\ORM\Query\Expr\Andx',
+                "pct.category_id IN($i)"
+            ],
+            [
+                $i = rand(),
+                new Operator\AllOperator(),
+                new Operator\NotInOperator(),
+                'Doctrine\ORM\Query\Expr\Andx',
+                "p.id NOT IN(SELECT p2 FROM Eccube\Entity\Product p2 WHERE pct IN($i)"
+            ],
+            [
+                $i = rand(),
+                new Operator\OrOperator(),
+                new Operator\InOperator(),
+                'Doctrine\ORM\Query\Expr\Orx',
+                "pct.category_id IN($i)"
+            ],
+            [
+                $i = rand(),
+                new Operator\OrOperator(),
+                new Operator\NotInOperator(),
+                'Doctrine\ORM\Query\Expr\Orx',
+                "p.id NOT IN(SELECT p2 FROM Eccube\Entity\Product p2 WHERE pct IN($i)"
+            ],
+        ];
     }
 }
