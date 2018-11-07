@@ -1,6 +1,7 @@
 <?php
 namespace Plugin\FlashSale\Tests\Service\PurchaseFlow\Processor;
 
+use Eccube\Entity\Cart;
 use Eccube\Tests\EccubeTestCase;
 use Eccube\Entity\ProductClass;
 use Eccube\Entity\Order;
@@ -40,7 +41,9 @@ class FSOrderItemProcessorTest extends EccubeTestCase
 
         $Order->getOrderItems()->add($OrderItem);
 
+        $this->orderItemProcessor->commit(new Cart(), $this->purchaseContext); // just make sure nothing happen
         $this->orderItemProcessor->commit($Order, $this->purchaseContext);
+
         $this->assertEquals($OrderItem->getFlashSaleTotalDiscountPrice(), $OrderItem->getFsPrice());
     }
 }
