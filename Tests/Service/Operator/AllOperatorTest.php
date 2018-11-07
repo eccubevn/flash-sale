@@ -1,11 +1,11 @@
 <?php
 
 /*
- * This file is part of EC-CUBE
+ * This file is part of the Flash Sale plugin
  *
- * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) ECCUBE VN LAB. All Rights Reserved.
  *
- * http://www.lockon.co.jp/
+ * https://www.facebook.com/groups/eccube.vn
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -71,7 +71,7 @@ class AllOperatorTest extends AbstractOperatorTest
         $tmp = ConditionTest\CartTotalConditionTest::dataProvider_testMatch_Valid(null, $orderSubtotal, 0);
         $conditionDataSet = [];
         foreach ($tmp as $tmpData) {
-            list($conditionData,, $expected) = $tmpData;
+            list($conditionData, , $expected) = $tmpData;
             $condition = new Condition\CartTotalCondition();
             $condition->setId(rand());
             $condition->setOperator($conditionData[0]);
@@ -80,8 +80,8 @@ class AllOperatorTest extends AbstractOperatorTest
         }
         $Order = new Order();
         $Order->setSubtotal($orderSubtotal);
-        for ($i=0; $i<count($conditionDataSet); $i++) {
-            for ($j=$i; $j<count($conditionDataSet); $j++) {
+        for ($i = 0; $i < count($conditionDataSet); $i++) {
+            for ($j = $i; $j < count($conditionDataSet); $j++) {
                 list($conditionI, $expectedI) = $conditionDataSet[$i];
                 list($conditionJ, $expectedJ) = $conditionDataSet[$j];
                 $data[] = [[$conditionI, $conditionJ], $Order, $expectedI && $expectedJ];
@@ -99,7 +99,7 @@ class AllOperatorTest extends AbstractOperatorTest
         $tmp = ConditionTest\ProductClassIdConditionTest::dataProvider_testMatch_Valid(null, $productClassId);
         $conditionDataSet = [];
         foreach ($tmp as $tmpData) {
-            list($conditionData,, $expected) = $tmpData;
+            list($conditionData, , $expected) = $tmpData;
             $condition = new Condition\ProductClassIdCondition();
             $condition->setId(rand());
             $condition->setOperator($conditionData[0]);
@@ -108,7 +108,7 @@ class AllOperatorTest extends AbstractOperatorTest
         }
         $tmp = ConditionTest\ProductCategoryIdConditionTest::dataProvider_testMatch_Valid(null, $categoryId);
         foreach ($tmp as $tmpData) {
-            list($conditionData,, $expected) = $tmpData;
+            list($conditionData, , $expected) = $tmpData;
             $condition = new Condition\ProductCategoryIdCondition();
             $condition->setId(rand());
             $condition->setOperator($conditionData[0]);
@@ -122,8 +122,8 @@ class AllOperatorTest extends AbstractOperatorTest
         $ProductClass = new ProductClass();
         $ProductClass->setPropertiesFromArray(['id' => $productClassId]);
         $ProductClass->setProduct($Product);
-        for ($i=0; $i<count($conditionDataSet); $i++) {
-            for ($j=$i; $j<count($conditionDataSet); $j++) {
+        for ($i = 0; $i < count($conditionDataSet); $i++) {
+            for ($j = $i; $j < count($conditionDataSet); $j++) {
                 list($conditionI, $expectedI) = $conditionDataSet[$i];
                 list($conditionJ, $expectedJ) = $conditionDataSet[$j];
                 $data[] = [[$conditionI, $conditionJ], $ProductClass, $expectedI && $expectedJ];

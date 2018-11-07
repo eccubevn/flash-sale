@@ -1,11 +1,11 @@
 <?php
 
 /*
- * This file is part of EC-CUBE
+ * This file is part of the Flash Sale plugin
  *
- * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) ECCUBE VN LAB. All Rights Reserved.
  *
- * http://www.lockon.co.jp/
+ * https://www.facebook.com/groups/eccube.vn
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -26,7 +26,6 @@ use Plugin\FlashSale\Tests\Entity\Condition as ConditionTest;
 
 /**
  * Class ProductClassRuleTest
- * @package Plugin\FlashSale\Tests\Entity\Rule
  */
 class ProductClassRuleTest extends RuleTest
 {
@@ -54,7 +53,7 @@ class ProductClassRuleTest extends RuleTest
                 'type' => 'rule_product_class',
                 'operator' => array_rand(['operator_all' => 1, 'operator_or' => 1]),
                 'promotion' => $promotionData[0],
-                'conditions' => []
+                'conditions' => [],
             ];
             $conditionDataSet = ConditionTest\ProductClassIdConditionTest::dataProvider_testRawData_Valid();
             foreach ($conditionDataSet as $conditionData) {
@@ -69,7 +68,7 @@ class ProductClassRuleTest extends RuleTest
                 'type' => 'rule_product_class',
                 'operator' => array_rand(['operator_all' => 1, 'operator_or' => 1]),
                 'promotion' => $promotionData[0],
-                'conditions' => []
+                'conditions' => [],
             ];
             $conditionDataSet = ConditionTest\ProductCategoryIdConditionTest::dataProvider_testRawData_Valid();
             foreach ($conditionDataSet as $conditionData) {
@@ -193,7 +192,6 @@ class ProductClassRuleTest extends RuleTest
             $Promotion = new Promotion\ProductClassPriceAmountPromotion();
             $Promotion->setId(rand());
             $Promotion->setValue($promotionValue);
-
 
             $data[] = [$Promotion, $ProductClass, $promotionExpected];
         }

@@ -1,11 +1,11 @@
 <?php
 
 /*
- * This file is part of EC-CUBE
+ * This file is part of the Flash Sale plugin
  *
- * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) ECCUBE VN LAB. All Rights Reserved.
  *
- * http://www.lockon.co.jp/
+ * https://www.facebook.com/groups/eccube.vn
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -76,7 +76,9 @@ class ProductClassRule extends Rule
     /**
      * @param QueryBuilder $qb
      * @param OperatorInterface $operatorRule
+     *
      * @return QueryBuilder
+     *
      * @throws RuleException
      * @throws \Plugin\FlashSale\Exception\ConditionException
      */
@@ -156,6 +158,7 @@ class ProductClassRule extends Rule
      * {@inheritdoc}
      *
      * @param $object
+     *
      * @return DiscountInterface
      */
     public function getDiscount($object): DiscountInterface
@@ -163,6 +166,7 @@ class ProductClassRule extends Rule
         if (!$object instanceof ProductClass) {
             $discount = new Discount();
             $discount->setRuleId($this->getId());
+
             return $discount;
         }
 
@@ -173,6 +177,7 @@ class ProductClassRule extends Rule
      * Get discount items of productClass
      *
      * @param ProductClass $ProductClass
+     *
      * @return DiscountInterface
      */
     protected function getDiscountFromProductClass(ProductClass $ProductClass)
@@ -186,7 +191,7 @@ class ProductClassRule extends Rule
 
         $discount = $this->getPromotion()->getDiscount($ProductClass);
         $discount->setRuleId($this->getId());
-        $this->cached[__METHOD__ . $ProductClass->getId()] = $discount;
+        $this->cached[__METHOD__.$ProductClass->getId()] = $discount;
 
         return $this->cached[__METHOD__.$ProductClass->getId()];
     }

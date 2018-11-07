@@ -1,11 +1,11 @@
 <?php
 
 /*
- * This file is part of EC-CUBE
+ * This file is part of the Flash Sale plugin
  *
- * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) ECCUBE VN LAB. All Rights Reserved.
  *
- * http://www.lockon.co.jp/
+ * https://www.facebook.com/groups/eccube.vn
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -17,10 +17,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\DiscriminatorMap;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Eccube\Entity\Category;
-use Eccube\Entity\ClassCategory;
-use Eccube\Entity\Product;
 use Eccube\Entity\ProductClass;
-use Eccube\Repository\CategoryRepository;
 use Eccube\Repository\ProductClassRepository;
 use Plugin\FlashSale\Service\Metadata\DiscriminatorManager;
 use Plugin\FlashSale\Entity\Rule;
@@ -58,7 +55,6 @@ class FlashSaleService
         $this->discriminatorManager = $discriminatorManager;
         $this->entityManager = $entityManager;
     }
-
 
     /**
      * Get metadata
@@ -125,9 +121,11 @@ class FlashSaleService
 
     /**
      * @param $categoryIds
+     *
      * @return mixed
      */
-    public function getCategoryName($categoryIds){
+    public function getCategoryName($categoryIds)
+    {
         if (!$categoryIds) {
             return [];
         }
@@ -137,14 +135,17 @@ class FlashSaleService
             ->from(Category::class, 'c')
             ->where($qb->expr()->in('c.id', ':ids'))
             ->setParameter('ids', $categoryIds);
+
         return $qb->getQuery()->getResult();
     }
 
     /**
      * @param $productClassIds
+     *
      * @return mixed
      */
-    public function getProductClassName($productClassIds){
+    public function getProductClassName($productClassIds)
+    {
         if (!$productClassIds) {
             return [];
         }
@@ -152,12 +153,13 @@ class FlashSaleService
         /** @var ProductClassRepository $ProductClass */
         $ProductClass = $this->entityManager->getRepository(ProductClass::class);
         $qb = $ProductClass->createQueryBuilder('pc');
-        $qb->select("pc.id as id, p.name as name, pc1.name AS class_name1, pc2.name AS class_name2")
+        $qb->select('pc.id as id, p.name as name, pc1.name AS class_name1, pc2.name AS class_name2')
             ->innerJoin('pc.Product', 'p')
             ->leftJoin('pc.ClassCategory1', 'pc1')
             ->leftJoin('pc.ClassCategory2', 'pc2')
             ->where($qb->expr()->in('pc.id', ':ids'))
             ->setParameter('ids', $productClassIds);
+
         return $qb->getQuery()->getResult();
     }
 }

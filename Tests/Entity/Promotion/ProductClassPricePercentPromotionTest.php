@@ -1,11 +1,11 @@
 <?php
 
 /*
- * This file is part of EC-CUBE
+ * This file is part of the Flash Sale plugin
  *
- * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) ECCUBE VN LAB. All Rights Reserved.
  *
- * http://www.lockon.co.jp/
+ * https://www.facebook.com/groups/eccube.vn
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -42,7 +42,6 @@ class ProductClassPricePercentPromotionTest extends PromotionTest
         ];
     }
 
-
     public function testGetDiscount_Invalid()
     {
         $this->promotion->setId(rand());
@@ -76,8 +75,8 @@ class ProductClassPricePercentPromotionTest extends PromotionTest
         $ProductClass->setPrice02IncTax($productClassPrice);
 
         return [
-            [10, $ProductClass, floor($productClassPrice*10/100)],
-            [23, $ProductClass, floor($productClassPrice*23/100)],
+            [10, $ProductClass, floor($productClassPrice * 10 / 100)],
+            [23, $ProductClass, floor($productClassPrice * 23 / 100)],
         ];
     }
 }
