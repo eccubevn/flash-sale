@@ -18,7 +18,9 @@ use Eccube\Service\PurchaseFlow\Processor\AddPointProcessor;
 use Eccube\Entity\ItemHolderInterface;
 use Eccube\Service\PurchaseFlow\PurchaseContext;
 use Eccube\Entity\ItemInterface;
-
+/**
+ * @codeCoverageIgnore
+ */
 class FSAddPointProcessor extends AddPointProcessor
 {
     public function validate(ItemHolderInterface $itemHolder, PurchaseContext $context)

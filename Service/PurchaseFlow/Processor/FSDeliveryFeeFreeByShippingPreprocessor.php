@@ -19,6 +19,9 @@ use Eccube\Entity\ItemHolderInterface;
 use Eccube\Service\PurchaseFlow\PurchaseContext;
 use Eccube\Service\PurchaseFlow\Processor\DeliveryFeeFreeByShippingPreprocessor;
 
+/**
+ * @codeCoverageIgnore
+ */
 class FSDeliveryFeeFreeByShippingPreprocessor extends DeliveryFeeFreeByShippingPreprocessor
 {
     /**
