@@ -12,7 +12,7 @@ flash_sale.admin.list.updated.at: 更新日
 flash_sale.admin.list.status: ステータス
 flash_sale.admin.list.status.draft: 非公開
 flash_sale.admin.list.status.activated: 公開
-flash_sale.admin.list.null: データがありません。<a href="%link%">[新規作成]</a> を押し、イベントをご作成ください。
+flash_sale.admin.list.null: データがありません。<a href="%link%">[新規作成]</a> を押し、イベントを作成してください。
 
 flash_sale.admin.edit.setting.rule: ルール
 
@@ -35,21 +35,21 @@ flash_sale.admin.form.rule.condition.add: 条件追加
 flash_sale.admin.form.remove: 削除
 flash_sale.admin.form.back.to.flash_sale.list: FlashSale一覧
 
-flash_sale.admin.form.rule.product_class_rule: 商品規格
+flash_sale.admin.form.rule.product_class_rule: 商品
 flash_sale.admin.form.rule.cart_rule: カート
-flash_sale.admin.form.rule.product_class_price_percent_promotion: 割合
-flash_sale.admin.form.rule.product_class_price_amount_promotion: 金額
-flash_sale.admin.form.rule.operator.is_one_of: 論理和
-flash_sale.admin.form.rule.operator.is_all_of: 論理積
+flash_sale.admin.form.rule.product_class_price_percent_promotion: 割引率
+flash_sale.admin.form.rule.product_class_price_amount_promotion: 割引額
+flash_sale.admin.form.rule.operator.is_one_of: いずれかの条件を含む
+flash_sale.admin.form.rule.operator.is_all_of: すべての条件を含む
 flash_sale.admin.form.rule.operator.is_equal_to: 等しい
 flash_sale.admin.form.rule.operator.is_not_equal_to: 除く
 flash_sale.admin.form.rule.operator.is_greater_than_to: より大きい
 flash_sale.admin.form.rule.operator.is_less_than_to: より小さい
-flash_sale.admin.form.rule.condition.product_class_id_condition: 商品規格ID
-flash_sale.admin.form.rule.condition.product_category_id_condition: 商品カテゴリID
+flash_sale.admin.form.rule.condition.product_class_id_condition: 商品
+flash_sale.admin.form.rule.condition.product_category_id_condition: カテゴリ
 flash_sale.admin.form.rule.condition.operator.is_one_of: 含む
-flash_sale.admin.form.rule.cart_total_percent_promotion: 割合
-flash_sale.admin.form.rule.cart_total_amount_promotion: 金額
+flash_sale.admin.form.rule.cart_total_percent_promotion: 割引率
+flash_sale.admin.form.rule.cart_total_amount_promotion: 割引額
 flash_sale.admin.form.rule.condition.cart_total_condition: 合計金額
 
 flash_sale.front.sale_up_to: "最大%percent%％値引き"
