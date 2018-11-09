@@ -13,6 +13,7 @@
 
 namespace Plugin\FlashSale\Service\PurchaseFlow\Processor;
 
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Eccube\Entity\ItemHolderInterface;
 use Eccube\Service\PurchaseFlow\DiscountProcessor;
@@ -31,14 +32,22 @@ class FSShoppingProcessor implements DiscountProcessor
     protected $entityManager;
 
     /**
-     * FlashSaleShoppingProcessor constructor.
+     * @var ContainerInterface
+     */
+    protected $container;
+
+    /**
+     * FSShoppingProcessor constructor.
      *
      * @param EntityManagerInterface $entityManager
+     * @param ContainerInterface $container
      */
     public function __construct(
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        ContainerInterface $container
     ) {
         $this->entityManager = $entityManager;
+        $this->container = $container;
     }
 
     /**
@@ -49,6 +58,12 @@ class FSShoppingProcessor implements DiscountProcessor
      */
     public function removeDiscountItem(ItemHolderInterface $itemHolder, PurchaseContext $context)
     {
+        // TODO: Due to core load config of all plugins, we need check by our self
+        $enabledPlugins = $this->container->getParameter('eccube.plugins.enabled');
+        if (!in_array('FlashSale', $enabledPlugins)) {
+            return;
+        }
+
         /** @var OrderItem $item */
         foreach ($itemHolder->getItems() as $item) {
             if ($item->isDiscount() && $item->getProcessorName() == static::class) {
@@ -68,6 +83,12 @@ class FSShoppingProcessor implements DiscountProcessor
      */
     public function addDiscountItem(ItemHolderInterface $itemHolder, PurchaseContext $context)
     {
+        // TODO: Due to core load config of all plugins, we need check by our self
+        $enabledPlugins = $this->container->getParameter('eccube.plugins.enabled');
+        if (!in_array('FlashSale', $enabledPlugins)) {
+            return;
+        }
+
         $discountValue = $itemHolder->getFlashSaleTotalDiscount();
         if ($discountValue) {
             $DiscountType = $this->entityManager->find(OrderItemType::class, OrderItemType::DISCOUNT);

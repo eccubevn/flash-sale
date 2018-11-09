@@ -13,6 +13,8 @@
 
 namespace Plugin\FlashSale\Service\PurchaseFlow\Processor;
 
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Eccube\Repository\BaseInfoRepository;
 use Eccube\Entity\Order;
 use Eccube\Service\PurchaseFlow\Processor\AddPointProcessor;
 use Eccube\Entity\ItemHolderInterface;
@@ -23,8 +25,29 @@ use Eccube\Entity\ItemInterface;
  */
 class FSAddPointProcessor extends AddPointProcessor
 {
+    /**
+     * @var ContainerInterface
+     */
+    protected $container;
+
+    /**
+     * FSAddPointProcessor constructor.
+     * @param \Eccube\Repository\BaseInfoRepository $baseInfoRepository
+     * @param ContainerInterface $container
+     */
+    public function __construct(BaseInfoRepository $baseInfoRepository, ContainerInterface $container)
+    {
+        parent::__construct($baseInfoRepository);
+        $this->container = $container;
+    }
+
     public function validate(ItemHolderInterface $itemHolder, PurchaseContext $context)
     {
+        // TODO: Due to core load config of all plugins, we need check by our self
+        $enabledPlugins = $this->container->getParameter('eccube.plugins.enabled');
+        if (!in_array('FlashSale', $enabledPlugins)) {
+            return parent::validate($itemHolder, $context);
+        }
         if (!$this->supports($itemHolder)) {
             return;
         }
