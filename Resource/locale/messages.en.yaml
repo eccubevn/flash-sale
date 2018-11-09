@@ -47,6 +47,7 @@ flash_sale.admin.form.rule.operator.is_greater_than_to: is greater than to
 flash_sale.admin.form.rule.operator.is_less_than_to: is less than to
 flash_sale.admin.form.rule.condition.product_class_id_condition: Product class
 flash_sale.admin.form.rule.condition.product_category_id_condition: Product category
+flash_sale.admin.form.rule.condition.operator.is_one_of: Including
 flash_sale.admin.form.rule.cart_total_percent_promotion: Cart total percent promotion
 flash_sale.admin.form.rule.cart_total_amount_promotion: Cart total amount promotion
 flash_sale.admin.form.rule.condition.cart_total_condition: Cart total condition
