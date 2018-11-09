@@ -38,7 +38,7 @@ class FSShoppingProcessorTest extends AbstractServiceTestCase
     {
         parent::setUp();
         $this->purchaseContext = $this->getMockBuilder(PurchaseContext::class)->getMock();
-        $this->flashSaleShoppingProcessor = new FSShoppingProcessor($this->entityManager);
+        $this->flashSaleShoppingProcessor = new FSShoppingProcessor($this->entityManager, $this->container);
     }
 
     public function testRemoveDiscountItem()

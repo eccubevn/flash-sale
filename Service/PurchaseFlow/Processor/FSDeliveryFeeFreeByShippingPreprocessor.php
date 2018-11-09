@@ -13,6 +13,8 @@
 
 namespace Plugin\FlashSale\Service\PurchaseFlow\Processor;
 
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Eccube\Repository\BaseInfoRepository;
 use Eccube\Entity\Order;
 use Eccube\Service\PurchaseFlow\Processor\DeliveryFeePreprocessor;
 use Eccube\Entity\ItemHolderInterface;
@@ -25,6 +27,22 @@ use Eccube\Service\PurchaseFlow\Processor\DeliveryFeeFreeByShippingPreprocessor;
 class FSDeliveryFeeFreeByShippingPreprocessor extends DeliveryFeeFreeByShippingPreprocessor
 {
     /**
+     * @var ContainerInterface
+     */
+    protected $container;
+
+    /**
+     * FSDeliveryFeeFreeByShippingPreprocessor constructor.
+     * @param BaseInfoRepository $baseInfoRepository
+     * @param ContainerInterface $container
+     */
+    public function __construct(BaseInfoRepository $baseInfoRepository, ContainerInterface $container)
+    {
+        parent::__construct($baseInfoRepository);
+        $this->container = $container;
+    }
+
+    /**
      * {@inheritdoc}
      *
      * @param ItemHolderInterface $itemHolder
@@ -32,6 +50,12 @@ class FSDeliveryFeeFreeByShippingPreprocessor extends DeliveryFeeFreeByShippingP
      */
     public function process(ItemHolderInterface $itemHolder, PurchaseContext $context)
     {
+        // TODO: Due to core load config of all plugins, we need check by our self
+        $enabledPlugins = $this->container->getParameter('eccube.plugins.enabled');
+        if (!in_array('FlashSale', $enabledPlugins)) {
+            return parent::process($itemHolder, $context);
+        }
+
         if (!($this->BaseInfo->getDeliveryFreeAmount() || $this->BaseInfo->getDeliveryFreeQuantity())) {
             return;
         }
