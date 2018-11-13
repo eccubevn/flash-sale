@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/eccubevn/flash-sale.svg?branch=master)](https://travis-ci.org/eccubevn/flash-sale)
 [![Coverage Status](https://coveralls.io/repos/github/eccubevn/flash-sale/badge.png?branch=master)](https://coveralls.io/github/eccubevn/flash-sale?branch=master)
 
-▼日本語訳
+▼日本語
 ## 概要
 ショップ運営者が期間限定セール（*FlashSale）を簡単に作成するために使うプラグインである。
 
