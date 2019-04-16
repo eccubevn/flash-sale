@@ -74,7 +74,7 @@ class PluginManager extends AbstractPluginManager
      *
      * @throws \Exception
      */
-    public function enable(array $meta = null, ContainerInterface $container)
+    public function enable(array $meta, ContainerInterface $container)
     {
         $this->copyMailTemplate($container);
         $this->copyBlock($container);
@@ -90,7 +90,7 @@ class PluginManager extends AbstractPluginManager
      *
      * @throws \Exception
      */
-    public function disable(array $meta = null, ContainerInterface $container)
+    public function disable(array $meta, ContainerInterface $container)
     {
         $this->removeMailTemplate($container);
         $this->removeDataBlock($container);
@@ -101,7 +101,7 @@ class PluginManager extends AbstractPluginManager
      * @param array|null $meta
      * @param ContainerInterface $container
      */
-    public function update(array $meta = null, ContainerInterface $container)
+    public function update(array $meta, ContainerInterface $container)
     {
         $this->copyMailTemplate($container);
         $this->copyBlock($container);
