@@ -1,0 +1,59 @@
+flash_sale.admin.nav.name: Flash Sale
+
+flash_sale.admin.list.title: Flash Sale
+flash_sale.admin.list.title.sub: Danh sách các Flash Sale
+
+flash_sale.admin.list.id: ID
+flash_sale.admin.list.description: Mô tả
+flash_sale.admin.list.time.start: Thời gian bắt đầu
+flash_sale.admin.list.time.end: Thời gian kết thúc
+flash_sale.admin.list.created.at: Thời gian tạo
+flash_sale.admin.list.updated.at: Thời gian cập nhật
+flash_sale.admin.list.status: Trạng thái
+flash_sale.admin.list.status.draft: Nháp
+flash_sale.admin.list.status.activated: Kích hoạt
+flash_sale.admin.list.null: Không có dữ liệu, hãy  nhấp vào <a href="%link%">[đây]</a> để tạo mới sự kiện Flash Sale
+
+flash_sale.admin.edit.setting.rule: Rule
+
+flash_sale.admin.form.title: Flash Sale
+flash_sale.admin.form.title.sub: Chỉnh sửa Flash Sale
+
+flash_sale.admin.form.add_product_category: Thêm danh mục sản phẩm
+flash_sale.admin.form.information: Flash Sale information registration
+flash_sale.admin.form.name: Tên
+flash_sale.admin.form.note: Ghi chú
+flash_sale.admin.form.note.tooltip: Thông tin này sẽ không được hiển thị ra ngoài trang chủ
+flash_sale.admin.form.rule.box: Quy tắc
+flash_sale.admin.form.rule.add: Thêm
+flash_sale.admin.form.rule.type: Loại
+flash_sale.admin.form.rule.operator: Hoạt động
+flash_sale.admin.form.rule.promotion: Khuyến mãi
+flash_sale.admin.form.rule.condition: Điều kiện
+
+flash_sale.admin.form.rule.condition.add: Thêm
+flash_sale.admin.form.remove: Xóa
+flash_sale.admin.form.back.to.flash_sale.list: Flash Sale list
+
+flash_sale.admin.form.rule.product_class_rule: Quy tắc tùy chọn SP
+flash_sale.admin.form.rule.cart_rule: Quy tắc giỏ hàng
+flash_sale.admin.form.rule.product_class_price_percent_promotion: Phần trăm giá sản phẩm
+flash_sale.admin.form.rule.product_class_price_amount_promotion: Giá sản phẩm
+flash_sale.admin.form.rule.operator.is_one_of: là một trong những
+flash_sale.admin.form.rule.operator.is_all_of: là tất cả
+flash_sale.admin.form.rule.operator.is_equal_to: bằng
+flash_sale.admin.form.rule.operator.is_not_equal_to: không bằng
+flash_sale.admin.form.rule.operator.is_greater_than_to: lớn hơn
+flash_sale.admin.form.rule.operator.is_less_than_to: ít hơn
+flash_sale.admin.form.rule.condition.product_class_id_condition: Tùy chọn sản phẩm
+flash_sale.admin.form.rule.condition.product_category_id_condition: Danh mục sản phẩm
+flash_sale.admin.form.rule.condition.operator.is_one_of: Kể cả
+flash_sale.admin.form.rule.cart_total_percent_promotion: Khuyến mãi trên % của giỏ hàng
+flash_sale.admin.form.rule.cart_total_amount_promotion: Khuyến mãi trên số tiền của giỏ hàng
+flash_sale.admin.form.rule.condition.cart_total_condition: Tổng điều kiện giỏ hàng
+
+flash_sale.front.sale_up_to: "Giảm giá đến %percent% %"
+flash_sale.front.from_to: "Từ %from% đến %to%"
+
+flash_sale.rule.exception: "%operator% hoạt động không được hỗ trợ!"
+flash_sale.condition.exception: "%operator% hoạt động không được hỗ trợ!"

@@ -1,0 +1,8 @@
+flash_sale.form.rule.require: 'Quy tắc là bắt buộc.'
+flash_sale.form.promotion.require: 'Khuyến mãi là bắt buộc.'
+flash_sale.form.condition.require: 'Điều kiện là bắc buộc.'
+flash_sale.form.time.from_to: 'Thời gian bắt đầu nên sớm hơn thời gian kết thúc.'
+flash_sale.form.multi: 'Có một sự kiện vào thời điểm này.'
+flash_sale.form.promotion.value.integer: 'Giá trị khuyến mại phải là số nguyên dương'
+flash_sale.form.promotion.percentage: 'Tỷ lệ chiết khấu phải nằm trong khoảng từ 0 đến 100'
+flash_sale.form.promotion.amount.must.than.zero: 'Số tiền chiết khấu phải lớn hơn 0'
